@@ -22,14 +22,14 @@ Refer to [`prod.env`](file:///home/worthmind/Coding/TempoEmails/prod.env) or [`.
 
 | Variable | Description | Example |
 | :--- | :--- | :--- |
-| `SITE_URL` / `PUBLIC_SITE_URL` | Canonical production domain URL | `https://tempoemails.dev` |
+| `SITE_URL` / `PUBLIC_SITE_URL` | Canonical production domain URL | `https://tempoemails.com` |
 | `PUBLIC_GOOGLE_ADSENSE_ID` | Google AdSense Publisher ID | `ca-pub-1234567890123456` |
 | `PUBLIC_GOOGLE_ADSENSE_SLOT_ID` | Default Ad Unit Slot ID | `1234567890` |
 | `PUBLIC_GOOGLE_ANALYTICS_ID` | Google Analytics 4 Measurement ID | `G-XXXXXXXXXX` |
 | `PUBLIC_GTM_ID` | Google Tag Manager ID (Optional) | `GTM-XXXXXXX` |
 | `PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console verification meta | `google_token_here` |
 | `PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster verification code | `bing_code_here` |
-| `PUBLIC_PLAUSIBLE_DOMAIN` | Plausible Analytics domain (Optional) | `tempoemails.dev` |
+| `PUBLIC_PLAUSIBLE_DOMAIN` | Plausible Analytics domain (Optional) | `tempoemails.com` |
 | `PUBLIC_UMAMI_WEBSITE_ID` | Umami Analytics website ID (Optional) | `uuid-here` |
 | `PORT` | Container exposed port | `3012` |
 
@@ -60,7 +60,7 @@ You can deploy TempoEmails on Dokploy using either **Standard Application (Docke
    - Paste the contents of your [`prod.env`](file:///home/worthmind/Coding/TempoEmails/prod.env) file (e.g. `SITE_URL`, `PUBLIC_GOOGLE_ANALYTICS_ID`, `PUBLIC_GOOGLE_ADSENSE_ID`, etc.).
 7. In the **General / Network / Domains** tab:
    - **Port**: Enter `3012` (the container exposes port 3012).
-   - Add your domain (e.g., `tempomail.yourdomain.com`).
+   - Add your domain (e.g., `tempoemails.com`).
    - Enable **HTTPS / SSL** (Dokploy/Traefik will automatically issue a Let's Encrypt certificate).
 8. Click **Deploy**.
 
@@ -78,8 +78,8 @@ You can deploy TempoEmails on Dokploy using either **Standard Application (Docke
          context: .
          dockerfile: Dockerfile
          args:
-           SITE_URL: ${SITE_URL:-https://tempoemails.dev}
-           PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-https://tempoemails.dev}
+           SITE_URL: ${SITE_URL:-https://tempoemails.com}
+           PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-https://tempoemails.com}
            PUBLIC_GOOGLE_ANALYTICS_ID: ${PUBLIC_GOOGLE_ANALYTICS_ID:-}
            PUBLIC_GOOGLE_ADSENSE_ID: ${PUBLIC_GOOGLE_ADSENSE_ID:-}
        image: tempoemails:latest

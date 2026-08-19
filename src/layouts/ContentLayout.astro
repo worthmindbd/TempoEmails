@@ -11,7 +11,8 @@ interface Props {
 
 const { title, description, publishDate, category, keywords } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://tempoemails.dev');
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || import.meta.env.SITE_URL || Astro.site?.origin || 'https://tempoemails.com';
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 
 const formattedDate = publishDate
   ? new Date(publishDate).toLocaleDateString('en-US', {

@@ -5,14 +5,14 @@ import { StorageManager } from '../utils/storage';
 export class MockClient {
   static async getDomains(): Promise<MailDomain[]> {
     return [
-      { id: 'mock_1', domain: 'tempoemails.cloud', isActive: true, provider: 'mock' as const },
+      { id: 'mock_1', domain: 'tempoemails.com', isActive: true, provider: 'mock' as const },
       { id: 'mock_2', domain: 'burnerinbox.dev', isActive: true, provider: 'mock' as const },
       { id: 'mock_3', domain: 'privatemail.link', isActive: true, provider: 'mock' as const },
     ];
   }
 
   static async createAccount(usernamePrefix?: string, domainName?: string): Promise<MailAccount> {
-    const domain = domainName || 'tempoemails.cloud';
+    const domain = domainName || 'tempoemails.com';
     const prefix = usernamePrefix || `user.${Math.floor(100000 + Math.random() * 900000)}`;
     const address = `${prefix}@${domain}`;
 
@@ -110,7 +110,7 @@ export class MockClient {
       },
       welcome: {
         fromName: 'TempoEmails Team',
-        fromAddr: 'hello@tempoemails.cloud',
+        fromAddr: 'hello@tempoemails.com',
         subject: '🎉 Your temporary inbox is ready to receive emails!',
         code: 'TEMPO',
         text: `Welcome to TempoEmails!\n\nYour temporary mailbox is active and ready to receive confirmation codes, OTPs, and activation links.\n\nEnjoy complete privacy without spam!`,

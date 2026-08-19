@@ -5,4 +5,4 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://tempoemails.dev/sitemap-index.xml
+Sitemap: https://tempoemails.com/sitemap-index.xml

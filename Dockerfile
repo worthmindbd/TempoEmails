@@ -15,8 +15,8 @@ RUN npm ci
 COPY . .
 
 # Build arguments for production configuration, SEO, Analytics & AdSense
-ARG SITE_URL="https://tempoemails.dev"
-ARG PUBLIC_SITE_URL="https://tempoemails.dev"
+ARG SITE_URL="https://tempoemails.com"
+ARG PUBLIC_SITE_URL="https://tempoemails.com"
 ARG PUBLIC_GOOGLE_ANALYTICS_ID=""
 ARG PUBLIC_GOOGLE_ADSENSE_ID=""
 ARG PUBLIC_GOOGLE_ADSENSE_SLOT_ID=""

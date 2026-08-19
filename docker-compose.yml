@@ -4,8 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        SITE_URL: ${SITE_URL:-https://tempoemails.dev}
-        PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-https://tempoemails.dev}
+        SITE_URL: ${SITE_URL:-https://tempoemails.com}
+        PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-https://tempoemails.com}
         PUBLIC_GOOGLE_ANALYTICS_ID: ${PUBLIC_GOOGLE_ANALYTICS_ID:-}
         PUBLIC_GOOGLE_ADSENSE_ID: ${PUBLIC_GOOGLE_ADSENSE_ID:-}
         PUBLIC_GOOGLE_ADSENSE_SLOT_ID: ${PUBLIC_GOOGLE_ADSENSE_SLOT_ID:-}
@@ -23,7 +23,7 @@ services:
       - path: .env
         required: false
     environment:
-      - SITE_URL=${SITE_URL:-https://tempoemails.dev}
+      - SITE_URL=${SITE_URL:-https://tempoemails.com}
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3012/healthz"]
       interval: 30s
