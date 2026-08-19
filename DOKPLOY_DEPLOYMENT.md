@@ -23,17 +23,19 @@ Refer to [`prod.env`](file:///home/worthmind/Coding/TempoEmails/prod.env):
 2. Navigate to your **Project** and click **Create Service** → **Application**.
 3. Fill in the details:
    - **Name**: `tempoemails`
+   - **Port**: `4321`
 4. In the **Provider / Source** tab:
    - Select **GitHub** (or **Git**).
    - Choose your repository and the branch (`main`).
 5. In the **Build** tab:
    - **Build Type**: Select **`Nixpacks`**.
-   - **Publish Directory**: `dist`
 6. In the **Environment Variables** tab:
    - Paste the contents of your [`prod.env`](file:///home/worthmind/Coding/TempoEmails/prod.env) file.
 7. In the **Domains** tab:
    - Click **Add Domain**.
    - **Domain**: `tempoemails.com` (and optionally `www.tempoemails.com`).
+   - **Path**: `/`
+   - **Port**: `4321`
    - **Certificate**: Select **Let's Encrypt** (automatic SSL).
    - **HTTPS**: Enabled.
 8. Click **Deploy**.
