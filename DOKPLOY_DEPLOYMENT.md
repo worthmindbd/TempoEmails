@@ -14,6 +14,29 @@ TempoEmails uses a multi-stage Docker build with **Node.js 22** for compilation 
 
 ---
 
+## ⚙️ Environment Variables (`prod.env`)
+
+TempoEmails supports optional environment variables for **Google AdSense, Google Analytics 4, Tag Manager, and Search Console verifications**. 
+
+Refer to [`prod.env`](file:///home/worthmind/Coding/TempoEmails/prod.env) or [`.env.example`](file:///home/worthmind/Coding/TempoEmails/.env.example):
+
+| Variable | Description | Example |
+| :--- | :--- | :--- |
+| `SITE_URL` / `PUBLIC_SITE_URL` | Canonical production domain URL | `https://tempoemails.dev` |
+| `PUBLIC_GOOGLE_ADSENSE_ID` | Google AdSense Publisher ID | `ca-pub-1234567890123456` |
+| `PUBLIC_GOOGLE_ADSENSE_SLOT_ID` | Default Ad Unit Slot ID | `1234567890` |
+| `PUBLIC_GOOGLE_ANALYTICS_ID` | Google Analytics 4 Measurement ID | `G-XXXXXXXXXX` |
+| `PUBLIC_GTM_ID` | Google Tag Manager ID (Optional) | `GTM-XXXXXXX` |
+| `PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console verification meta | `google_token_here` |
+| `PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster verification code | `bing_code_here` |
+| `PUBLIC_PLAUSIBLE_DOMAIN` | Plausible Analytics domain (Optional) | `tempoemails.dev` |
+| `PUBLIC_UMAMI_WEBSITE_ID` | Umami Analytics website ID (Optional) | `uuid-here` |
+| `PORT` | Container exposed port | `3012` |
+
+> **Note on Google AdSense `ads.txt`**: Remember to update [`public/ads.txt`](file:///home/worthmind/Coding/TempoEmails/public/ads.txt) with your approved Google AdSense publisher ID.
+
+---
+
 ## 🚀 Deployment Methods
 
 You can deploy TempoEmails on Dokploy using either **Standard Application (Dockerfile)** or **Docker Compose**.
@@ -33,11 +56,8 @@ You can deploy TempoEmails on Dokploy using either **Standard Application (Docke
    - **Build Type**: Select **`Dockerfile`**.
    - **Dockerfile Path**: `Dockerfile` (default).
    - **Context**: `.` (default).
-6. In the **Environment Variables / Build Arguments** tab (Optional):
-   - Add `SITE_URL` to configure canonical URLs and sitemap generation:
-     ```env
-     SITE_URL=https://yourdomain.com
-     ```
+6. In the **Environment Variables / Build Arguments** tab:
+   - Paste the contents of your [`prod.env`](file:///home/worthmind/Coding/TempoEmails/prod.env) file (e.g. `SITE_URL`, `PUBLIC_GOOGLE_ANALYTICS_ID`, `PUBLIC_GOOGLE_ADSENSE_ID`, etc.).
 7. In the **General / Network / Domains** tab:
    - **Port**: Enter `3012` (the container exposes port 3012).
    - Add your domain (e.g., `tempomail.yourdomain.com`).
@@ -59,13 +79,17 @@ You can deploy TempoEmails on Dokploy using either **Standard Application (Docke
          dockerfile: Dockerfile
          args:
            SITE_URL: ${SITE_URL:-https://tempoemails.dev}
+           PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-https://tempoemails.dev}
+           PUBLIC_GOOGLE_ANALYTICS_ID: ${PUBLIC_GOOGLE_ANALYTICS_ID:-}
+           PUBLIC_GOOGLE_ADSENSE_ID: ${PUBLIC_GOOGLE_ADSENSE_ID:-}
        image: tempoemails:latest
        container_name: tempoemails
        restart: unless-stopped
        ports:
          - "3012:3012"
-       environment:
-         - SITE_URL=${SITE_URL:-https://tempoemails.dev}
+       env_file:
+         - path: prod.env
+           required: false
        healthcheck:
          test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3012/healthz"]
          interval: 30s
@@ -73,7 +97,7 @@ You can deploy TempoEmails on Dokploy using either **Standard Application (Docke
          retries: 3
          start_period: 5s
    ```
-4. Set the `SITE_URL` environment variable if needed.
+4. Set the environment variables in Dokploy's **Environment** tab.
 5. In the **Domains** section, map your domain to port `3012` with SSL enabled.
 6. Click **Deploy**.
 
@@ -109,8 +133,11 @@ Dokploy and Traefik monitor this endpoint to ensure traffic is only routed to he
 If you want to test the Docker build locally before deploying to your VPS:
 
 ```bash
-# Build the Docker image
-docker build --build-arg SITE_URL="http://localhost:3012" -t tempoemails .
+# Build the Docker image with environment variables
+docker build \
+  --build-arg SITE_URL="http://localhost:3012" \
+  --build-arg PUBLIC_GOOGLE_ANALYTICS_ID="G-XXXXXXXXXX" \
+  -t tempoemails .
 
 # Run the container
 docker run -d -p 3012:3012 --name tempoemails tempoemails
@@ -118,12 +145,12 @@ docker run -d -p 3012:3012 --name tempoemails tempoemails
 # Test in browser
 open http://localhost:3012
 
-# Or test healthcheck
+# Test healthcheck
 curl http://localhost:3012/healthz
 ```
 
 Or with Docker Compose:
 
 ```bash
-SITE_URL="http://localhost:3012" PORT=3012 docker compose up -d --build
+docker compose up -d --build
 ```

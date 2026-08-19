@@ -5,11 +5,23 @@ services:
       dockerfile: Dockerfile
       args:
         SITE_URL: ${SITE_URL:-https://tempoemails.dev}
+        PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-https://tempoemails.dev}
+        PUBLIC_GOOGLE_ANALYTICS_ID: ${PUBLIC_GOOGLE_ANALYTICS_ID:-}
+        PUBLIC_GOOGLE_ADSENSE_ID: ${PUBLIC_GOOGLE_ADSENSE_ID:-}
+        PUBLIC_GOOGLE_ADSENSE_SLOT_ID: ${PUBLIC_GOOGLE_ADSENSE_SLOT_ID:-}
+        PUBLIC_GTM_ID: ${PUBLIC_GTM_ID:-}
+        PUBLIC_GOOGLE_SITE_VERIFICATION: ${PUBLIC_GOOGLE_SITE_VERIFICATION:-}
+        PUBLIC_BING_SITE_VERIFICATION: ${PUBLIC_BING_SITE_VERIFICATION:-}
     image: tempoemails:latest
     container_name: tempoemails
     restart: unless-stopped
     ports:
       - "${PORT:-3012}:3012"
+    env_file:
+      - path: prod.env
+        required: false
+      - path: .env
+        required: false
     environment:
       - SITE_URL=${SITE_URL:-https://tempoemails.dev}
     healthcheck:

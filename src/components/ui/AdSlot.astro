@@ -1,0 +1,37 @@
+---
+interface Props {
+  slotId?: string;
+  format?: 'auto' | 'fluid' | 'rectangle' | 'horizontal';
+  responsive?: boolean;
+  class?: string;
+}
+
+const {
+  slotId = import.meta.env.PUBLIC_GOOGLE_ADSENSE_SLOT_ID,
+  format = 'auto',
+  responsive = true,
+  class: className = '',
+} = Astro.props;
+
+const adsenseClientId = import.meta.env.PUBLIC_GOOGLE_ADSENSE_ID || import.meta.env.PUBLIC_GOOGLE_ADSENSE_CLIENT_ID;
+---
+
+{adsenseClientId && slotId && (
+  <div class={`ad-slot-wrapper my-6 flex justify-center items-center overflow-hidden min-h-[90px] ${className}`}>
+    <ins
+      class="adsbygoogle"
+      style="display:block; text-align:center;"
+      data-ad-client={adsenseClientId}
+      data-ad-slot={slotId}
+      data-ad-format={format}
+      data-full-width-responsive={responsive ? 'true' : 'false'}
+    />
+    <script is:inline>
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {
+        console.debug('AdSense init notice:', e);
+      }
+    </script>
+  </div>
+)}

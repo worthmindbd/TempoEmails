@@ -21,8 +21,21 @@ const {
   ogType = 'website',
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://tempoemails.dev');
-const ogImageURL = new URL(ogImage, Astro.site || 'https://tempoemails.dev');
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || import.meta.env.SITE_URL || Astro.site?.origin || 'https://tempoemails.dev';
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+const ogImageURL = new URL(ogImage, siteUrl);
+
+// Analytics, Ads, & Verification Environment Variables
+const gaId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || import.meta.env.PUBLIC_GA_ID;
+const gtmId = import.meta.env.PUBLIC_GTM_ID;
+const adsenseClientId = import.meta.env.PUBLIC_GOOGLE_ADSENSE_ID || import.meta.env.PUBLIC_GOOGLE_ADSENSE_CLIENT_ID;
+const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
+const bingSiteVerification = import.meta.env.PUBLIC_BING_SITE_VERIFICATION;
+const yandexVerification = import.meta.env.PUBLIC_YANDEX_VERIFICATION;
+const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN;
+const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
+const umamiScriptUrl = import.meta.env.PUBLIC_UMAMI_SCRIPT_URL || 'https://cloud.umami.is/script.js';
+const cloudflareToken = import.meta.env.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN;
 
 // JSON-LD Structured Data for WebSite, WebApplication, and Organization
 const websiteSchema = {
@@ -104,6 +117,11 @@ const organizationSchema = {
     <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <link rel="canonical" href={canonicalURL.href} />
 
+    <!-- Webmaster Search Console Verifications -->
+    {googleSiteVerification && <meta name="google-site-verification" content={googleSiteVerification} />}
+    {bingSiteVerification && <meta name="msvalidate.01" content={bingSiteVerification} />}
+    {yandexVerification && <meta name="yandex-verification" content={yandexVerification} />}
+
     <!-- Geo Meta Tags for Global Reach -->
     <meta name="geo.region" content="US;GB;EU" />
     <meta name="geo.placename" content="Global" />
@@ -132,6 +150,55 @@ const organizationSchema = {
     <meta name="twitter:image" content={ogImageURL.href} />
     <meta name="twitter:image:alt" content="TempoEmails Temporary Mail Platform" />
 
+    <!-- Google AdSense -->
+    {adsenseClientId && (
+      <script
+        is:inline
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
+        crossorigin="anonymous"
+      />
+    )}
+
+    <!-- Google Analytics 4 (gtag.js) -->
+    {gaId && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+        <script is:inline define:vars={{ gaId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', gaId, { page_path: window.location.pathname });
+        </script>
+      </>
+    )}
+
+    <!-- Google Tag Manager -->
+    {gtmId && (
+      <script is:inline define:vars={{ gtmId }}>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer',gtmId);
+      </script>
+    )}
+
+    <!-- Plausible Analytics -->
+    {plausibleDomain && (
+      <script is:inline defer data-domain={plausibleDomain} src="https://plausible.io/js/script.js" />
+    )}
+
+    <!-- Umami Analytics -->
+    {umamiWebsiteId && (
+      <script is:inline defer src={umamiScriptUrl} data-website-id={umamiWebsiteId} />
+    )}
+
+    <!-- Cloudflare Web Analytics -->
+    {cloudflareToken && (
+      <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={`{"token": "${cloudflareToken}"}`} />
+    )}
+
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />
@@ -159,6 +226,17 @@ const organizationSchema = {
     </script>
   </head>
   <body class="bg-[#f9f7f3] dark:bg-[#0e0e11] text-[#202020] dark:text-[#fcfcfc] min-h-screen flex flex-col antialiased selection:bg-[#ea2804] selection:text-white">
+    {gtmId && (
+      <noscript>
+        <iframe
+          src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+          height="0"
+          width="0"
+          style="display:none;visibility:hidden"
+        ></iframe>
+      </noscript>
+    )}
+
     <!-- Atmospheric Ambient Glow Mesh Background -->
     <div class="fixed inset-0 hero-glow-mesh pointer-events-none z-0"></div>
 
