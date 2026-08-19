@@ -1,0 +1,89 @@
+---
+import GlassCard from '../ui/GlassCard.astro';
+import Badge from '../ui/Badge.astro';
+
+const faqs = [
+  {
+    q: 'Can I send emails using TempoMail?',
+    a: 'No. To ensure high deliverability, protect sender domain reputation, and prevent spamming abuse, TempoMail is strictly a receive-only disposable email service. You can receive verification codes, activation links, and confirmation emails instantly.',
+  },
+  {
+    q: 'How fast do verification emails and OTPs arrive?',
+    a: 'Incoming emails and OTP codes typically arrive within 2 to 5 seconds. The inbox features automatic smart polling so you never need to manually refresh the page.',
+  },
+  {
+    q: 'How long do temporary emails stay active?',
+    a: 'Your temporary mailbox remains active as long as you keep this browser tab or session open, and is saved in your browser session history so you do not lose it upon refreshing. You can also manually delete it whenever you are finished.',
+  },
+  {
+    q: 'Is TempoMail 100% free?',
+    a: 'Yes, TempoMail is completely free to use without any hidden fees, subscription requirements, or limits on received emails.',
+  },
+  {
+    q: 'Do I need to sign up or provide personal details?',
+    a: 'Never. You are automatically provided with a disposable email address the moment you visit the website. No name, password, phone number, or personal information is ever requested.',
+  },
+  {
+    q: 'Can I choose my own custom email username?',
+    a: 'Yes! Click the "Custom" button in the address bar to pick your preferred username alias and choose from our active domain pool.',
+  },
+];
+---
+
+<section id="faq" class="w-full max-w-4xl mx-auto my-16 px-4">
+  <div class="text-center mb-10 space-y-3">
+    <Badge variant="neutral" size="md">
+      Frequently Asked Questions
+    </Badge>
+    <h2 class="font-display text-3xl md:text-4xl font-black text-[#202020] dark:text-[#fcfcfc] tracking-tight">
+      Everything you need to know.
+    </h2>
+  </div>
+
+  <div class="space-y-3">
+    {faqs.map((faq, i) => (
+      <GlassCard variant="card" class="faq-item overflow-hidden transition-all duration-200 cursor-pointer">
+        <button
+          type="button"
+          class="faq-toggle w-full p-5 text-left flex items-center justify-between gap-4 font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc] cursor-pointer"
+          aria-expanded="false"
+        >
+          <span>{faq.q}</span>
+          <svg class="faq-icon w-5 h-5 text-[#ea2804] shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="faq-content hidden px-5 pb-5 text-xs md:text-sm text-[#575757] dark:text-zinc-300 leading-relaxed border-t border-black/5 dark:border-white/5 pt-3">
+          {faq.a}
+        </div>
+      </GlassCard>
+    ))}
+  </div>
+</section>
+
+<script>
+  function setupFaq() {
+    const items = document.querySelectorAll('.faq-item');
+    items.forEach((item) => {
+      const toggle = item.querySelector('.faq-toggle');
+      const content = item.querySelector('.faq-content');
+      const icon = item.querySelector('.faq-icon');
+
+      toggle?.addEventListener('click', () => {
+        const isOpen = !content?.classList.contains('hidden');
+        if (isOpen) {
+          content?.classList.add('hidden');
+          icon?.classList.remove('rotate-180');
+          toggle.setAttribute('aria-expanded', 'false');
+        } else {
+          content?.classList.remove('hidden');
+          icon?.classList.add('rotate-180');
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  }
+
+  setupFaq();
+  document.addEventListener('astro:page-load', setupFaq);
+</script>

@@ -1,0 +1,915 @@
+---
+import GlassCard from '../ui/GlassCard.astro';
+import EmailAddressBar from './EmailAddressBar.astro';
+import InboxList from './InboxList.astro';
+import EmailDetail from './EmailDetail.astro';
+import QrCodeModal from './QrCodeModal.astro';
+import CustomInboxModal from './CustomInboxModal.astro';
+import InboxHistoryDrawer from './InboxHistoryDrawer.astro';
+import ConfirmModal from '../ui/ConfirmModal.astro';
+---
+
+<div id="mailbox-manager" class="w-full max-w-6xl mx-auto space-y-5">
+  <!-- Top Address & Action Controls Island -->
+  <EmailAddressBar />
+
+  <!-- Main Inbox Grid (Split View on Desktop, Toggle on Mobile) -->
+  <GlassCard variant="panel" class="overflow-hidden border border-white/60 dark:border-white/10 shadow-2xl">
+    <div class="grid grid-cols-1 md:grid-cols-12 min-h-[540px]">
+      <!-- Left Column: Inbox List (md:col-span-5 or 4) -->
+      <div id="inbox-list-pane" class="md:col-span-5 lg:col-span-4 border-r border-black/5 dark:border-white/10 h-full">
+        <InboxList />
+      </div>
+
+      <!-- Right Column: Email Reader Detail (md:col-span-7 or 8) -->
+      <div id="email-detail-pane" class="hidden md:block md:col-span-7 lg:col-span-8 h-full">
+        <EmailDetail />
+      </div>
+    </div>
+  </GlassCard>
+
+  <!-- Modals -->
+  <QrCodeModal />
+  <CustomInboxModal />
+  <InboxHistoryDrawer />
+  <ConfirmModal />
+</div>
+
+<script>
+  import { MailService } from '../../lib/mail/service';
+  import { StorageManager } from '../../lib/utils/storage';
+  import { copyToClipboard } from '../../lib/utils/clipboard';
+  import { formatRelativeTime, formatFullDateTime } from '../../lib/utils/date-formatter';
+  import { generateQrCodeSvg } from '../../lib/utils/qrcode';
+  import type { MailAccount, MailMessage, DetailedMailMessage, MailDomain } from '../../lib/mail/types';
+
+  class MailboxController {
+    private account: MailAccount | null = null;
+    private messages: MailMessage[] = [];
+    private selectedMessage: DetailedMailMessage | null = null;
+    private pollInterval: any = null;
+    private timerInterval: any = null;
+    private pollCountdown: number = 10;
+    private isPolling: boolean = false;
+    private availableDomains: MailDomain[] = [];
+    private sseSource: EventSource | null = null;
+
+    async init() {
+      this.bindEvents();
+      await this.loadInitialMailbox();
+      this.startAutoRefresh();
+      this.loadDomains();
+    }
+
+    async loadInitialMailbox(
+      forceNew: boolean = false,
+      preferredProvider?: 'mailtm' | 'guerrilla' | 'secmail',
+      excludeDomain?: string
+    ) {
+      this.showAddressLoading(true);
+      if (this.sseSource) {
+        this.sseSource.close();
+        this.sseSource = null;
+      }
+      try {
+        this.account = await MailService.getOrCreateAccount(forceNew, preferredProvider, excludeDomain);
+        this.updateAddressDisplay();
+        this.connectRealtimeStream();
+        await this.fetchMessages(true);
+      } catch (err) {
+        console.error('Failed to init mailbox:', err);
+        window.dispatchEvent(
+          new CustomEvent('tempomail:toast', {
+            detail: { message: 'Failed to initialize mailbox. Please try refreshing.', type: 'error' },
+          })
+        );
+      } finally {
+        this.showAddressLoading(false);
+      }
+    }
+
+    connectRealtimeStream() {
+      if (!this.account || this.account.provider !== 'mailtm' || !this.account.id) return;
+      if (typeof window === 'undefined' || typeof EventSource === 'undefined') return;
+
+      try {
+        if (this.sseSource) {
+          this.sseSource.close();
+        }
+        const sseUrl = `https://mercure.mail.tm/.well-known/mercure?topic=/accounts/${this.account.id}`;
+        this.sseSource = new EventSource(sseUrl);
+
+        this.sseSource.onmessage = () => {
+          this.fetchMessages();
+        };
+
+        this.sseSource.onerror = () => {
+          // If SSE drops, fallback timer handles polling automatically
+          this.sseSource?.close();
+          this.sseSource = null;
+        };
+      } catch {
+        // Fallback polling active
+      }
+    }
+
+    async loadDomains() {
+      try {
+        this.availableDomains = await MailService.getAvailableDomains();
+        this.populateDomainSelect();
+      } catch (err) {
+        console.warn('Could not load domains', err);
+      }
+    }
+
+    populateDomainSelect() {
+      const select = document.getElementById('custom-domain-select') as HTMLSelectElement;
+      if (!select) return;
+
+      select.innerHTML = '';
+
+      const mailtmDomains = this.availableDomains.filter((d) => d.provider === 'mailtm');
+      const inboxesDomains = this.availableDomains.filter((d) => d.provider === 'inboxes');
+      const tempmailLolDomains = this.availableDomains.filter((d) => d.provider === 'tempmaillol');
+      const guerrillaDomains = this.availableDomains.filter((d) => d.provider === 'guerrilla');
+      const secmailDomains = this.availableDomains.filter((d) => d.provider === 'secmail');
+      const otherDomains = this.availableDomains.filter(
+        (d) => !['mailtm', 'inboxes', 'tempmaillol', 'guerrilla', 'secmail'].includes(d.provider || '')
+      );
+
+      if (mailtmDomains.length > 0) {
+        const group = document.createElement('optgroup');
+        group.label = '⭐ Mail.tm & Mail.gw (Private / Authenticated)';
+        mailtmDomains.forEach((d) => {
+          const opt = document.createElement('option');
+          opt.value = d.domain;
+          opt.dataset.provider = 'mailtm';
+          opt.textContent = `@${d.domain}`;
+          group.appendChild(opt);
+        });
+        select.appendChild(group);
+      }
+
+      if (inboxesDomains.length > 0) {
+        const group = document.createElement('optgroup');
+        group.label = '🚀 Inboxes Network (GetNada, AirMail, Bear, etc.)';
+        inboxesDomains.forEach((d) => {
+          const opt = document.createElement('option');
+          opt.value = d.domain;
+          opt.dataset.provider = 'inboxes';
+          opt.textContent = `@${d.domain}`;
+          group.appendChild(opt);
+        });
+        select.appendChild(group);
+      }
+
+      if (tempmailLolDomains.length > 0) {
+        const group = document.createElement('optgroup');
+        group.label = '⚡ TempMail.lol (Stealth Subdomains)';
+        tempmailLolDomains.forEach((d) => {
+          const opt = document.createElement('option');
+          opt.value = d.domain;
+          opt.dataset.provider = 'tempmaillol';
+          opt.textContent = `@${d.domain}`;
+          group.appendChild(opt);
+        });
+        select.appendChild(group);
+      }
+
+      if (guerrillaDomains.length > 0) {
+        const group = document.createElement('optgroup');
+        group.label = '🛡️ Guerrilla Mail (Sharklasers, Grr.la, etc.)';
+        guerrillaDomains.forEach((d) => {
+          const opt = document.createElement('option');
+          opt.value = d.domain;
+          opt.dataset.provider = 'guerrilla';
+          opt.textContent = `@${d.domain}`;
+          group.appendChild(opt);
+        });
+        select.appendChild(group);
+      }
+
+      if (secmailDomains.length > 0) {
+        const group = document.createElement('optgroup');
+        group.label = '⚡ 1secmail (Fast / Stateless)';
+        secmailDomains.forEach((d) => {
+          const opt = document.createElement('option');
+          opt.value = d.domain;
+          opt.dataset.provider = 'secmail';
+          opt.textContent = `@${d.domain}`;
+          group.appendChild(opt);
+        });
+        select.appendChild(group);
+      }
+
+      if (otherDomains.length > 0) {
+        const group = document.createElement('optgroup');
+        group.label = '🛠️ Simulated Domains';
+        otherDomains.forEach((d) => {
+          const opt = document.createElement('option');
+          opt.value = d.domain;
+          opt.dataset.provider = 'mock';
+          opt.textContent = `@${d.domain}`;
+          group.appendChild(opt);
+        });
+        select.appendChild(group);
+      }
+
+      this.updateCustomPreview();
+    }
+
+    updateAddressDisplay() {
+      const display = document.getElementById('current-email-display');
+      const providerBadge = document.getElementById('provider-badge');
+      if (!this.account || !display) return;
+
+      display.textContent = this.account.address;
+      if (providerBadge) {
+        const prov = this.account.provider;
+        if (prov === 'mailtm') {
+          providerBadge.textContent = 'MAIL.TM';
+          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 font-mono font-bold cursor-pointer hover:opacity-80 transition-opacity';
+          providerBadge.title = 'Click to switch provider';
+        } else if (prov === 'inboxes') {
+          providerBadge.textContent = 'INBOXES';
+          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/25 font-mono font-bold cursor-pointer hover:opacity-80 transition-opacity';
+          providerBadge.title = 'Click to switch provider';
+        } else if (prov === 'tempmaillol') {
+          providerBadge.textContent = 'TEMPMAIL';
+          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/25 font-mono font-bold cursor-pointer hover:opacity-80 transition-opacity';
+          providerBadge.title = 'Click to switch provider';
+        } else if (prov === 'guerrilla') {
+          providerBadge.textContent = 'GUERRILLA';
+          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 font-mono font-bold cursor-pointer hover:opacity-80 transition-opacity';
+          providerBadge.title = 'Click to switch provider';
+        } else if (prov === 'secmail') {
+          providerBadge.textContent = '1SECMAIL';
+          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/25 font-mono font-bold cursor-pointer hover:opacity-80 transition-opacity';
+          providerBadge.title = 'Click to switch provider';
+        } else {
+          providerBadge.textContent = 'MOCK';
+          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/25 font-mono font-bold';
+        }
+      }
+    }
+
+    showAddressLoading(loading: boolean) {
+      const display = document.getElementById('current-email-display');
+      if (!display) return;
+      if (loading) {
+        display.innerHTML = '<span class="inline-block w-48 h-5 bg-black/10 dark:bg-white/10 animate-pulse rounded"></span>';
+      }
+    }
+
+    async fetchMessages(isInitial: boolean = false) {
+      if (!this.account || this.isPolling) return;
+      this.isPolling = true;
+
+      const refreshIcon = document.getElementById('refresh-icon');
+      if (refreshIcon) refreshIcon.classList.add('animate-spin');
+
+      try {
+        this.messages = await MailService.getMessages(this.account, isInitial);
+        this.renderMessageList();
+      } catch (err) {
+        console.warn('Message fetch error', err);
+      } finally {
+        this.isPolling = false;
+        if (refreshIcon) refreshIcon.classList.remove('animate-spin');
+        this.resetRefreshTimer();
+      }
+    }
+
+    startAutoRefresh() {
+      if (this.pollInterval) clearInterval(this.pollInterval);
+      if (this.timerInterval) clearInterval(this.timerInterval);
+
+      this.pollCountdown = 10;
+      this.timerInterval = setInterval(() => {
+        this.pollCountdown--;
+        const timerCount = document.getElementById('refresh-timer-count');
+        const progressBar = document.getElementById('refresh-progress-bar');
+        
+        if (timerCount) {
+          timerCount.textContent = `${this.pollCountdown}s`;
+        }
+        if (progressBar) {
+          const pct = ((10 - this.pollCountdown) / 10) * 100;
+          progressBar.style.width = `${pct}%`;
+        }
+
+        if (this.pollCountdown <= 0) {
+          this.fetchMessages();
+        }
+      }, 1000);
+    }
+
+    resetRefreshTimer() {
+      this.pollCountdown = 10;
+      const progressBar = document.getElementById('refresh-progress-bar');
+      if (progressBar) progressBar.style.width = '0%';
+    }
+
+    renderMessageList() {
+      const emptyState = document.getElementById('inbox-empty-state');
+      const listContainer = document.getElementById('inbox-items-list');
+      const countBadge = document.getElementById('inbox-count-badge');
+
+      if (countBadge) {
+        countBadge.textContent = String(this.messages.length);
+      }
+
+      if (!listContainer || !emptyState) return;
+
+      if (this.messages.length === 0) {
+        emptyState.classList.remove('hidden');
+        listContainer.classList.add('hidden');
+        listContainer.innerHTML = '';
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      listContainer.classList.remove('hidden');
+      listContainer.innerHTML = '';
+
+      this.messages.forEach((msg) => {
+        const item = document.createElement('div');
+        const isSelected = this.selectedMessage && this.selectedMessage.id === msg.id;
+        const initial = (msg.from.name || msg.from.address || 'U').charAt(0).toUpperCase();
+
+        item.className = `p-4 cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/5 relative flex items-start gap-3 border-b border-black/5 dark:border-white/5 ${
+          isSelected ? 'bg-[#ea2804]/10 dark:bg-[#ea2804]/15 border-l-4 border-l-[#ea2804]' : ''
+        }`;
+
+        item.innerHTML = `
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#ea2804] to-[#ff6a3d] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+            ${initial}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="font-bold text-xs text-[#202020] dark:text-[#fcfcfc] truncate">${msg.from.name || msg.from.address}</span>
+              <span class="text-[10px] text-[#8d8d8d] dark:text-zinc-400 font-mono shrink-0">${formatRelativeTime(msg.createdAt)}</span>
+            </div>
+            <div class="text-xs font-semibold text-[#3a3a3a] dark:text-zinc-200 truncate mb-1">
+              ${msg.subject || '(No Subject)'}
+            </div>
+            <div class="text-[11px] text-[#8d8d8d] dark:text-zinc-400 line-clamp-1">
+              ${msg.intro || 'Click to view email details...'}
+            </div>
+            ${
+              msg.extractedOtp
+                ? `<div class="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#ea2804]/10 dark:bg-[#ea2804]/20 border border-[#ea2804]/30 text-[#ea2804] dark:text-[#ff6a3d] font-mono text-[11px] font-bold">
+                    <span>⚡ OTP:</span>
+                    <span>${msg.extractedOtp}</span>
+                  </div>`
+                : ''
+            }
+          </div>
+        `;
+
+        item.addEventListener('click', () => {
+          this.selectMessage(msg.id);
+        });
+
+        listContainer.appendChild(item);
+      });
+    }
+
+    async selectMessage(messageId: string) {
+      if (!this.account) return;
+
+      const empty = document.getElementById('email-detail-empty');
+      const loading = document.getElementById('email-detail-loading');
+      const content = document.getElementById('email-detail-content');
+
+      if (empty) empty.classList.add('hidden');
+      if (loading) loading.classList.remove('hidden');
+      if (content) content.classList.add('hidden');
+
+      // Mobile pane switch
+      const inboxListPane = document.getElementById('inbox-list-pane');
+      const emailDetailPane = document.getElementById('email-detail-pane');
+      if (window.innerWidth < 768) {
+        if (inboxListPane) inboxListPane.classList.add('hidden');
+        if (emailDetailPane) {
+          emailDetailPane.classList.remove('hidden');
+          emailDetailPane.classList.add('block');
+        }
+      }
+
+      try {
+        this.selectedMessage = await MailService.getMessageDetail(this.account, messageId);
+        this.renderMessageDetail();
+        this.renderMessageList(); // update active highlight
+      } catch (err) {
+        console.error('Failed to load message detail:', err);
+        window.dispatchEvent(
+          new CustomEvent('tempomail:toast', {
+            detail: { message: 'Failed to load message content.', type: 'error' },
+          })
+        );
+      } finally {
+        if (loading) loading.classList.add('hidden');
+      }
+    }
+
+    renderMessageDetail() {
+      const msg = this.selectedMessage;
+      if (!msg) return;
+
+      const content = document.getElementById('email-detail-content');
+      const subject = document.getElementById('msg-subject-display');
+      const fromName = document.getElementById('msg-from-name');
+      const fromAddr = document.getElementById('msg-from-address');
+      const toAddr = document.getElementById('msg-to-address');
+      const dateFull = document.getElementById('msg-date-full');
+      const avatar = document.getElementById('sender-avatar');
+      const otpBanner = document.getElementById('otp-highlight-banner');
+      const otpCodeText = document.getElementById('detected-otp-code');
+      const linkBanner = document.getElementById('verify-link-banner');
+      const verifyUrlText = document.getElementById('detected-verify-url');
+      const verifyLinkA = document.getElementById('open-verify-link') as HTMLAnchorElement;
+      const htmlFrame = document.getElementById('email-html-frame') as HTMLIFrameElement;
+      const textContent = document.getElementById('email-text-content');
+
+      if (content) content.classList.remove('hidden');
+      if (subject) subject.textContent = msg.subject || '(No Subject)';
+      if (fromName) fromName.textContent = msg.from.name || 'Unknown Sender';
+      if (fromAddr) fromAddr.textContent = msg.from.address;
+      if (toAddr) toAddr.textContent = msg.to.map((t) => t.address).join(', ') || this.account?.address || '';
+      if (dateFull) dateFull.textContent = formatFullDateTime(msg.createdAt);
+      if (avatar) avatar.textContent = (msg.from.name || 'S').charAt(0).toUpperCase();
+
+      // Handle OTP detection
+      if (msg.extractedOtp && otpBanner && otpCodeText) {
+        otpCodeText.textContent = msg.extractedOtp;
+        otpBanner.classList.remove('hidden');
+      } else if (otpBanner) {
+        otpBanner.classList.add('hidden');
+      }
+
+      // Handle Verification Link detection
+      if (msg.verificationLink && linkBanner && verifyUrlText && verifyLinkA) {
+        verifyUrlText.textContent = msg.verificationLink;
+        verifyLinkA.href = msg.verificationLink;
+        linkBanner.classList.remove('hidden');
+      } else if (linkBanner) {
+        linkBanner.classList.add('hidden');
+      }
+
+      // Render HTML in sandboxed iframe
+      if (htmlFrame) {
+        const rawHtml = msg.html && msg.html.length > 0 ? msg.html.join('') : `<pre style="font-family: monospace; white-space: pre-wrap; padding: 20px;">${msg.text}</pre>`;
+        const styledDoc = `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <style>
+                body {
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                  color: #202020;
+                  line-height: 1.6;
+                  padding: 16px;
+                  margin: 0;
+                  word-break: break-word;
+                }
+                a { color: #ea2804; }
+                img { max-width: 100%; height: auto; }
+              </style>
+            </head>
+            <body>
+              ${rawHtml}
+            </body>
+          </html>
+        `;
+        htmlFrame.srcdoc = styledDoc;
+      }
+
+      // Plain text content
+      if (textContent) {
+        textContent.textContent = msg.text || (msg.html ? msg.html.join('\n').replace(/<[^>]*>?/gm, '') : '');
+      }
+
+      // Reset to HTML view tab by default
+      this.switchViewTab('html');
+    }
+
+    switchViewTab(tab: 'html' | 'text') {
+      const htmlBtn = document.getElementById('tab-html-btn');
+      const textBtn = document.getElementById('tab-text-btn');
+      const htmlWrapper = document.getElementById('html-view-wrapper');
+      const textWrapper = document.getElementById('text-view-wrapper');
+
+      if (tab === 'html') {
+        htmlBtn?.classList.add('bg-white', 'dark:bg-zinc-800', 'text-[#202020]', 'dark:text-white', 'shadow-xs');
+        htmlBtn?.classList.remove('text-[#575757]', 'dark:text-zinc-400');
+        textBtn?.classList.remove('bg-white', 'dark:bg-zinc-800', 'text-[#202020]', 'dark:text-white', 'shadow-xs');
+        textBtn?.classList.add('text-[#575757]', 'dark:text-zinc-400');
+        htmlWrapper?.classList.remove('hidden');
+        textWrapper?.classList.add('hidden');
+      } else {
+        textBtn?.classList.add('bg-white', 'dark:bg-zinc-800', 'text-[#202020]', 'dark:text-white', 'shadow-xs');
+        textBtn?.classList.remove('text-[#575757]', 'dark:text-zinc-400');
+        htmlBtn?.classList.remove('bg-white', 'dark:bg-zinc-800', 'text-[#202020]', 'dark:text-white', 'shadow-xs');
+        htmlBtn?.classList.add('text-[#575757]', 'dark:text-zinc-400');
+        textWrapper?.classList.remove('hidden');
+        htmlWrapper?.classList.add('hidden');
+      }
+    }
+
+    async deleteCurrentSelectedMessage() {
+      if (!this.account || !this.selectedMessage) return;
+      const msgId = this.selectedMessage.id;
+      await MailService.deleteMessage(this.account, msgId);
+      this.selectedMessage = null;
+      
+      const empty = document.getElementById('email-detail-empty');
+      const content = document.getElementById('email-detail-content');
+      if (empty) empty.classList.remove('hidden');
+      if (content) content.classList.add('hidden');
+
+      // On mobile return to list
+      if (window.innerWidth < 768) {
+        const inboxListPane = document.getElementById('inbox-list-pane');
+        const emailDetailPane = document.getElementById('email-detail-pane');
+        if (inboxListPane) inboxListPane.classList.remove('hidden');
+        if (emailDetailPane) emailDetailPane.classList.add('hidden');
+      }
+
+      await this.fetchMessages();
+      window.dispatchEvent(
+        new CustomEvent('tempomail:toast', {
+          detail: { message: 'Message deleted', type: 'success' },
+        })
+      );
+    }
+
+    downloadCurrentEmail() {
+      if (!this.selectedMessage) return;
+      const msg = this.selectedMessage;
+      const rawContent = `From: ${msg.from.name} <${msg.from.address}>\nTo: ${msg.to.map((t) => t.address).join(', ')}\nDate: ${msg.createdAt}\nSubject: ${msg.subject}\n\n${msg.text || msg.html.join('\n')}`;
+      const blob = new Blob([rawContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${msg.subject.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'email'}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    openQrModal() {
+      if (!this.account) return;
+      const modal = document.getElementById('qr-modal');
+      const content = document.getElementById('qr-modal-content');
+      const addressText = document.getElementById('qr-modal-address');
+      const qrPlaceholder = document.getElementById('qr-code-placeholder');
+
+      if (addressText) addressText.textContent = this.account.address;
+      if (qrPlaceholder) {
+        qrPlaceholder.innerHTML = generateQrCodeSvg(this.account.address, 200);
+      }
+
+      if (modal && content) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+      }
+    }
+
+    closeQrModal() {
+      const modal = document.getElementById('qr-modal');
+      const content = document.getElementById('qr-modal-content');
+      if (modal && content) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+      }
+    }
+
+    openCustomModal() {
+      const modal = document.getElementById('custom-modal');
+      const content = document.getElementById('custom-modal-content');
+      if (modal && content) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+      }
+      const input = document.getElementById('custom-prefix-input') as HTMLInputElement;
+      if (input) input.focus();
+    }
+
+    closeCustomModal() {
+      const modal = document.getElementById('custom-modal');
+      const content = document.getElementById('custom-modal-content');
+      if (modal && content) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+      }
+    }
+
+    updateCustomPreview() {
+      const input = document.getElementById('custom-prefix-input') as HTMLInputElement;
+      const select = document.getElementById('custom-domain-select') as HTMLSelectElement;
+      const preview = document.getElementById('custom-preview-address');
+      if (!preview) return;
+
+      const prefix = input?.value?.trim() || 'yourname';
+      const domain = select?.value || this.availableDomains[0]?.domain || 'tempomail.cloud';
+      preview.textContent = `${prefix}@${domain}`;
+    }
+
+    openHistoryModal() {
+      const modal = document.getElementById('history-modal');
+      const content = document.getElementById('history-modal-content');
+      const list = document.getElementById('history-inboxes-list');
+
+      if (!list) return;
+
+      const saved = StorageManager.getSavedAccounts();
+      if (saved.length === 0) {
+        list.innerHTML = '<div class="text-center py-6 text-xs text-[#8d8d8d]">No previous inboxes found in this session.</div>';
+      } else {
+        list.innerHTML = '';
+        saved.forEach((acc) => {
+          const isCurrent = this.account && this.account.address.toLowerCase() === acc.address.toLowerCase();
+          const item = document.createElement('div');
+          item.className = `flex items-center justify-between p-3 rounded-xl border text-xs transition-all ${
+            isCurrent
+              ? 'bg-[#ea2804]/10 dark:bg-[#ea2804]/20 border-[#ea2804]/40 font-bold'
+              : 'bg-black/5 dark:bg-white/5 border-transparent hover:border-black/10 dark:hover:border-white/10'
+          }`;
+
+          item.innerHTML = `
+            <div class="flex items-center gap-2 truncate cursor-pointer flex-1" data-switch-address="${acc.address}">
+              <span class="w-2 h-2 rounded-full ${isCurrent ? 'bg-[#ea2804]' : 'bg-[#8d8d8d]'}"></span>
+              <span class="font-mono text-[#202020] dark:text-zinc-200 truncate">${acc.address}</span>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              ${isCurrent ? '<span class="text-[10px] text-[#ea2804] uppercase font-bold tracking-wider">Active</span>' : ''}
+              <button type="button" class="text-rose-500 hover:text-rose-700 p-1 transition-colors cursor-pointer" data-delete-address="${acc.address}" title="Delete from history">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          `;
+
+          // Bind switch click
+          item.querySelector('[data-switch-address]')?.addEventListener('click', () => {
+            this.switchInbox(acc);
+            this.closeHistoryModal();
+          });
+
+          // Bind delete click
+          item.querySelector('[data-delete-address]')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            StorageManager.removeSavedAccount(acc.address);
+            this.openHistoryModal(); // Refresh modal
+          });
+
+          list.appendChild(item);
+        });
+      }
+
+      if (modal && content) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+      }
+    }
+
+    closeHistoryModal() {
+      const modal = document.getElementById('history-modal');
+      const content = document.getElementById('history-modal-content');
+      if (modal && content) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+      }
+    }
+
+    switchInbox(targetAccount: MailAccount) {
+      this.account = targetAccount;
+      StorageManager.setCurrentAccount(targetAccount);
+      this.selectedMessage = null;
+      this.updateAddressDisplay();
+      this.fetchMessages();
+      window.dispatchEvent(
+        new CustomEvent('tempomail:toast', {
+          detail: { message: `Switched to ${targetAccount.address}`, type: 'success' },
+        })
+      );
+    }
+
+    bindEvents() {
+      // 1. Copy button
+      const copyBtn = document.getElementById('copy-email-btn');
+      const copyIcon = document.getElementById('copy-icon');
+      const checkIcon = document.getElementById('check-icon');
+      const copyText = document.getElementById('copy-btn-text');
+
+      copyBtn?.addEventListener('click', async () => {
+        if (!this.account) return;
+        const ok = await copyToClipboard(this.account.address, 'Email copied to clipboard!');
+        if (ok && copyIcon && checkIcon && copyText) {
+          copyIcon.classList.add('hidden');
+          checkIcon.classList.remove('hidden');
+          copyText.textContent = 'Copied!';
+          setTimeout(() => {
+            copyIcon.classList.remove('hidden');
+            checkIcon.classList.add('hidden');
+            copyText.textContent = 'Copy Address';
+          }, 2000);
+        }
+      });
+
+      // 2. Refresh button
+      document.getElementById('refresh-inbox-btn')?.addEventListener('click', () => {
+        this.fetchMessages();
+      });
+
+      // 3. Change / Randomize button
+      document.getElementById('change-email-btn')?.addEventListener('click', async () => {
+        const currentDomain = this.account?.address.split('@')[1];
+        const ok = await (window as any).showConfirmDialog({
+          title: 'Generate New Email?',
+          description: 'This will create a fresh temporary mailbox with a new domain. Your current mailbox remains saved in history.',
+          confirmText: 'Generate New',
+          cancelText: 'Keep Current',
+          variant: 'primary',
+          iconType: 'random',
+        });
+        if (ok) {
+          await this.loadInitialMailbox(true, undefined, currentDomain);
+          window.dispatchEvent(
+            new CustomEvent('tempomail:toast', {
+              detail: { message: 'Generated fresh temporary inbox with new domain!', type: 'success' },
+            })
+          );
+        }
+      });
+
+      // 4. Delete current mailbox
+      document.getElementById('delete-inbox-btn')?.addEventListener('click', async () => {
+        const ok = await (window as any).showConfirmDialog({
+          title: 'Delete This Mailbox?',
+          description: 'Are you sure you want to delete this temporary inbox and generate a fresh one?',
+          confirmText: 'Delete Mailbox',
+          cancelText: 'Cancel',
+          variant: 'danger',
+          iconType: 'trash',
+        });
+        if (ok) {
+          if (this.account) {
+            const currentDomain = this.account.address.split('@')[1];
+            this.account = await MailService.deleteCurrentAccount(this.account);
+            this.updateAddressDisplay();
+            this.connectRealtimeStream();
+            this.selectedMessage = null;
+            await this.fetchMessages();
+            window.dispatchEvent(
+              new CustomEvent('tempomail:toast', {
+                detail: { message: 'Mailbox deleted and fresh address generated!', type: 'success' },
+              })
+            );
+          }
+        }
+      });
+
+      // 5. QR Code modal triggers
+      document.getElementById('qr-code-btn')?.addEventListener('click', () => this.openQrModal());
+      document.getElementById('qr-modal-close')?.addEventListener('click', () => this.closeQrModal());
+      document.getElementById('qr-modal')?.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('qr-modal')) this.closeQrModal();
+      });
+      document.getElementById('qr-copy-btn')?.addEventListener('click', () => {
+        if (this.account) copyToClipboard(this.account.address, 'Email copied to clipboard!');
+      });
+
+      // 7. Custom email modal triggers
+      document.getElementById('custom-email-btn')?.addEventListener('click', () => this.openCustomModal());
+      document.getElementById('custom-modal-close')?.addEventListener('click', () => this.closeCustomModal());
+      document.getElementById('custom-modal-cancel')?.addEventListener('click', () => this.closeCustomModal());
+      document.getElementById('custom-modal')?.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('custom-modal')) this.closeCustomModal();
+      });
+
+      const customPrefix = document.getElementById('custom-prefix-input');
+      const customDomain = document.getElementById('custom-domain-select');
+      customPrefix?.addEventListener('input', () => this.updateCustomPreview());
+      customDomain?.addEventListener('change', () => this.updateCustomPreview());
+
+      document.getElementById('custom-inbox-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const prefixInput = document.getElementById('custom-prefix-input') as HTMLInputElement;
+        const select = document.getElementById('custom-domain-select') as HTMLSelectElement;
+        const prefix = prefixInput?.value?.trim();
+        const domain = select?.value;
+        const selectedOpt = select?.options[select.selectedIndex];
+        const providerHint = selectedOpt?.dataset?.provider as ('mailtm' | 'secmail' | undefined);
+
+        if (!prefix || !domain) return;
+
+        this.showAddressLoading(true);
+        this.closeCustomModal();
+        try {
+          this.account = await MailService.createCustomAccount(prefix, domain, providerHint);
+          this.updateAddressDisplay();
+          this.connectRealtimeStream();
+          this.selectedMessage = null;
+          await this.fetchMessages();
+          window.dispatchEvent(
+            new CustomEvent('tempomail:toast', {
+              detail: { message: `Created custom inbox: ${this.account.address} (${this.account.provider.toUpperCase()})`, type: 'success' },
+            })
+          );
+        } catch (err: any) {
+          console.error('Custom inbox creation failed:', err);
+          window.dispatchEvent(
+            new CustomEvent('tempomail:toast', {
+              detail: { message: err?.message || 'Failed to create inbox. Please try a different username.', type: 'error' },
+            })
+          );
+        } finally {
+          this.showAddressLoading(false);
+        }
+      });
+
+      // Quick Provider Toggle on Badge Click
+      document.getElementById('provider-badge')?.addEventListener('click', () => {
+        const provs: ('mailtm' | 'inboxes' | 'tempmaillol' | 'guerrilla' | 'secmail')[] = [
+          'mailtm',
+          'inboxes',
+          'tempmaillol',
+          'guerrilla',
+          'secmail',
+        ];
+        const curIdx = provs.indexOf(this.account?.provider as any);
+        const nextProvider = provs[(curIdx + 1) % provs.length] || 'mailtm';
+        this.loadInitialMailbox(true, nextProvider);
+        window.dispatchEvent(
+          new CustomEvent('tempomail:toast', {
+            detail: { message: `Switched active provider to ${nextProvider.toUpperCase()}`, type: 'success' },
+          })
+        );
+      });
+
+      // 8. History modal triggers (from Header or button)
+      window.addEventListener('tempomail:openhistory', () => this.openHistoryModal());
+      document.getElementById('history-modal-close')?.addEventListener('click', () => this.closeHistoryModal());
+      document.getElementById('history-modal-done')?.addEventListener('click', () => this.closeHistoryModal());
+      document.getElementById('history-modal')?.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('history-modal')) this.closeHistoryModal();
+      });
+      document.getElementById('clear-all-history-btn')?.addEventListener('click', async () => {
+        const ok = await (window as any).showConfirmDialog({
+          title: 'Clear All Inboxes?',
+          description: 'Are you sure you want to permanently remove all saved temporary inboxes from browser memory?',
+          confirmText: 'Clear Everything',
+          cancelText: 'Cancel',
+          variant: 'danger',
+          iconType: 'trash',
+        });
+        if (ok) {
+          StorageManager.clearAllSavedAccounts();
+          await this.loadInitialMailbox(true);
+          this.closeHistoryModal();
+          window.dispatchEvent(
+            new CustomEvent('tempomail:toast', {
+              detail: { message: 'All saved inboxes cleared from memory.', type: 'success' },
+            })
+          );
+        }
+      });
+
+      // 9. Message detail view controls
+      document.getElementById('tab-html-btn')?.addEventListener('click', () => this.switchViewTab('html'));
+      document.getElementById('tab-text-btn')?.addEventListener('click', () => this.switchViewTab('text'));
+      document.getElementById('delete-msg-btn')?.addEventListener('click', () => this.deleteCurrentSelectedMessage());
+      document.getElementById('download-email-btn')?.addEventListener('click', () => this.downloadCurrentEmail());
+
+      // 10. Copy OTP code button
+      document.getElementById('copy-otp-btn')?.addEventListener('click', () => {
+        if (this.selectedMessage?.extractedOtp) {
+          copyToClipboard(this.selectedMessage.extractedOtp, `Verification Code ${this.selectedMessage.extractedOtp} copied!`);
+        }
+      });
+
+      // 11. Mobile back button
+      document.getElementById('email-detail-back-btn')?.addEventListener('click', () => {
+        const inboxListPane = document.getElementById('inbox-list-pane');
+        const emailDetailPane = document.getElementById('email-detail-pane');
+        if (inboxListPane) inboxListPane.classList.remove('hidden');
+        if (emailDetailPane) {
+          emailDetailPane.classList.add('hidden');
+          emailDetailPane.classList.remove('block');
+        }
+      });
+    }
+  }
+
+  // Initialize controller
+  const controller = new MailboxController();
+  controller.init();
+</script>

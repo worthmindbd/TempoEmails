@@ -1,0 +1,20 @@
+---
+interface Props {
+  class?: string;
+  variant?: 'panel' | 'card' | 'inset';
+  id?: string;
+  [key: string]: any;
+}
+
+const { variant = 'panel', class: className = '', id, ...rest } = Astro.props;
+
+const variantClasses = {
+  panel: 'glass-panel rounded-2xl md:rounded-3xl',
+  card: 'glass-card rounded-xl md:rounded-2xl',
+  inset: 'bg-[#f3f0e8] dark:bg-[#16161c] border border-black/5 dark:border-white/5 rounded-xl',
+};
+---
+
+<div id={id} class:list={[variantClasses[variant], className]} {...rest}>
+  <slot />
+</div>

@@ -1,0 +1,165 @@
+---
+import Button from './Button.astro';
+---
+
+<div
+  id="confirm-modal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="confirm-modal-title"
+>
+  <div
+    class="relative w-full max-w-md glass-panel p-6 rounded-3xl shadow-2xl transform scale-95 transition-transform duration-200"
+    id="confirm-modal-content"
+  >
+    <div class="flex items-start gap-4 mb-4">
+      <!-- Icon Container -->
+      <div id="confirm-modal-icon-wrapper" class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#ea2804]/10 text-[#ea2804]">
+        <!-- Random / Refresh Icon -->
+        <svg id="confirm-icon-random" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M16 3h5v5"></path>
+          <path d="M4 20L21 3"></path>
+          <path d="M21 16v5h-5"></path>
+          <path d="M15 15l6 6"></path>
+          <path d="M4 4l5 5"></path>
+        </svg>
+        <!-- Trash / Delete Icon -->
+        <svg id="confirm-icon-trash" class="w-6 h-6 hidden text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+        <!-- Warning Icon -->
+        <svg id="confirm-icon-warning" class="w-6 h-6 hidden text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+
+      <!-- Title & Description -->
+      <div class="flex-1 min-w-0 pt-0.5">
+        <h3 id="confirm-modal-title" class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc]">
+          Confirm Action
+        </h3>
+        <p id="confirm-modal-description" class="text-xs text-[#575757] dark:text-zinc-400 mt-1 leading-relaxed">
+          Are you sure you want to proceed with this action?
+        </p>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex gap-2.5 pt-3">
+      <Button variant="ghost" size="md" id="confirm-modal-cancel" class="flex-1" type="button">
+        Cancel
+      </Button>
+      <button
+        id="confirm-modal-action"
+        type="button"
+        class="flex-1 h-10 px-5 rounded-full font-sans font-semibold text-xs transition-all duration-200 inline-flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95 bg-[#ea2804] hover:bg-[#d02403] text-white"
+      >
+        Confirm
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Global Confirm Modal Dialog helper
+  let confirmResolve: ((value: boolean) => void) | null = null;
+
+  (window as any).showConfirmDialog = function ({
+    title = 'Confirm Action',
+    description = 'Are you sure you want to proceed?',
+    confirmText = 'Confirm',
+    cancelText = 'Cancel',
+    variant = 'primary',
+    iconType = 'random',
+  }: {
+    title?: string;
+    description?: string;
+    confirmText?: string;
+    cancelText?: string;
+    variant?: 'primary' | 'danger';
+    iconType?: 'random' | 'trash' | 'warning';
+  }): Promise<boolean> {
+    return new Promise((resolve) => {
+      confirmResolve = resolve;
+
+      const modal = document.getElementById('confirm-modal');
+      const content = document.getElementById('confirm-modal-content');
+      const titleEl = document.getElementById('confirm-modal-title');
+      const descEl = document.getElementById('confirm-modal-description');
+      const cancelBtn = document.getElementById('confirm-modal-cancel');
+      const actionBtn = document.getElementById('confirm-modal-action') as HTMLButtonElement;
+      const iconWrapper = document.getElementById('confirm-modal-icon-wrapper');
+
+      const iconRandom = document.getElementById('confirm-icon-random');
+      const iconTrash = document.getElementById('confirm-icon-trash');
+      const iconWarning = document.getElementById('confirm-icon-warning');
+
+      if (titleEl) titleEl.textContent = title;
+      if (descEl) descEl.textContent = description;
+      if (cancelBtn) cancelBtn.textContent = cancelText;
+
+      if (actionBtn) {
+        actionBtn.textContent = confirmText;
+        if (variant === 'danger') {
+          actionBtn.className =
+            'flex-1 h-10 px-5 rounded-full font-sans font-semibold text-xs transition-all duration-200 inline-flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95 bg-rose-600 hover:bg-rose-700 text-white';
+        } else {
+          actionBtn.className =
+            'flex-1 h-10 px-5 rounded-full font-sans font-semibold text-xs transition-all duration-200 inline-flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95 bg-[#ea2804] hover:bg-[#d02403] text-white';
+        }
+      }
+
+      // Handle icon
+      iconRandom?.classList.add('hidden');
+      iconTrash?.classList.add('hidden');
+      iconWarning?.classList.add('hidden');
+
+      if (iconWrapper) {
+        if (iconType === 'trash' || variant === 'danger') {
+          iconWrapper.className = 'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-rose-500/10 text-rose-500';
+          iconTrash?.classList.remove('hidden');
+        } else if (iconType === 'warning') {
+          iconWrapper.className = 'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-amber-500/10 text-amber-500';
+          iconWarning?.classList.remove('hidden');
+        } else {
+          iconWrapper.className = 'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#ea2804]/10 text-[#ea2804]';
+          iconRandom?.classList.remove('hidden');
+        }
+      }
+
+      if (modal && content) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+      }
+    });
+  };
+
+  function closeConfirm(result: boolean) {
+    const modal = document.getElementById('confirm-modal');
+    const content = document.getElementById('confirm-modal-content');
+    if (modal && content) {
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      content.classList.remove('scale-100');
+      content.classList.add('scale-95');
+    }
+    if (confirmResolve) {
+      confirmResolve(result);
+      confirmResolve = null;
+    }
+  }
+
+  document.getElementById('confirm-modal-cancel')?.addEventListener('click', () => closeConfirm(false));
+  document.getElementById('confirm-modal-action')?.addEventListener('click', () => closeConfirm(true));
+  document.getElementById('confirm-modal')?.addEventListener('click', (e) => {
+    if (e.target === document.getElementById('confirm-modal')) {
+      closeConfirm(false);
+    }
+  });
+</script>

@@ -1,0 +1,53 @@
+---
+import Badge from '../ui/Badge.astro';
+import Button from '../ui/Button.astro';
+---
+
+<div class="h-full flex flex-col">
+  <!-- Inbox Header -->
+  <div class="flex items-center justify-between px-5 py-4 border-b border-black/5 dark:border-white/10">
+    <div class="flex items-center gap-2.5">
+      <div class="w-2.5 h-2.5 rounded-full bg-[#ea2804] animate-pulse"></div>
+      <h2 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc]">
+        Inbox
+      </h2>
+      <span id="inbox-count-badge" class="text-xs px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 font-mono text-[#575757] dark:text-zinc-300 font-semibold">
+        0
+      </span>
+    </div>
+  </div>
+
+  <!-- Messages List Container -->
+  <div id="messages-container" class="flex-1 overflow-y-auto divide-y divide-black/5 dark:divide-white/5 relative min-h-[360px]">
+    <!-- Empty State -->
+    <div id="inbox-empty-state" class="flex flex-col items-center justify-center p-8 text-center h-full min-h-[320px]">
+      <div class="relative flex items-center justify-center mb-5">
+        <div class="w-20 h-20 rounded-full bg-[#ea2804]/5 dark:bg-[#ea2804]/10 flex items-center justify-center">
+          <div class="w-14 h-14 rounded-full bg-[#ea2804]/10 dark:bg-[#ea2804]/20 flex items-center justify-center text-[#ea2804] dark:text-[#ff6a3d]">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </div>
+        </div>
+        <!-- Pulse Rings -->
+        <span class="absolute w-24 h-24 rounded-full border border-[#ea2804]/20 animate-pulse-ring pointer-events-none"></span>
+      </div>
+
+      <h3 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">
+        Waiting for incoming emails...
+      </h3>
+      <p class="text-xs text-[#575757] dark:text-zinc-400 max-w-xs mb-4">
+        Copy your temporary email address above and use it to sign up on any website. Verification emails appear here instantly!
+      </p>
+      
+      <div class="flex items-center gap-2 text-[11px] font-mono text-[#8d8d8d] dark:text-zinc-500">
+        <span class="w-2 h-2 rounded-full bg-[#2b9a66]"></span>
+        Auto-refresh active
+      </div>
+    </div>
+
+    <!-- Live Message Items List will be injected here -->
+    <div id="inbox-items-list" class="hidden"></div>
+  </div>
+</div>

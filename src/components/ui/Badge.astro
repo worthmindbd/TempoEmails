@@ -1,0 +1,28 @@
+---
+interface Props {
+  variant?: 'success' | 'neutral' | 'otp' | 'outline' | 'orange';
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const { variant = 'neutral', size = 'sm', class: className = '' } = Astro.props;
+
+const baseStyles = 'inline-flex items-center font-medium rounded-full select-none transition-colors';
+
+const sizeStyles = {
+  sm: 'text-xs px-2.5 py-0.5 gap-1',
+  md: 'text-sm px-3.5 py-1 gap-1.5',
+};
+
+const variantStyles = {
+  success: 'bg-[#2b9a66] text-white shadow-xs',
+  neutral: 'bg-black/5 dark:bg-white/10 text-[#575757] dark:text-zinc-300 border border-black/5 dark:border-white/10',
+  otp: 'bg-[#ea2804]/10 text-[#ea2804] dark:bg-[#ea2804]/20 dark:text-[#ff6a3d] border border-[#ea2804]/30 font-mono font-bold shadow-[0_0_12px_rgba(234,40,4,0.15)]',
+  outline: 'bg-transparent text-[#575757] dark:text-zinc-400 border border-black/10 dark:border-white/15',
+  orange: 'bg-[#ea2804] text-white shadow-xs',
+};
+---
+
+<span class:list={[baseStyles, sizeStyles[size], variantStyles[variant], className]}>
+  <slot />
+</span>

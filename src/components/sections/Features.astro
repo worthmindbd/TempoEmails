@@ -1,0 +1,66 @@
+---
+import GlassCard from '../ui/GlassCard.astro';
+import Badge from '../ui/Badge.astro';
+
+const features = [
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    title: 'Complete Spam Protection',
+    description: 'Keep your real email address private from marketing lists, untrusted websites, data brokers, and spammers.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+    title: 'Instant OTP Auto-Detector',
+    description: 'Our engine parses incoming emails and highlights 4-8 digit verification codes and activation links with 1-click copy.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    title: 'Zero Database & Zero Logs',
+    description: 'Your temporary emails and codes are never logged to a central database. When you wipe your mailbox, it is gone forever.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+    title: 'QR Code Mobile Handoff',
+    description: 'Generate an instant QR code on your desktop screen to scan and quickly copy or inspect your temp address on mobile.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+    title: 'Real-Time Auto Refresh',
+    description: 'Automatic 10-second smart polling ensures new incoming messages appear immediately without requiring manual page reloads.',
+  },
+  {
+    icon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
+    title: 'Multi-Inbox Session History',
+    description: 'Switch between up to 8 recently created temporary inboxes in your browser without losing your active verification emails.',
+  },
+];
+---
+
+<section id="features" class="w-full max-w-6xl mx-auto my-16 px-4">
+  <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+    <Badge variant="neutral" size="md">
+      Features & Architecture
+    </Badge>
+    <h2 class="font-display text-3xl md:text-4xl font-black text-[#202020] dark:text-[#fcfcfc] tracking-tight">
+      Built for speed, simplicity, and total anonymity.
+    </h2>
+    <p class="text-sm md:text-base text-[#575757] dark:text-zinc-400">
+      Everything you need to sign up for trials, test apps, and verify accounts without compromising your personal inbox.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {features.map((f) => (
+      <GlassCard variant="card" class="p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group">
+        <div class="w-12 h-12 rounded-2xl bg-[#ea2804]/10 dark:bg-[#ea2804]/20 text-[#ea2804] dark:text-[#ff6a3d] flex items-center justify-center mb-4 transition-transform group-hover:scale-110 shadow-xs" set:html={f.icon}>
+        </div>
+        <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-2">
+          {f.title}
+        </h3>
+        <p class="text-xs md:text-sm text-[#575757] dark:text-zinc-400 leading-relaxed">
+          {f.description}
+        </p>
+      </GlassCard>
+    ))}
+  </div>
+</section>

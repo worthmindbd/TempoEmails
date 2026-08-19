@@ -1,0 +1,51 @@
+---
+interface Props {
+  variant?: 'primary' | 'dark' | 'outline' | 'ghost' | 'icon' | 'glass';
+  size?: 'sm' | 'md' | 'lg';
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  id?: string;
+  disabled?: boolean;
+  title?: string;
+  [key: string]: any;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  class: className = '',
+  id,
+  disabled = false,
+  title,
+  ...rest
+} = Astro.props;
+
+const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ea2804]/50 active:scale-[0.98]';
+
+const sizeStyles = {
+  sm: 'text-xs px-3.5 py-1.5 h-8 gap-1.5 rounded-full',
+  md: 'text-sm px-5 py-2.5 h-11 gap-2 rounded-full',
+  lg: 'text-base px-6 py-3.5 h-12 gap-2.5 rounded-full',
+};
+
+const variantStyles = {
+  primary: 'bg-[#ea2804] text-white hover:bg-[#c01f00] shadow-[0_2px_10px_rgba(234,40,4,0.3)] hover:shadow-[0_4px_16px_rgba(234,40,4,0.4)]',
+  dark: 'bg-[#202020] text-[#fcfcfc] dark:bg-[#2c2c34] hover:bg-[#333333] dark:hover:bg-[#383842] shadow-sm',
+  outline: 'bg-white/80 dark:bg-zinc-900/80 text-[#202020] dark:text-[#fcfcfc] border border-[#202020]/20 dark:border-white/20 hover:bg-white dark:hover:bg-zinc-800 backdrop-blur-md',
+  ghost: 'bg-transparent text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10',
+  icon: 'w-10 h-10 p-0 rounded-full bg-white/80 dark:bg-zinc-900/80 text-[#202020] dark:text-[#fcfcfc] border border-black/10 dark:border-white/10 hover:bg-white dark:hover:bg-zinc-800 shadow-sm',
+  glass: 'bg-white/60 dark:bg-white/10 text-[#202020] dark:text-[#fcfcfc] border border-white/60 dark:border-white/15 backdrop-blur-xl hover:bg-white/80 dark:hover:bg-white/20 shadow-sm',
+};
+---
+
+<button
+  type={type}
+  id={id}
+  class:list={[baseStyles, size === 'md' && variant === 'icon' ? 'w-10 h-10 p-0 rounded-full' : sizeStyles[size], variantStyles[variant], className]}
+  disabled={disabled}
+  title={title}
+  {...rest}
+>
+  <slot />
+</button>

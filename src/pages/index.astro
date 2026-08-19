@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MailboxManager from '../components/app/MailboxManager.astro';
+import OtpShowcase from '../components/sections/OtpShowcase.astro';
+import Features from '../components/sections/Features.astro';
+import HowItWorks from '../components/sections/HowItWorks.astro';
+import Faq from '../components/sections/Faq.astro';
+import Badge from '../ui/Badge.astro';
+---
+
+<Layout>
+  <!-- Hero Section -->
+  <section class="relative pt-10 pb-6 md:pt-16 md:pb-10 px-4 sm:px-6 lg:px-8 text-center max-w-5xl mx-auto space-y-5">
+    <!-- Top Pill Chip -->
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-pill text-xs font-semibold shadow-xs">
+      <span class="w-2 h-2 rounded-full bg-[#ea2804] animate-ping"></span>
+      <span class="text-[#202020] dark:text-zinc-200">100% Free & Unlimited Disposable Mail</span>
+      <span class="text-[#8d8d8d] dark:text-zinc-500">• No Registration</span>
+    </div>
+
+    <!-- Editorial Display Headline (DESIGN.md specification) -->
+    <h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight leading-[1.05]">
+      Temporary email. <br class="hidden sm:inline" />
+      <span class="bg-gradient-to-r from-[#ea2804] via-[#ff6a3d] to-[#ea2804] bg-clip-text text-transparent">
+        Instant privacy.
+      </span>
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="text-base sm:text-lg text-[#575757] dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+      Generate a disposable burner inbox in one click. Receive signup verification codes, activation OTPs, and confirmation links without ever exposing your personal email.
+    </p>
+  </section>
+
+  <!-- Interactive TempMail Box Island -->
+  <section class="px-4 sm:px-6 lg:px-8 pb-12">
+    <MailboxManager />
+  </section>
+
+  <!-- OTP Feature Showcase -->
+  <OtpShowcase />
+
+  <!-- Features Grid -->
+  <Features />
+
+  <!-- 4-Step Process Guide -->
+  <HowItWorks />
+
+  <!-- FAQ Accordion -->
+  <Faq />
+</Layout>

@@ -1,0 +1,69 @@
+---
+import Header from '../components/sections/Header.astro';
+import Footer from '../components/sections/Footer.astro';
+import ToastContainer from '../components/ui/ToastContainer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'TempoMail — Free Disposable Temporary Email & Verification Codes',
+  description = 'Get a free, instant temporary disposable email address to sign up on any website. Auto-extracts verification codes and OTPs without exposing your real inbox.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- SEO Meta Tags -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#ea2804" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Fonts: Bricolage Grotesque (Display), Inter (Body), JetBrains Mono (Code) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Zero-FOUC Theme Script -->
+    <script is:inline>
+      (function () {
+        const storedTheme = localStorage.getItem('theme');
+        const userPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (storedTheme === 'dark' || (!storedTheme && userPrefersDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-[#f9f7f3] dark:bg-[#0e0e11] text-[#202020] dark:text-[#fcfcfc] min-h-screen flex flex-col antialiased selection:bg-[#ea2804] selection:text-white">
+    <!-- Atmospheric Ambient Glow Mesh Background -->
+    <div class="fixed inset-0 hero-glow-mesh pointer-events-none z-0"></div>
+
+    <Header />
+
+    <main class="flex-1 relative z-10">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <ToastContainer />
+  </body>
+</html>

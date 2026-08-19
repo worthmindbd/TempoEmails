@@ -1,0 +1,52 @@
+---
+---
+
+<div
+  id="toast-container"
+  class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4"
+  aria-live="polite"
+>
+</div>
+
+<script>
+  function setupToaster() {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    window.addEventListener('tempomail:toast', ((event: CustomEvent) => {
+      const { message, type = 'success', duration = 3000 } = event.detail || {};
+      if (!message) return;
+
+      const toast = document.createElement('div');
+      toast.className = `pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0 flex items-center gap-3 px-4 py-3 rounded-full text-sm font-medium shadow-xl backdrop-blur-xl border ${
+        type === 'error'
+          ? 'bg-rose-500/90 text-white border-rose-400'
+          : 'bg-[#202020]/90 dark:bg-zinc-800/90 text-white border-white/20'
+      }`;
+
+      const icon =
+        type === 'error'
+          ? '<svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+          : '<svg class="w-4 h-4 text-[#ea2804] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+
+      toast.innerHTML = `${icon}<span class="flex-1">${message}</span>`;
+      container.appendChild(toast);
+
+      // Trigger enter animation
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+      });
+
+      // Dismiss after duration
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }) as EventListener);
+  }
+
+  setupToaster();
+  document.addEventListener('astro:page-load', setupToaster);
+</script>

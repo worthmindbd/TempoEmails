@@ -1,0 +1,116 @@
+---
+import ThemeToggle from '../ui/ThemeToggle.astro';
+import Button from '../ui/Button.astro';
+---
+
+<header class="sticky top-0 z-40 w-full border-b border-black/5 dark:border-white/10 glass-panel backdrop-blur-xl transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+    <!-- Brand Wordmark Logo -->
+    <a href="/" class="flex items-center gap-2.5 group select-none">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#ea2804] to-[#ff6a3d] flex items-center justify-center text-white shadow-md shadow-[#ea2804]/25 transition-transform group-hover:scale-105">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"></path>
+        </svg>
+      </div>
+      <div class="flex flex-col">
+        <span class="font-display text-xl font-black tracking-tight text-[#202020] dark:text-white">
+          Tempo<span class="text-[#ea2804] dark:text-[#ff6a3d]">Mail</span>
+        </span>
+        <span class="text-[9px] uppercase tracking-widest font-mono text-[#8d8d8d] dark:text-zinc-400 -mt-1">
+          Burner Inbox
+        </span>
+      </div>
+    </a>
+
+    <!-- Center Status Pill -->
+    <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2b9a66] opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-[#2b9a66]"></span>
+      </span>
+      <span class="text-[#575757] dark:text-zinc-300 font-medium">Free Disposable Email</span>
+      <span class="text-[#8d8d8d] dark:text-zinc-500">• Receive Only</span>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center gap-2">
+      <!-- Sound Chime Toggle -->
+      <button
+        id="sound-toggle-btn"
+        type="button"
+        class="w-10 h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white transition-colors cursor-pointer"
+        title="Toggle email notification sound"
+      >
+        <svg id="sound-on-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+        <svg id="sound-off-icon" class="w-4 h-4 hidden text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <line x1="23" y1="9" x2="17" y2="15"></line>
+          <line x1="17" y1="9" x2="23" y2="15"></line>
+        </svg>
+      </button>
+
+      <!-- Recent Inboxes History Button -->
+      <button
+        id="header-history-btn"
+        type="button"
+        class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors shadow-xs cursor-pointer"
+      >
+        <svg class="w-3.5 h-3.5 text-[#ea2804]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span>History</span>
+      </button>
+
+      <!-- Light / Dark Mode Toggle -->
+      <ThemeToggle />
+    </div>
+  </div>
+</header>
+
+<script>
+  import { soundNotifier } from '../../lib/utils/sound';
+
+  function setupHeader() {
+    const soundBtn = document.getElementById('sound-toggle-btn');
+    const soundOn = document.getElementById('sound-on-icon');
+    const soundOff = document.getElementById('sound-off-icon');
+
+    const updateSoundUI = () => {
+      const enabled = soundNotifier.isEnabled();
+      if (enabled) {
+        soundOn?.classList.remove('hidden');
+        soundOff?.classList.add('hidden');
+      } else {
+        soundOn?.classList.add('hidden');
+        soundOff?.classList.remove('hidden');
+      }
+    };
+
+    updateSoundUI();
+
+    soundBtn?.addEventListener('click', () => {
+      soundNotifier.toggle();
+      updateSoundUI();
+      window.dispatchEvent(
+        new CustomEvent('tempomail:toast', {
+          detail: {
+            message: soundNotifier.isEnabled() ? '🔔 Sound notifications enabled' : '🔕 Sound notifications muted',
+            type: 'success',
+          },
+        })
+      );
+    });
+
+    document.getElementById('header-history-btn')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('tempomail:openhistory'));
+    });
+  }
+
+  setupHeader();
+  document.addEventListener('astro:page-load', setupHeader);
+</script>

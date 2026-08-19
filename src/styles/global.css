@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Brand Colors from DESIGN.md */
+  --color-primary: #ea2804;
+  --color-primary-deep: #c01f00;
+  --color-primary-glow: #ff6a3d;
+  --color-primary-pink: #f4a8a0;
+  --color-on-primary: #ffffff;
+
+  /* Neutrals & Surfaces */
+  --color-ink: #202020;
+  --color-body: #3a3a3a;
+  --color-charcoal: #575757;
+  --color-mute: #646464;
+  --color-ash: #8d8d8d;
+  --color-stone: #bbbbbb;
+  --color-canvas: #f9f7f3;
+  --color-surface-bone: #f3f0e8;
+  --color-surface-card: #ffffff;
+  --color-surface-dark: #202020;
+  --color-surface-deep: #0e0e11;
+  --color-on-dark: #fcfcfc;
+  --color-on-dark-mute: rgba(252, 252, 252, 0.72);
+  --color-hairline: rgba(32, 32, 32, 0.12);
+  --color-hairline-strong: #202020;
+  --color-divider-dark: rgba(255, 255, 255, 0.16);
+
+  /* Semantic */
+  --color-badge-success: #2b9a66;
+  --color-ring-focus: rgba(234, 40, 4, 0.4);
+
+  /* Fonts */
+  --font-display: "Bricolage Grotesque", "Syne", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: "Inter", "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Custom Radii */
+  --radius-full: 9999px;
+  --radius-xl: 16px;
+  --radius-lg: 12px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+  --radius-xs: 4px;
+}
+
+/* Custom Base & Typography Rules */
+:root {
+  color-scheme: light dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html.dark body {
+  background-color: #0e0e11;
+  color: #fcfcfc;
+}
+
+/* Headings with tight display tracking */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Glassmorphic Component Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px 0 rgba(32, 32, 32, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+}
+
+html.dark .glass-panel {
+  background: rgba(22, 22, 26, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+html.dark .glass-card {
+  background: rgba(28, 28, 34, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.35);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+html.dark .glass-pill {
+  background: rgba(36, 36, 44, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Background atmospheric gradient mesh */
+.hero-glow-mesh {
+  background: radial-gradient(circle at 50% 20%, rgba(234, 40, 4, 0.12) 0%, rgba(255, 106, 61, 0.06) 35%, rgba(244, 168, 160, 0) 70%);
+}
+
+html.dark .hero-glow-mesh {
+  background: radial-gradient(circle at 50% 20%, rgba(234, 40, 4, 0.18) 0%, rgba(255, 106, 61, 0.08) 35%, rgba(14, 14, 17, 0) 70%);
+}
+
+/* Live pulse radar animation */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+/* Scrollbar refinement */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 120, 0.25);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 120, 120, 0.45);
+}
