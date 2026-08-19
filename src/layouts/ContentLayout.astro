@@ -1,0 +1,170 @@
+---
+import Layout from './Layout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  publishDate?: string;
+  category?: string;
+  keywords?: string;
+}
+
+const { title, description, publishDate, category, keywords } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://tempoemails.dev');
+
+const formattedDate = publishDate
+  ? new Date(publishDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : null;
+
+// JSON-LD Schema: BreadcrumbList
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: canonicalURL.origin,
+    },
+    ...(category
+      ? [
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Blog',
+            item: `${canonicalURL.origin}/blog`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: title,
+            item: canonicalURL.href,
+          },
+        ]
+      : [
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: title,
+            item: canonicalURL.href,
+          },
+        ]),
+  ],
+};
+
+// JSON-LD Schema: Article (for blog posts)
+const articleSchema = publishDate
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      description: description,
+      datePublished: publishDate,
+      dateModified: publishDate,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': canonicalURL.href,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'TempoEmails Editorial Team',
+        url: canonicalURL.origin,
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'TempoEmails',
+        logo: {
+          '@type': 'ImageObject',
+          url: `${canonicalURL.origin}/favicon.svg`,
+        },
+      },
+      image: `${canonicalURL.origin}/og-image.png`,
+      articleSection: category || 'Privacy',
+    }
+  : null;
+---
+
+<Layout
+  title={`${title} — TempoEmails`}
+  description={description}
+  keywords={keywords}
+  ogType={publishDate ? 'article' : 'website'}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  {articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <!-- Breadcrumb Navigation -->
+    <nav class="mb-8 flex items-center gap-2 text-xs font-mono text-[#8d8d8d] dark:text-zinc-500">
+      <a href="/" class="hover:text-[#ea2804] transition-colors">Home</a>
+      <span>→</span>
+      {category && (
+        <>
+          <a href="/blog" class="hover:text-[#ea2804] transition-colors">Blog</a>
+          <span>→</span>
+        </>
+      )}
+      <span class="text-[#575757] dark:text-zinc-300 truncate">{title}</span>
+    </nav>
+
+    <!-- Article Header -->
+    <header class="mb-10 space-y-4">
+      {category && (
+        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#ea2804]/10 text-[#ea2804] dark:bg-[#ea2804]/20 dark:text-[#ff6a3d]">
+          {category}
+        </span>
+      )}
+
+      <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight leading-tight">
+        {title}
+      </h1>
+
+      {(formattedDate || category) && (
+        <div class="flex items-center gap-3 text-xs font-mono text-[#8d8d8d] dark:text-zinc-500 pt-1">
+          {formattedDate && (
+            <time datetime={publishDate}>
+              {formattedDate}
+            </time>
+          )}
+          {formattedDate && category && <span>•</span>}
+          {category && <span>{category}</span>}
+        </div>
+      )}
+
+      <div class="w-16 h-1 rounded-full bg-gradient-to-r from-[#ea2804] to-[#ff6a3d]"></div>
+    </header>
+
+    <!-- Article Content -->
+    <div class="content-body space-y-1">
+      <slot />
+    </div>
+
+    <!-- Back to Home / Blog -->
+    <footer class="mt-16 pt-8 border-t border-black/10 dark:border-white/10">
+      <div class="flex flex-wrap items-center gap-4">
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"></path>
+          </svg>
+          Back to Home
+        </a>
+        {category && (
+          <a
+            href="/blog"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-[#ea2804] hover:underline"
+          >
+            ← All Articles
+          </a>
+        )}
+      </div>
+    </footer>
+  </article>
+</Layout>

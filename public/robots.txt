@@ -1,0 +1,8 @@
+# TempoEmails — robots.txt
+# Allow all search engine crawlers
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://tempoemails.dev/sitemap-index.xml

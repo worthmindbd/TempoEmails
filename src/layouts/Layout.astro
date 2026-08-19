@@ -2,17 +2,76 @@
 import Header from '../components/sections/Header.astro';
 import Footer from '../components/sections/Footer.astro';
 import ToastContainer from '../components/ui/ToastContainer.astro';
+import CookieConsent from '../components/ui/CookieConsent.astro';
 import '../styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
+  keywords?: string;
+  ogImage?: string;
+  ogType?: string;
 }
 
 const {
-  title = 'TempoMail — Free Disposable Temporary Email & Verification Codes',
-  description = 'Get a free, instant temporary disposable email address to sign up on any website. Auto-extracts verification codes and OTPs without exposing your real inbox.',
+  title = 'TempoEmails — Free Disposable Temporary Email & Verification Codes',
+  description = 'Get a free, instant temporary disposable email address to sign up on any website. Auto-extracts verification codes and OTPs without exposing your real inbox. 100% anonymous, zero logs.',
+  keywords = 'temp mail, temporary email, disposable email, throwaway email, burner email, fake email generator, 10 minute mail, 24 hour temp mail, temp mail for discord, temporary email for chatgpt, temp mail for telegram, temporary mail for steam, disposable email for facebook, disposable mail rest api, free temporary inbox, anonymous temp email no log',
+  ogImage = '/og-image.png',
+  ogType = 'website',
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://tempoemails.dev');
+const ogImageURL = new URL(ogImage, Astro.site || 'https://tempoemails.dev');
+
+// JSON-LD Structured Data for WebSite, WebApplication, and Organization
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'TempoEmails',
+  url: canonicalURL.origin,
+  description: 'Instant, anonymous disposable email addresses with automatic OTP verification code extraction.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${canonicalURL.origin}/blog?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'TempoEmails',
+  url: canonicalURL.origin,
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'All',
+  browserRequirements: 'Requires JavaScript. Requires HTML5.',
+  offers: {
+    '@type': 'Offer',
+    price: '0.00',
+    priceCurrency: 'USD',
+  },
+  featureList: [
+    'Instant disposable email address generation',
+    'Automated OTP verification code extraction',
+    'Custom username and domain aliases',
+    '10-minute to 30-day extended lifespan retention',
+    'QR code desktop-to-mobile handoff',
+    'Zero database logging and total anonymity',
+    'Multi-inbox session switching',
+  ],
+};
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'TempoEmails',
+  url: canonicalURL.origin,
+  logo: new URL('/favicon.svg', canonicalURL.origin).href,
+  sameAs: [
+    'https://github.com/TempoEmails',
+  ],
+};
 ---
 
 <!doctype html>
@@ -21,15 +80,58 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.ico" />
 
     <!-- SEO Meta Tags -->
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="TempoEmails" />
+    <meta name="publisher" content="TempoEmails" />
     <meta name="theme-color" content="#ea2804" />
+    <meta name="application-name" content="TempoEmails" />
+    <meta name="apple-mobile-web-app-title" content="TempoEmails" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Search Engine Indexing Directives -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href={canonicalURL.href} />
+
+    <!-- Geo Meta Tags for Global Reach -->
+    <meta name="geo.region" content="US;GB;EU" />
+    <meta name="geo.placename" content="Global" />
+
+    <!-- Open Graph / Facebook -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:site_name" content="TempoEmails" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="en_GB" />
+    <meta property="og:locale:alternate" content="de_DE" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="es_ES" />
+    <meta property="og:locale:alternate" content="it_IT" />
+    <meta property="og:image" content={ogImageURL.href} />
+    <meta property="og:image:alt" content="TempoEmails - Free Disposable Temporary Email & Verification Codes" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL.href} />
+    <meta name="twitter:image:alt" content="TempoEmails Temporary Mail Platform" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
 
     <!-- Google Fonts: Bricolage Grotesque (Display), Inter (Body), JetBrains Mono (Code) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -65,5 +167,6 @@ const {
     <Footer />
 
     <ToastContainer />
+    <CookieConsent />
   </body>
 </html>

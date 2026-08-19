@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Page Not Found — TempoEmails" description="The page you're looking for doesn't exist. Head back to TempoEmails to get a free disposable email address.">
+  <section class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 text-center space-y-6">
+    <!-- 404 Badge -->
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-pill text-xs font-semibold shadow-xs">
+      <span class="text-[#ea2804] font-mono font-bold">404</span>
+      <span class="text-[#8d8d8d] dark:text-zinc-500">•</span>
+      <span class="text-[#575757] dark:text-zinc-300">Page Not Found</span>
+    </div>
+
+    <!-- Headline -->
+    <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight leading-tight">
+      Oops, this page
+      <span class="bg-gradient-to-r from-[#ea2804] via-[#ff6a3d] to-[#ea2804] bg-clip-text text-transparent">
+        expired.
+      </span>
+    </h1>
+
+    <!-- Description -->
+    <p class="text-base sm:text-lg text-[#575757] dark:text-zinc-300 max-w-md mx-auto leading-relaxed">
+      Just like a temporary email, this page has disappeared. But don't worry — your disposable inbox is still waiting for you.
+    </p>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold bg-gradient-to-r from-[#ea2804] to-[#ff6a3d] text-white shadow-lg shadow-[#ea2804]/25 hover:shadow-xl hover:shadow-[#ea2804]/30 transition-all"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        Go to Homepage
+      </a>
+      <a
+        href="/blog"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors"
+      >
+        Read Our Blog
+      </a>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="pt-8 flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-[#8d8d8d] dark:text-zinc-500">
+      <a href="/about" class="hover:text-[#ea2804] transition-colors">About</a>
+      <span>•</span>
+      <a href="/contact" class="hover:text-[#ea2804] transition-colors">Contact</a>
+      <span>•</span>
+      <a href="/privacy-policy" class="hover:text-[#ea2804] transition-colors">Privacy</a>
+      <span>•</span>
+      <a href="/blog" class="hover:text-[#ea2804] transition-colors">Blog</a>
+    </div>
+  </section>
+</Layout>

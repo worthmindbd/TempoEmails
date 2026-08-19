@@ -6,14 +6,14 @@ export class MockClient {
 
   static async getDomains(): Promise<MailDomain[]> {
     return [
-      { id: 'mock_1', domain: 'tempomail.cloud', isActive: true, provider: 'mock' as const },
+      { id: 'mock_1', domain: 'tempoemails.cloud', isActive: true, provider: 'mock' as const },
       { id: 'mock_2', domain: 'burnerinbox.dev', isActive: true, provider: 'mock' as const },
       { id: 'mock_3', domain: 'privatemail.link', isActive: true, provider: 'mock' as const },
     ];
   }
 
   static async createAccount(usernamePrefix?: string, domainName?: string): Promise<MailAccount> {
-    const domain = domainName || 'tempomail.cloud';
+    const domain = domainName || 'tempoemails.cloud';
     const prefix = usernamePrefix || `user.${Math.floor(100000 + Math.random() * 900000)}`;
     const address = `${prefix}@${domain}`;
 
@@ -110,14 +110,14 @@ export class MockClient {
         </div>`,
       },
       welcome: {
-        fromName: 'TempoMail Team',
-        fromAddr: 'hello@tempomail.cloud',
+        fromName: 'TempoEmails Team',
+        fromAddr: 'hello@tempoemails.cloud',
         subject: '🎉 Your temporary inbox is ready to receive emails!',
         code: 'TEMPO',
-        text: `Welcome to TempoMail!\n\nYour temporary mailbox is active and ready to receive confirmation codes, OTPs, and activation links.\n\nEnjoy complete privacy without spam!`,
+        text: `Welcome to TempoEmails!\n\nYour temporary mailbox is active and ready to receive confirmation codes, OTPs, and activation links.\n\nEnjoy complete privacy without spam!`,
         html: `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; color: #202020; line-height: 1.6;">
           <div style="background: linear-gradient(135deg, #ea2804, #ff6a3d); border-radius: 12px; padding: 24px; color: #ffffff; margin-bottom: 20px;">
-            <h2 style="margin: 0 0 8px 0; font-size: 24px;">Welcome to TempoMail 🚀</h2>
+            <h2 style="margin: 0 0 8px 0; font-size: 24px;">Welcome to TempoEmails 🚀</h2>
             <p style="margin: 0; opacity: 0.9;">Your temporary disposable mailbox is live and listening.</p>
           </div>
           <p>You can use this email address on any website to receive sign-up confirmation emails, OTP codes, and password resets safely.</p>

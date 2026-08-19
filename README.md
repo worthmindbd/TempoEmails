@@ -1,4 +1,4 @@
-# TempoMail — Instant Disposable Email
+# TempoEmails — Instant Disposable Email
 
 A modern, privacy-first temporary email web app. Generate a burner inbox in one click, receive emails instantly, auto-detect OTP codes, and forget it all when you close the tab. No registration, no database, no logs.
 

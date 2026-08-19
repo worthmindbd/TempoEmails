@@ -1,8 +1,8 @@
 ---
 version: 1.0
-name: TempoMail-design-system
+name: TempoEmails-design-system
 description: |
-  TempoMail's visual identity is built on glassmorphism — translucent panels
+  TempoEmails's visual identity is built on glassmorphism — translucent panels
   with backdrop blur layered over a warm atmospheric glow. The system pairs a
   cream canvas (light) / deep charcoal (dark) base with a single bold red-orange
   accent reserved for CTAs, OTP highlights, and brand marks. Three font families
@@ -112,7 +112,7 @@ theme:
 
 ## Overview
 
-TempoMail's visual language is **glassmorphism over atmospheric glow**. Every
+TempoEmails's visual language is **glassmorphism over atmospheric glow**. Every
 panel, card, and modal is a translucent frosted surface floating above a subtle
 red-orange radial gradient that washes the entire viewport. The effect reads as
 "modern privacy tool with editorial warmth" — polished enough for a utility app

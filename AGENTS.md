@@ -1,8 +1,8 @@
-# TempoMail — Agent Instructions
+# TempoEmails — Agent Instructions
 
 ## Project Overview
 
-TempoMail is a single-page disposable email web app built with **Astro + Tailwind CSS v4 + vanilla TypeScript**. No framework runtime (React/Vue/etc.). All interactivity is vanilla JS in `<script>` tags.
+TempoEmails is a single-page disposable email web app built with **Astro + Tailwind CSS v4 + vanilla TypeScript**. No framework runtime (React/Vue/etc.). All interactivity is vanilla JS in `<script>` tags.
 
 ## Development
 

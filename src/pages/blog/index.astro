@@ -1,0 +1,215 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import GlassCard from '../../components/ui/GlassCard.astro';
+import Badge from '../../components/ui/Badge.astro';
+
+// Blog articles data — ordered by publish date (newest first)
+const articles = [
+  {
+    title: 'The Rise of Disposable Email Services: A Brief History',
+    description: 'Explore the evolution of disposable email services from early spam solutions to modern privacy tools used by millions worldwide.',
+    category: 'Technology',
+    date: '2026-08-20',
+    slug: '/blog/rise-of-disposable-email',
+  },
+  {
+    title: 'Best Practices for Managing Multiple Online Accounts',
+    description: 'Learn how to organize and secure dozens of online accounts without sacrificing convenience or security.',
+    category: 'Guides',
+    date: '2026-08-18',
+    slug: '/blog/managing-multiple-online-accounts',
+  },
+  {
+    title: '10 Essential Tips for Protecting Your Identity Online',
+    description: 'Practical tips to safeguard your digital identity from data breaches, social engineering, and online surveillance.',
+    category: 'Security',
+    date: '2026-08-15',
+    slug: '/blog/protecting-identity-online',
+  },
+  {
+    title: 'Why Every Website Wants Your Email Address',
+    description: 'Understand the real reasons companies collect your email address and how to protect yourself from data exploitation.',
+    category: 'Privacy',
+    date: '2026-08-12',
+    slug: '/blog/why-companies-want-your-email',
+  },
+  {
+    title: 'How Temporary Email Works Behind the Scenes',
+    description: 'A technical deep-dive into how disposable email services work — from DNS routing to API-driven inboxes and automatic message expiration.',
+    category: 'Technology',
+    date: '2026-08-10',
+    slug: '/blog/how-temporary-email-works',
+  },
+  {
+    title: 'Temporary Email vs. Email Aliases: Which Should You Use?',
+    description: 'Compare disposable temporary email addresses with email aliases to decide which privacy solution best fits your needs.',
+    category: 'Guides',
+    date: '2026-08-08',
+    slug: '/blog/temporary-email-vs-email-aliases',
+  },
+  {
+    title: 'Email Privacy Best Practices for 2026',
+    description: 'Comprehensive guide to protecting your email privacy — from using disposable addresses to avoiding phishing and managing permissions.',
+    category: 'Privacy',
+    date: '2026-08-05',
+    slug: '/blog/email-privacy-best-practices',
+  },
+  {
+    title: 'How to Recognize and Avoid Phishing Emails',
+    description: 'Learn to identify phishing emails with real examples, warning signs, and protective measures to keep your accounts safe.',
+    category: 'Security',
+    date: '2026-08-03',
+    slug: '/blog/understanding-phishing-emails',
+  },
+  {
+    title: 'Understanding OTP Verification Codes: A Complete Guide',
+    description: 'Everything you need to know about OTP verification codes — how they work, why they\'re used, and how to manage them effectively.',
+    category: 'Security',
+    date: '2026-08-01',
+    slug: '/blog/understanding-otp-verification-codes',
+  },
+  {
+    title: 'Data Privacy Laws You Should Know: GDPR, CCPA, and Beyond',
+    description: 'A clear breakdown of major data privacy regulations worldwide and how they protect your personal information online.',
+    category: 'Privacy',
+    date: '2026-07-28',
+    slug: '/blog/data-privacy-laws-explained',
+  },
+  {
+    title: 'Complete Guide to Online Account Security',
+    description: 'Protect your online accounts with this comprehensive security guide covering passwords, 2FA, email safety, and privacy practices.',
+    category: 'Security',
+    date: '2026-07-25',
+    slug: '/blog/online-account-security-guide',
+  },
+  {
+    title: 'How Disposable Email Protects Your Online Privacy',
+    description: 'Learn the privacy benefits of using disposable email addresses and how they shield you from tracking, data harvesting, and unwanted marketing.',
+    category: 'Privacy',
+    date: '2026-07-22',
+    slug: '/blog/how-disposable-email-protects-privacy',
+  },
+  {
+    title: 'What Is Email Tracking and How to Stop It',
+    description: 'Understand how companies track your email activity with invisible pixels and links, and learn practical steps to protect yourself.',
+    category: 'Security',
+    date: '2026-07-18',
+    slug: '/blog/what-is-email-tracking',
+  },
+  {
+    title: 'Why You Should Use a Temporary Email Address',
+    description: 'Discover why disposable email addresses are essential for protecting your privacy and avoiding spam when signing up for online services.',
+    category: 'Privacy',
+    date: '2026-07-15',
+    slug: '/blog/why-use-temporary-email',
+  },
+  {
+    title: 'How to Avoid Spam Emails: The Ultimate Guide',
+    description: 'Learn proven strategies to reduce spam in your inbox, from using disposable email addresses to managing subscriptions.',
+    category: 'Guides',
+    date: '2026-07-10',
+    slug: '/blog/how-to-avoid-spam',
+  },
+];
+
+const categories = [...new Set(articles.map(a => a.category))];
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+const categoryColors: Record<string, string> = {
+  Privacy: 'bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400',
+  Security: 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400',
+  Guides: 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400',
+  Technology: 'bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400',
+};
+---
+
+<Layout
+  title="Privacy & Security Blog — TempoEmails"
+  description="TempoEmails Privacy & Security Blog: expert guides on temporary email for Discord, ChatGPT, 10 minute mail, developer QA automation, Selenium testing, and spam prevention."
+  keywords="temp mail for discord sign up, temporary email for chatgpt verification, 10 minute temp mail instant, 24 hour temporary email address, disposable email rest api free, temp mail selenium automation test, anonymous temporary inbox no log"
+>
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <!-- Header -->
+    <div class="text-center mb-12 space-y-4">
+      <Badge variant="neutral" size="md">
+        TempoEmails Blog
+      </Badge>
+      <h1 class="font-display text-4xl sm:text-5xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight">
+        Privacy & Security
+        <span class="bg-gradient-to-r from-[#ea2804] via-[#ff6a3d] to-[#ea2804] bg-clip-text text-transparent">
+          Insights
+        </span>
+      </h1>
+      <p class="text-base sm:text-lg text-[#575757] dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+        Expert guides on email privacy, online security, disposable email use cases, and protecting your digital identity.
+      </p>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="flex flex-wrap items-center justify-center gap-2 mb-10">
+      <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#ea2804]/10 text-[#ea2804] dark:bg-[#ea2804]/20 dark:text-[#ff6a3d] border border-[#ea2804]/20">
+        All ({articles.length})
+      </span>
+      {categories.map(cat => (
+        <span class={`px-3.5 py-1.5 rounded-full text-xs font-semibold ${categoryColors[cat] || 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400'}`}>
+          {cat} ({articles.filter(a => a.category === cat).length})
+        </span>
+      ))}
+    </div>
+
+    <!-- Articles Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {articles.map((article) => (
+        <a href={article.slug} class="group block">
+          <GlassCard variant="card" class="h-full p-6 transition-all duration-200 group-hover:shadow-lg group-hover:border-[#ea2804]/20 dark:group-hover:border-[#ea2804]/30">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${categoryColors[article.category] || 'bg-zinc-500/10 text-zinc-600'}`}>
+                  {article.category}
+                </span>
+                <time class="text-[10px] font-mono text-[#8d8d8d] dark:text-zinc-500" datetime={article.date}>
+                  {formatDate(article.date)}
+                </time>
+              </div>
+
+              <h2 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc] leading-snug group-hover:text-[#ea2804] dark:group-hover:text-[#ff6a3d] transition-colors">
+                {article.title}
+              </h2>
+
+              <p class="text-xs text-[#575757] dark:text-zinc-400 leading-relaxed line-clamp-3">
+                {article.description}
+              </p>
+
+              <div class="flex items-center gap-1.5 text-xs font-semibold text-[#ea2804] dark:text-[#ff6a3d] pt-1">
+                <span>Read article</span>
+                <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </div>
+          </GlassCard>
+        </a>
+      ))}
+    </div>
+
+    <!-- Back to Home -->
+    <div class="text-center mt-12">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"></path>
+        </svg>
+        Back to Home
+      </a>
+    </div>
+  </section>
+</Layout>

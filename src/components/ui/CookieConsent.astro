@@ -1,0 +1,68 @@
+---
+---
+
+<div
+  id="cookie-consent-banner"
+  class="fixed bottom-0 left-0 right-0 z-50 p-4 hidden"
+  role="dialog"
+  aria-label="Cookie consent"
+>
+  <div class="max-w-4xl mx-auto glass-card rounded-2xl border border-black/10 dark:border-white/10 p-5 sm:p-6 shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-zinc-900/95">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      <div class="flex-1 space-y-1">
+        <h3 class="font-display text-sm font-bold text-[#202020] dark:text-[#fcfcfc]">
+          🍪 We value your privacy
+        </h3>
+        <p class="text-xs text-[#575757] dark:text-zinc-400 leading-relaxed">
+          We use cookies to enhance your browsing experience, serve personalized ads, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies. Read our
+          <a href="/privacy-policy" class="text-[#ea2804] hover:underline">Privacy Policy</a>
+          for more information.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+          id="cookie-reject-btn"
+          type="button"
+          class="px-4 py-2 rounded-full text-xs font-semibold bg-transparent border border-black/10 dark:border-white/10 text-[#575757] dark:text-zinc-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+        >
+          Reject Non-Essential
+        </button>
+        <button
+          id="cookie-accept-btn"
+          type="button"
+          class="px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-[#ea2804] to-[#ff6a3d] text-white shadow-md shadow-[#ea2804]/25 hover:shadow-lg hover:shadow-[#ea2804]/30 transition-all cursor-pointer"
+        >
+          Accept All
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupCookieConsent() {
+    const banner = document.getElementById('cookie-consent-banner');
+    const acceptBtn = document.getElementById('cookie-accept-btn');
+    const rejectBtn = document.getElementById('cookie-reject-btn');
+
+    if (!banner) return;
+
+    const consent = localStorage.getItem('tempomail-cookie-consent');
+    if (!consent) {
+      banner.classList.remove('hidden');
+    }
+
+    acceptBtn?.addEventListener('click', () => {
+      localStorage.setItem('tempomail-cookie-consent', 'accepted');
+      banner.classList.add('hidden');
+    });
+
+    rejectBtn?.addEventListener('click', () => {
+      localStorage.setItem('tempomail-cookie-consent', 'rejected');
+      banner.classList.add('hidden');
+    });
+  }
+
+  setupCookieConsent();
+  document.addEventListener('astro:page-load', setupCookieConsent);
+</script>
