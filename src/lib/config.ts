@@ -5,23 +5,10 @@
  */
 
 function resolveSiteUrl(): string {
-  let url = '';
-
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    url = import.meta.env.PUBLIC_SITE_URL || import.meta.env.SITE_URL || '';
-  }
-
-  if (!url && typeof process !== 'undefined' && process.env) {
-    url = process.env.PUBLIC_SITE_URL || process.env.SITE_URL || '';
-  }
-
-  if (!url && typeof window !== 'undefined' && window.location) {
-    url = window.location.origin;
-  }
-
-  if (!url) {
-    url = 'https://tempoemails.com';
-  }
+  const url =
+    (typeof import.meta !== 'undefined' && import.meta.env.SITE_URL) ||
+    (typeof process !== 'undefined' && process.env.SITE_URL) ||
+    'https://tempoemails.com';
 
   let clean = url.trim();
   if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
@@ -31,26 +18,11 @@ function resolveSiteUrl(): string {
 }
 
 function resolveDomain(siteUrl: string): string {
-  let domain = '';
-
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    domain = import.meta.env.PUBLIC_DOMAIN || '';
+  try {
+    return new URL(siteUrl).hostname;
+  } catch {
+    return 'tempoemails.com';
   }
-
-  if (!domain && typeof process !== 'undefined' && process.env) {
-    domain = process.env.PUBLIC_DOMAIN || '';
-  }
-
-  if (!domain) {
-    try {
-      const parsed = new URL(siteUrl);
-      domain = parsed.hostname;
-    } catch {
-      domain = siteUrl.replace(/^https?:\/\//, '').split('/')[0];
-    }
-  }
-
-  return domain || 'tempoemails.com';
 }
 
 export function getSiteConfig() {

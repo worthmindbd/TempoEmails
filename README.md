@@ -58,20 +58,15 @@ npm run build
 npm run preview
 ```
 
-### 🐳 Docker & Dokploy Deployment
+### 🚀 Dokploy VPS Deployment (Nixpacks)
 
-TempoEmails is fully configured for one-click Docker and Dokploy deployment:
+TempoEmails is pre-configured for one-click deployment on **Dokploy** using Nixpacks:
 
-```bash
-# Build and run with Docker
-docker build -t tempoemails .
-docker run -d -p 3012:3012 tempoemails
+1. Create an Application in Dokploy connected to this Git repository.
+2. Set **Build Type** to `Nixpacks` and **Publish Directory** to `dist`.
+3. Add your domain (e.g., `tempoemails.com`) with SSL enabled in the Domains tab.
 
-# Or using Docker Compose
-docker compose up -d --build
-```
-
-For full Dokploy VPS deployment instructions, see [DOKPLOY_DEPLOYMENT.md](file:///home/worthmind/Coding/TempoEmails/DOKPLOY_DEPLOYMENT.md).
+For step-by-step instructions, see [DOKPLOY_DEPLOYMENT.md](file:///home/worthmind/Coding/TempoEmails/DOKPLOY_DEPLOYMENT.md).
 
 ---
 
