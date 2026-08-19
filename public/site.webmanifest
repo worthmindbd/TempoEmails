@@ -1,0 +1,27 @@
+{
+  "name": "TempoEmails — Disposable Temporary Email",
+  "short_name": "TempoEmails",
+  "description": "Instant, anonymous disposable email addresses with automatic OTP verification code extraction.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e0e11",
+  "theme_color": "#ea2804",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

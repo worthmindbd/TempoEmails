@@ -5,8 +5,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO: Replace with your actual production domain
-  site: 'https://tempoemails.dev',
+  // Production domain (can be overridden via SITE_URL env variable in Docker/Dokploy)
+  site: process.env.SITE_URL || 'https://tempoemails.dev',
   integrations: [sitemap()],
   server: {
     port: 4321,

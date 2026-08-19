@@ -1,11 +1,10 @@
 import type { MailAccount, MailDomain, MailMessage, DetailedMailMessage } from './types';
 import { extractOtpCode, extractVerificationLink } from '../utils/otp-extractor';
+import { StorageManager } from '../utils/storage';
 
 const API_BASE = 'https://api.tempmail.lol/v2';
 
 export class TempMailLolClient {
-  private static messageCache: Map<string, DetailedMailMessage[]> = new Map();
-
   static async getDomains(): Promise<MailDomain[]> {
     // Dynamic stealth domains from TempMail.lol
     const sampleDomains = [
@@ -49,8 +48,6 @@ export class TempMailLolClient {
       const data = await res.json();
       const emails: any[] = data.emails || [];
 
-      const detailedList: DetailedMailMessage[] = [];
-
       const summaries: MailMessage[] = emails.map((e: any, idx: number) => {
         const id = `tml_${token}_${idx}`;
         const subject = e.subject || '(No Subject)';
@@ -81,7 +78,8 @@ export class TempMailLolClient {
           provider: 'tempmaillol',
         };
 
-        detailedList.push(detailed);
+        // Cache detailed message in localStorage immediately
+        StorageManager.setCachedMessageDetail(address, detailed);
 
         return {
           id,
@@ -97,7 +95,6 @@ export class TempMailLolClient {
         };
       });
 
-      this.messageCache.set(address, detailedList);
       return summaries;
     } catch (err) {
       console.warn('TempMail.lol getMessages error:', err);
@@ -106,12 +103,12 @@ export class TempMailLolClient {
   }
 
   static async getMessageDetail(address: string, messageId: string): Promise<DetailedMailMessage> {
-    const list = this.messageCache.get(address) || [];
-    const found = list.find((m) => m.id === messageId);
-    if (!found) {
-      throw new Error('Message not found');
+    const cached = StorageManager.getCachedMessageDetail(address, messageId);
+    if (cached) {
+      cached.seen = true;
+      StorageManager.setCachedMessageDetail(address, cached);
+      return cached;
     }
-    found.seen = true;
-    return found;
+    throw new Error('Message not found');
   }
 }

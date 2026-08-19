@@ -58,6 +58,21 @@ npm run build
 npm run preview
 ```
 
+### 🐳 Docker & Dokploy Deployment
+
+TempoEmails is fully configured for one-click Docker and Dokploy deployment:
+
+```bash
+# Build and run with Docker
+docker build -t tempoemails .
+docker run -d -p 3012:3012 tempoemails
+
+# Or using Docker Compose
+docker compose up -d --build
+```
+
+For full Dokploy VPS deployment instructions, see [DOKPLOY_DEPLOYMENT.md](file:///home/worthmind/Coding/TempoEmails/DOKPLOY_DEPLOYMENT.md).
+
 ---
 
 ## 📁 Project Structure

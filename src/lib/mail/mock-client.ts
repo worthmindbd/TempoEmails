@@ -1,9 +1,8 @@
 import type { MailAccount, MailDomain, MailMessage, DetailedMailMessage } from './types';
 import { extractOtpCode, extractVerificationLink } from '../utils/otp-extractor';
+import { StorageManager } from '../utils/storage';
 
 export class MockClient {
-  private static simulatedStore: Map<string, DetailedMailMessage[]> = new Map();
-
   static async getDomains(): Promise<MailDomain[]> {
     return [
       { id: 'mock_1', domain: 'tempoemails.cloud', isActive: true, provider: 'mock' as const },
@@ -17,9 +16,10 @@ export class MockClient {
     const prefix = usernamePrefix || `user.${Math.floor(100000 + Math.random() * 900000)}`;
     const address = `${prefix}@${domain}`;
 
-    // Initialize with a welcoming verification message
+    // Initialize with a welcoming verification message and save it in localStorage
     const welcomeMsg = this.generateSampleEmail(address, 'welcome');
-    this.simulatedStore.set(address, [welcomeMsg]);
+    StorageManager.setCachedMessageDetail(address, welcomeMsg);
+    StorageManager.mergeAndSaveMessages(address, [welcomeMsg]);
 
     return {
       id: address,
@@ -30,44 +30,43 @@ export class MockClient {
   }
 
   static async getMessages(address: string): Promise<MailMessage[]> {
-    const list = this.simulatedStore.get(address) || [];
-    return list.map((m) => ({
-      id: m.id,
-      accountId: address,
-      from: m.from,
-      to: m.to,
-      subject: m.subject,
-      intro: m.intro,
-      seen: m.seen,
-      createdAt: m.createdAt,
-      extractedOtp: m.extractedOtp,
-      provider: 'mock',
-    }));
+    return StorageManager.getCachedMessages(address);
   }
 
   static async getMessageDetail(address: string, messageId: string): Promise<DetailedMailMessage> {
-    const list = this.simulatedStore.get(address) || [];
-    const found = list.find((m) => m.id === messageId);
-    if (!found) {
-      throw new Error('Message not found');
+    const found = StorageManager.getCachedMessageDetail(address, messageId);
+    if (found) {
+      found.seen = true;
+      StorageManager.setCachedMessageDetail(address, found);
+      return found;
     }
-    found.seen = true;
-    return found;
+
+    const summaries = StorageManager.getCachedMessages(address);
+    const summary = summaries.find((m) => m.id === messageId);
+    if (summary) {
+      const fallback: DetailedMailMessage = {
+        ...summary,
+        seen: true,
+        text: summary.intro || summary.subject,
+        html: [`<p>${summary.intro || summary.subject}</p>`],
+        attachments: [],
+      };
+      StorageManager.setCachedMessageDetail(address, fallback);
+      return fallback;
+    }
+
+    throw new Error('Message not found');
   }
 
   static async deleteMessage(address: string, messageId: string): Promise<boolean> {
-    const list = this.simulatedStore.get(address) || [];
-    this.simulatedStore.set(
-      address,
-      list.filter((m) => m.id !== messageId)
-    );
+    StorageManager.removeCachedMessage(address, messageId);
     return true;
   }
 
   static sendTestVerificationEmail(address: string, serviceType: 'github' | 'discord' | 'stripe' | 'notion' | 'openai' = 'github'): DetailedMailMessage {
     const newMsg = this.generateSampleEmail(address, serviceType);
-    const current = this.simulatedStore.get(address) || [];
-    this.simulatedStore.set(address, [newMsg, ...current]);
+    StorageManager.setCachedMessageDetail(address, newMsg);
+    StorageManager.mergeAndSaveMessages(address, [newMsg]);
     return newMsg;
   }
 
@@ -124,7 +123,7 @@ export class MockClient {
           <ul style="padding-left: 20px; color: #575757;">
             <li>🛡️ <strong>100% Private</strong>: No personal data or registration needed.</li>
             <li>⚡ <strong>Smart OTP Detection</strong>: Verification codes are highlighted instantly.</li>
-            <li>🔄 <strong>Real-time Polling</strong>: New emails show up automatically.</li>
+            <li>🔄 <strong>Persistent Storage</strong>: Received emails stay saved in your browser local storage.</li>
           </ul>
         </div>`,
       },

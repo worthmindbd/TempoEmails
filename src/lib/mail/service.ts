@@ -197,24 +197,36 @@ export class MailService {
   }
 
   /**
-   * Fetches messages for an account and plays chime if new unread email arrives
+   * Fetches messages for an account.
+   * Merges incoming remote messages with locally stored messages in browser localStorage,
+   * guaranteeing that received emails are NEVER lost when the provider server purges them after a few minutes.
    */
   static async getMessages(account: MailAccount, isInitialLoad: boolean = false): Promise<MailMessage[]> {
-    let messages: MailMessage[] = [];
+    const previousMsgs = StorageManager.getCachedMessages(account.address);
+    const prevIds = new Set(previousMsgs.map((m) => m.id));
+
+    let remoteMessages: MailMessage[] = [];
+    let fetchSucceeded = false;
 
     try {
       if (account.provider === 'mailtm' && account.token) {
-        messages = await MailTmClient.getMessages(account.token, account.apiBase);
+        remoteMessages = await MailTmClient.getMessages(account.token, account.apiBase);
+        fetchSucceeded = true;
       } else if (account.provider === 'inboxes') {
-        messages = await InboxesClient.getMessages(account.address);
+        remoteMessages = await InboxesClient.getMessages(account.address);
+        fetchSucceeded = true;
       } else if (account.provider === 'tempmaillol' && account.token) {
-        messages = await TempMailLolClient.getMessages(account.token, account.address);
+        remoteMessages = await TempMailLolClient.getMessages(account.token, account.address);
+        fetchSucceeded = true;
       } else if (account.provider === 'guerrilla') {
-        messages = await GuerrillaMailClient.getMessages(account.token, account.address);
+        remoteMessages = await GuerrillaMailClient.getMessages(account.token, account.address);
+        fetchSucceeded = true;
       } else if (account.provider === 'secmail') {
-        messages = await SecMailClient.getMessages(account.address);
+        remoteMessages = await SecMailClient.getMessages(account.address);
+        fetchSucceeded = true;
       } else {
-        messages = await MockClient.getMessages(account.address);
+        remoteMessages = await MockClient.getMessages(account.address);
+        fetchSucceeded = true;
       }
     } catch (err: any) {
       if (err?.message === 'UNAUTHORIZED' && account.provider === 'mailtm') {
@@ -222,19 +234,24 @@ export class MailService {
         const newAcc = await this.getOrCreateAccount(true);
         return this.getMessages(newAcc, isInitialLoad);
       }
-      // Fall back to cached messages
-      messages = StorageManager.getCachedMessages(account.address);
+      console.warn('Remote fetch failed, falling back to local storage cache:', err);
     }
 
-    // Check if new emails arrived compared to cache
-    const previousMsgs = StorageManager.getCachedMessages(account.address);
-    const prevIds = new Set(previousMsgs.map((m) => m.id));
-    const newItems = messages.filter((m) => !prevIds.has(m.id));
+    let finalMessages: MailMessage[];
+    if (fetchSucceeded) {
+      // Merge remote messages with existing cache to permanently keep emails even after server deletion
+      finalMessages = StorageManager.mergeAndSaveMessages(account.address, remoteMessages);
+    } else {
+      finalMessages = previousMsgs;
+    }
+
+    // Check if new emails arrived compared to previous state
+    const newItems = finalMessages.filter((m) => !prevIds.has(m.id));
 
     // Play chime whenever new incoming email arrives
     if (newItems.length > 0 && !isInitialLoad) {
       soundNotifier.playNotificationChime();
-      
+
       // Dispatch browser notification if permitted
       if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
         const newest = newItems[0];
@@ -245,49 +262,139 @@ export class MailService {
       }
     }
 
-    // Update cache
-    StorageManager.setCachedMessages(account.address, messages);
-    return messages;
+    // Proactively prefetch full email contents into localStorage for new items
+    // so user can read full email body even if provider server purges it shortly
+    if (fetchSucceeded && newItems.length > 0) {
+      this.prefetchMessageDetails(account, newItems);
+    }
+
+    return finalMessages;
   }
 
   /**
-   * Fetches full body content and attachments for a specific message
+   * Background pre-fetches and saves full email bodies into localStorage cache
+   * so emails are permanently preserved even if the provider purges them shortly.
+   */
+  private static prefetchMessageDetails(account: MailAccount, newMessages: MailMessage[]): void {
+    if (!newMessages || newMessages.length === 0) return;
+
+    setTimeout(async () => {
+      for (const msg of newMessages) {
+        try {
+          const cached = StorageManager.getCachedMessageDetail(account.address, msg.id);
+          if (!cached || (!cached.html?.length && !cached.text)) {
+            let detail: DetailedMailMessage | null = null;
+            if (account.provider === 'mailtm' && account.token) {
+              detail = await MailTmClient.getMessageDetail(account.token, msg.id, account.apiBase);
+            } else if (account.provider === 'inboxes') {
+              detail = await InboxesClient.getMessageDetail(account.address, msg.id);
+            } else if (account.provider === 'tempmaillol') {
+              detail = await TempMailLolClient.getMessageDetail(account.address, msg.id);
+            } else if (account.provider === 'guerrilla') {
+              detail = await GuerrillaMailClient.getMessageDetail(account.token || '', msg.id);
+            } else if (account.provider === 'secmail') {
+              detail = await SecMailClient.getMessageDetail(account.address, msg.id);
+            } else if (account.provider === 'mock') {
+              detail = await MockClient.getMessageDetail(account.address, msg.id);
+            }
+
+            if (detail) {
+              detail.seen = msg.seen;
+              StorageManager.setCachedMessageDetail(account.address, detail);
+            }
+          }
+        } catch (e) {
+          console.debug('Background prefetch detail note:', e);
+        }
+      }
+    }, 100);
+  }
+
+  /**
+   * Fetches full body content and attachments for a specific message.
+   * Checks browser localStorage cache first, then fetches remotely and caches permanently.
    */
   static async getMessageDetail(account: MailAccount, messageId: string): Promise<DetailedMailMessage> {
-    if (account.provider === 'mailtm' && account.token) {
-      return MailTmClient.getMessageDetail(account.token, messageId, account.apiBase);
-    } else if (account.provider === 'inboxes') {
-      return InboxesClient.getMessageDetail(account.address, messageId);
-    } else if (account.provider === 'tempmaillol') {
-      return TempMailLolClient.getMessageDetail(account.address, messageId);
-    } else if (account.provider === 'guerrilla') {
-      return GuerrillaMailClient.getMessageDetail(account.token || '', messageId);
-    } else if (account.provider === 'secmail') {
-      return SecMailClient.getMessageDetail(account.address, messageId);
-    } else {
-      return MockClient.getMessageDetail(account.address, messageId);
+    // 1. Check local storage cache first
+    const cachedDetail = StorageManager.getCachedMessageDetail(account.address, messageId);
+    if (cachedDetail && (cachedDetail.html?.length > 0 || cachedDetail.text)) {
+      if (!cachedDetail.seen) {
+        cachedDetail.seen = true;
+        StorageManager.setCachedMessageDetail(account.address, cachedDetail);
+        StorageManager.markMessageSeen(account.address, messageId);
+      }
+      return cachedDetail;
+    }
+
+    // 2. Try fetching from remote provider
+    try {
+      let detail: DetailedMailMessage;
+      if (account.provider === 'mailtm' && account.token) {
+        detail = await MailTmClient.getMessageDetail(account.token, messageId, account.apiBase);
+      } else if (account.provider === 'inboxes') {
+        detail = await InboxesClient.getMessageDetail(account.address, messageId);
+      } else if (account.provider === 'tempmaillol') {
+        detail = await TempMailLolClient.getMessageDetail(account.address, messageId);
+      } else if (account.provider === 'guerrilla') {
+        detail = await GuerrillaMailClient.getMessageDetail(account.token || '', messageId);
+      } else if (account.provider === 'secmail') {
+        detail = await SecMailClient.getMessageDetail(account.address, messageId);
+      } else {
+        detail = await MockClient.getMessageDetail(account.address, messageId);
+      }
+
+      detail.seen = true;
+      // Save into permanent local storage
+      StorageManager.setCachedMessageDetail(account.address, detail);
+      StorageManager.markMessageSeen(account.address, messageId);
+      return detail;
+    } catch (err) {
+      console.warn('Failed to fetch remote message detail, checking fallback:', err);
+
+      // 3. Fallback: If remote failed (e.g. server deleted message), check cached detail or build from summary
+      if (cachedDetail) {
+        return cachedDetail;
+      }
+
+      const summaryList = StorageManager.getCachedMessages(account.address);
+      const summary = summaryList.find((m) => m.id === messageId);
+      if (summary) {
+        const fallbackDetail: DetailedMailMessage = {
+          ...summary,
+          seen: true,
+          text: summary.intro || summary.subject || '',
+          html: summary.intro ? [`<p>${summary.intro}</p>`] : [`<p>${summary.subject}</p>`],
+          attachments: [],
+        };
+        StorageManager.setCachedMessageDetail(account.address, fallbackDetail);
+        StorageManager.markMessageSeen(account.address, messageId);
+        return fallbackDetail;
+      }
+
+      throw err;
     }
   }
 
   /**
-   * Deletes a message from the mailbox
+   * Deletes a message from the mailbox and localStorage
    */
   static async deleteMessage(account: MailAccount, messageId: string): Promise<boolean> {
-    if (account.provider === 'mailtm' && account.token) {
-      await MailTmClient.deleteMessage(account.token, messageId, account.apiBase);
-    } else if (account.provider === 'inboxes') {
-      await InboxesClient.deleteMessage(messageId);
-    } else if (account.provider === 'guerrilla') {
-      await GuerrillaMailClient.deleteMessage(account.token || '', messageId);
-    } else if (account.provider === 'mock') {
-      await MockClient.deleteMessage(account.address, messageId);
+    try {
+      if (account.provider === 'mailtm' && account.token) {
+        await MailTmClient.deleteMessage(account.token, messageId, account.apiBase);
+      } else if (account.provider === 'inboxes') {
+        await InboxesClient.deleteMessage(messageId);
+      } else if (account.provider === 'guerrilla') {
+        await GuerrillaMailClient.deleteMessage(account.token || '', messageId);
+      } else if (account.provider === 'mock') {
+        await MockClient.deleteMessage(account.address, messageId);
+      }
+    } catch (err) {
+      console.warn('Remote delete failed, proceeding with local removal:', err);
     }
 
-    // Update cache
-    const cached = StorageManager.getCachedMessages(account.address);
-    const updated = cached.filter((m) => m.id !== messageId);
-    StorageManager.setCachedMessages(account.address, updated);
-
+    // Always remove from local storage cache
+    StorageManager.removeCachedMessage(account.address, messageId);
     return true;
   }
 
