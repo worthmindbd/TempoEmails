@@ -6,6 +6,7 @@ services:
       args:
         SITE_URL: ${SITE_URL:-https://tempoemails.com}
         PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-https://tempoemails.com}
+        PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:-tempoemails.com}
         PUBLIC_GOOGLE_ANALYTICS_ID: ${PUBLIC_GOOGLE_ANALYTICS_ID:-}
         PUBLIC_GOOGLE_ADSENSE_ID: ${PUBLIC_GOOGLE_ADSENSE_ID:-}
         PUBLIC_GOOGLE_ADSENSE_SLOT_ID: ${PUBLIC_GOOGLE_ADSENSE_SLOT_ID:-}
