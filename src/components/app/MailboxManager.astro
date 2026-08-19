@@ -636,7 +636,7 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
       if (!preview) return;
 
       const prefix = input?.value?.trim() || 'yourname';
-      const domain = select?.value || this.availableDomains[0]?.domain || 'tempoemails.com';
+      const domain = select?.value || this.availableDomains[0]?.domain || (typeof window !== 'undefined' ? window.location.hostname : 'tempomail');
       preview.textContent = `${prefix}@${domain}`;
     }
 

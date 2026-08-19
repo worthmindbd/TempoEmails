@@ -1,5 +1,6 @@
 ---
 import ContentLayout from '../layouts/ContentLayout.astro';
+import { SITE_CONFIG } from '../lib/config';
 ---
 
 <ContentLayout
@@ -31,8 +32,8 @@ import ContentLayout from '../layouts/ContentLayout.astro';
       <p class="text-xs text-[#575757] dark:text-zinc-400">
         Questions about our platform, feature suggestions, or general feedback.
       </p>
-      <a href="mailto:contact@tempoemails.com" class="inline-block text-sm font-mono font-semibold text-[#ea2804] hover:underline pt-1">
-        contact@tempoemails.com
+      <a href={`mailto:${SITE_CONFIG.emails.contact}`} class="inline-block text-sm font-mono font-semibold text-[#ea2804] hover:underline pt-1">
+        {SITE_CONFIG.emails.contact}
       </a>
     </div>
 
@@ -46,8 +47,8 @@ import ContentLayout from '../layouts/ContentLayout.astro';
       <p class="text-xs text-[#575757] dark:text-zinc-400">
         Report inbox delivery glitches, UI bugs, or connectivity errors.
       </p>
-      <a href="mailto:support@tempoemails.com" class="inline-block text-sm font-mono font-semibold text-[#ea2804] hover:underline pt-1">
-        support@tempoemails.com
+      <a href={`mailto:${SITE_CONFIG.emails.support}`} class="inline-block text-sm font-mono font-semibold text-[#ea2804] hover:underline pt-1">
+        {SITE_CONFIG.emails.support}
       </a>
     </div>
 
@@ -61,8 +62,8 @@ import ContentLayout from '../layouts/ContentLayout.astro';
       <p class="text-xs text-[#575757] dark:text-zinc-400">
         Advertising inquiries, domain integrations, and commercial syndication.
       </p>
-      <a href="mailto:business@tempoemails.com" class="inline-block text-sm font-mono font-semibold text-[#ea2804] hover:underline pt-1">
-        business@tempoemails.com
+      <a href={`mailto:${SITE_CONFIG.emails.business}`} class="inline-block text-sm font-mono font-semibold text-[#ea2804] hover:underline pt-1">
+        {SITE_CONFIG.emails.business}
       </a>
     </div>
 
@@ -76,8 +77,8 @@ import ContentLayout from '../layouts/ContentLayout.astro';
       <p class="text-xs text-[#575757] dark:text-zinc-400">
         Report terms violations, spam originators, phishing attempts, or DMCA notices.
       </p>
-      <a href="mailto:abuse@tempoemails.com" class="inline-block text-sm font-mono font-semibold text-[#ea2804] hover:underline pt-1">
-        abuse@tempoemails.com
+      <a href={`mailto:${SITE_CONFIG.emails.abuse}`} class="inline-block text-sm font-mono font-semibold text-[#ea2804] hover:underline pt-1">
+        {SITE_CONFIG.emails.abuse}
       </a>
     </div>
   </div>
@@ -109,12 +110,12 @@ import ContentLayout from '../layouts/ContentLayout.astro';
 
   <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Tips for Submitting Bug Reports</h2>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    When sending technical bug reports to <a href="mailto:support@tempoemails.com" class="text-[#ea2804] hover:underline">support@tempoemails.com</a>, including the following details helps our engineering team resolve issues faster:
+    When sending technical bug reports to <a href={`mailto:${SITE_CONFIG.emails.support}`} class="text-[#ea2804] hover:underline">{SITE_CONFIG.emails.support}</a>, including the following details helps our engineering team resolve issues faster:
   </p>
   <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-4">
     <li>Your browser name and version (e.g., Chrome 128, Firefox 130, Safari iOS).</li>
     <li>Your device type and operating system (e.g., macOS Sonoma, Windows 11, Android 14).</li>
-    <li>The specific domain name you were using (e.g., <code>@tempoemails.com</code>).</li>
+    <li>The specific domain name you were using (e.g., <code>@{SITE_CONFIG.domain}</code>).</li>
     <li>A brief description of what happened vs. what you expected to happen.</li>
     <li><strong>Security Reminder:</strong> Never share sensitive passwords, secret API keys, or personal banking data in your support correspondence.</li>
   </ul>

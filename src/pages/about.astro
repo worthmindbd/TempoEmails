@@ -1,5 +1,6 @@
 ---
 import ContentLayout from '../layouts/ContentLayout.astro';
+import { SITE_CONFIG } from '../lib/config';
 ---
 
 <ContentLayout
@@ -91,6 +92,6 @@ import ContentLayout from '../layouts/ContentLayout.astro';
 
   <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Get in Touch</h2>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Have questions, feature suggestions, or feedback? We are constantly improving TempoEmails and would love to hear from you. Visit our <a href="/contact" class="text-[#ea2804] hover:underline">Contact Us page</a> or email our team directly at <a href="mailto:contact@tempoemails.com" class="text-[#ea2804] hover:underline">contact@tempoemails.com</a>.
+    Have questions, feature suggestions, or feedback? We are constantly improving TempoEmails and would love to hear from you. Visit our <a href="/contact" class="text-[#ea2804] hover:underline">Contact Us page</a> or email our team directly at <a href={`mailto:${SITE_CONFIG.emails.contact}`} class="text-[#ea2804] hover:underline">{SITE_CONFIG.emails.contact}</a>.
   </p>
 </ContentLayout>

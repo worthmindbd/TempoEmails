@@ -1,5 +1,6 @@
 ---
 import ContentLayout from '../layouts/ContentLayout.astro';
+import { SITE_CONFIG } from '../lib/config';
 ---
 
 <ContentLayout
@@ -12,7 +13,7 @@ import ContentLayout from '../layouts/ContentLayout.astro';
   </p>
 
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Welcome to <strong>TempoEmails</strong> ("we", "our", "us"). We operate the temporary, disposable email service available at <strong>tempoemails.com</strong> (the "Service"). Your privacy is the foundational cornerstone of our platform. TempoEmails was specifically built to provide an anonymous, hassle-free layer of protection between your personal identity and the public internet.
+    Welcome to <strong>TempoEmails</strong> ("we", "our", "us"). We operate the temporary, disposable email service available at <strong>{SITE_CONFIG.domain}</strong> (the "Service"). Your privacy is the foundational cornerstone of our platform. TempoEmails was specifically built to provide an anonymous, hassle-free layer of protection between your personal identity and the public internet.
   </p>
 
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
@@ -150,7 +151,7 @@ import ContentLayout from '../layouts/ContentLayout.astro';
     If you have any questions, concerns, or inquiries regarding this Privacy Policy or our data handling practices, please contact our privacy team:
   </p>
   <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-4">
-    <li><strong>Email:</strong> <a href="mailto:contact@tempoemails.com" class="text-[#ea2804] hover:underline">contact@tempoemails.com</a></li>
+    <li><strong>Email:</strong> <a href={`mailto:${SITE_CONFIG.emails.contact}`} class="text-[#ea2804] hover:underline">{SITE_CONFIG.emails.contact}</a></li>
     <li><strong>Support & Inquiries:</strong> <a href="/contact" class="text-[#ea2804] hover:underline">TempoEmails Contact Page</a></li>
     <li><strong>Terms of Service:</strong> <a href="/terms-of-service" class="text-[#ea2804] hover:underline">View Terms of Service</a></li>
   </ul>
