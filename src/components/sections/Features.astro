@@ -49,10 +49,10 @@ const features = [
     </p>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
     {features.map((f) => (
-      <GlassCard variant="card" class="p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group">
-        <div class="w-12 h-12 rounded-2xl bg-[#ea2804]/10 dark:bg-[#ea2804]/20 text-[#ea2804] dark:text-[#ff6a3d] flex items-center justify-center mb-4 transition-transform group-hover:scale-110 shadow-xs" set:html={f.icon}>
+      <GlassCard variant="card" class="p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group">
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#ea2804]/10 dark:bg-[#ea2804]/20 text-[#ea2804] dark:text-[#ff6a3d] flex items-center justify-center mb-4 transition-transform group-hover:scale-110 shadow-xs" set:html={f.icon}>
         </div>
         <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-2">
           {f.title}

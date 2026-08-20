@@ -4,29 +4,32 @@ import Button from '../ui/Button.astro';
 ---
 
 <header class="sticky top-0 z-40 w-full border-b border-black/5 dark:border-white/10 glass-panel backdrop-blur-xl transition-all duration-300">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
     <!-- Brand Wordmark Logo -->
-    <a href="/" class="flex items-center gap-2.5 group select-none">
-      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#ea2804] to-[#ff6a3d] flex items-center justify-center text-white shadow-md shadow-[#ea2804]/25 transition-transform group-hover:scale-105">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <a href="/" class="flex items-center gap-2 sm:gap-2.5 group select-none shrink-0">
+      <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-[#ea2804] to-[#ff6a3d] flex items-center justify-center text-white shadow-md shadow-[#ea2804]/25 transition-transform group-hover:scale-105">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="4"></circle>
           <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"></path>
         </svg>
       </div>
       <div class="flex flex-col">
-        <span class="font-display text-xl font-black tracking-tight text-[#202020] dark:text-white">
+        <span class="font-display text-lg sm:text-xl font-black tracking-tight text-[#202020] dark:text-white">
           Tempo<span class="text-[#ea2804] dark:text-[#ff6a3d]">Emails</span>
         </span>
-        <span class="text-[9px] uppercase tracking-widest font-mono text-[#8d8d8d] dark:text-zinc-400 -mt-1">
+        <span class="text-[8px] sm:text-[9px] uppercase tracking-widest font-mono text-[#8d8d8d] dark:text-zinc-400 -mt-1">
           Burner Inbox
         </span>
       </div>
     </a>
 
-    <!-- Navigation Links -->
+    <!-- Desktop Navigation Links -->
     <nav class="hidden md:flex items-center gap-1">
       <a href="/#features" class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
         Features
+      </a>
+      <a href="/#how-it-works" class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+        How It Works
       </a>
       <a href="/#faq" class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
         FAQ
@@ -40,13 +43,14 @@ import Button from '../ui/Button.astro';
     </nav>
 
     <!-- Right Controls -->
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5 sm:gap-2">
       <!-- Sound Chime Toggle -->
       <button
         id="sound-toggle-btn"
         type="button"
-        class="w-10 h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white transition-colors cursor-pointer"
+        class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white transition-colors cursor-pointer"
         title="Toggle email notification sound"
+        aria-label="Toggle notification sound"
       >
         <svg id="sound-on-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -59,7 +63,7 @@ import Button from '../ui/Button.astro';
         </svg>
       </button>
 
-      <!-- Recent Inboxes History Button -->
+      <!-- Recent Inboxes History Button (Desktop & Tablet) -->
       <button
         id="header-history-btn"
         type="button"
@@ -74,6 +78,94 @@ import Button from '../ui/Button.astro';
 
       <!-- Light / Dark Mode Toggle -->
       <ThemeToggle />
+
+      <!-- Mobile Hamburger Menu Button -->
+      <button
+        id="mobile-menu-toggle"
+        type="button"
+        class="md:hidden w-9 h-9 rounded-full flex items-center justify-center bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white transition-colors cursor-pointer"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+        aria-controls="mobile-nav-drawer"
+      >
+        <!-- Hamburger Icon -->
+        <svg id="hamburger-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <!-- Close (X) Icon -->
+        <svg id="close-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Drawer -->
+  <div
+    id="mobile-nav-drawer"
+    class="hidden md:hidden border-t border-black/5 dark:border-white/10 bg-white/95 dark:bg-[#121216]/95 backdrop-blur-2xl px-4 pt-3 pb-5 space-y-3 transition-all duration-200 shadow-xl"
+  >
+    <nav class="flex flex-col space-y-1">
+      <a
+        href="/#features"
+        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
+      >
+        <span>Features</span>
+        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
+      </a>
+      <a
+        href="/#how-it-works"
+        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
+      >
+        <span>How It Works</span>
+        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
+      </a>
+      <a
+        href="/#faq"
+        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
+      >
+        <span>FAQ</span>
+        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
+      </a>
+      <a
+        href="/blog"
+        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
+      >
+        <span>Privacy & Security Blog</span>
+        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
+      </a>
+      <a
+        href="/about"
+        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
+      >
+        <span>About Us</span>
+        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
+      </a>
+      <a
+        href="/contact"
+        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
+      >
+        <span>Contact & Support</span>
+        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
+      </a>
+    </nav>
+
+    <!-- Mobile Quick History Button -->
+    <div class="pt-2 border-t border-black/5 dark:border-white/10">
+      <button
+        id="mobile-history-btn"
+        type="button"
+        class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold bg-[#ea2804]/10 dark:bg-[#ea2804]/20 text-[#ea2804] dark:text-[#ff6a3d] border border-[#ea2804]/30 hover:bg-[#ea2804]/20 transition-all cursor-pointer"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span>View Recent Inboxes History</span>
+      </button>
     </div>
   </div>
 </header>
@@ -114,6 +206,65 @@ import Button from '../ui/Button.astro';
 
     document.getElementById('header-history-btn')?.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('tempomail:openhistory'));
+    });
+
+    // Mobile Navigation Toggle
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileNavDrawer = document.getElementById('mobile-nav-drawer');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    const toggleMobileMenu = (open?: boolean) => {
+      if (!mobileNavDrawer || !mobileMenuToggle) return;
+      const isCurrentlyOpen = !mobileNavDrawer.classList.contains('hidden');
+      const shouldOpen = open !== undefined ? open : !isCurrentlyOpen;
+
+      if (shouldOpen) {
+        mobileNavDrawer.classList.remove('hidden');
+        hamburgerIcon?.classList.add('hidden');
+        closeIcon?.classList.remove('hidden');
+        mobileMenuToggle.setAttribute('aria-expanded', 'true');
+      } else {
+        mobileNavDrawer.classList.add('hidden');
+        hamburgerIcon?.classList.remove('hidden');
+        closeIcon?.classList.add('hidden');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      }
+    };
+
+    mobileMenuToggle?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMobileMenu();
+    });
+
+    // Mobile history button trigger
+    document.getElementById('mobile-history-btn')?.addEventListener('click', () => {
+      toggleMobileMenu(false);
+      window.dispatchEvent(new CustomEvent('tempomail:openhistory'));
+    });
+
+    // Close mobile menu when clicking any link
+    document.querySelectorAll('.mobile-nav-link').forEach((link) => {
+      link.addEventListener('click', () => {
+        toggleMobileMenu(false);
+      });
+    });
+
+    // Close mobile menu on click outside
+    document.addEventListener('click', (e) => {
+      if (!mobileNavDrawer?.classList.contains('hidden')) {
+        const header = document.querySelector('header');
+        if (header && !header.contains(e.target as Node)) {
+          toggleMobileMenu(false);
+        }
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !mobileNavDrawer?.classList.contains('hidden')) {
+        toggleMobileMenu(false);
+      }
     });
   }
 

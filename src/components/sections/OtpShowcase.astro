@@ -53,16 +53,16 @@ import Badge from '../ui/Badge.astro';
           </div>
 
           <!-- Highlighted banner -->
-          <div class="p-4 rounded-xl bg-gradient-to-r from-[#ea2804]/15 via-[#ff6a3d]/20 to-[#ea2804]/15 border border-[#ea2804]/40 flex items-center justify-between gap-3">
-            <div>
+          <div class="p-3.5 sm:p-4 rounded-xl bg-gradient-to-r from-[#ea2804]/15 via-[#ff6a3d]/20 to-[#ea2804]/15 border border-[#ea2804]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="min-w-0">
               <span class="text-[10px] font-bold tracking-wider uppercase text-[#ea2804] dark:text-[#ff6a3d] block">
                 Verification Code
               </span>
-              <span class="font-mono text-3xl font-black tracking-widest text-[#202020] dark:text-white">
+              <span class="font-mono text-2xl sm:text-3xl font-black tracking-widest text-[#202020] dark:text-white break-all">
                 5 9 3 8 2 1
               </span>
             </div>
-            <div class="px-3.5 py-2 rounded-full bg-[#ea2804] text-white text-xs font-bold shadow-md inline-flex items-center gap-1">
+            <div class="w-full sm:w-auto px-3.5 py-2 rounded-full bg-[#ea2804] text-white text-xs font-bold shadow-md inline-flex items-center justify-center gap-1 shrink-0">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
               1-Tap Copy
             </div>

@@ -4,12 +4,12 @@ import Button from '../ui/Button.astro';
 
 <div
   id="qr-modal"
-  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200"
+  class="fixed inset-0 z-50 flex items-center justify-center p-3.5 sm:p-4 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200"
   role="dialog"
   aria-modal="true"
   aria-labelledby="qr-modal-title"
 >
-  <div class="relative w-full max-w-sm glass-panel p-6 rounded-3xl shadow-2xl transform scale-95 transition-transform duration-200" id="qr-modal-content">
+  <div class="relative w-full max-w-sm max-h-[90vh] overflow-y-auto glass-panel p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-2xl transform scale-95 transition-transform duration-200" id="qr-modal-content">
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center gap-2">
         <div class="w-8 h-8 rounded-full bg-[#ea2804]/10 text-[#ea2804] flex items-center justify-center">

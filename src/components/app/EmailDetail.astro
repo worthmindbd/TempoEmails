@@ -5,22 +5,22 @@ import Badge from '../ui/Badge.astro';
 
 <div id="email-detail-container" class="h-full flex flex-col bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm">
   <!-- Empty placeholder when no message is selected -->
-  <div id="email-detail-empty" class="flex flex-col items-center justify-center p-8 text-center h-full min-h-[400px]">
-    <div class="w-16 h-16 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-[#8d8d8d] dark:text-zinc-500 mb-4">
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+  <div id="email-detail-empty" class="flex flex-col items-center justify-center p-6 sm:p-8 text-center h-full min-h-[360px] sm:min-h-[400px]">
+    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-[#8d8d8d] dark:text-zinc-500 mb-4">
+      <svg class="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
         <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
       </svg>
     </div>
     <h3 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">
       No message selected
     </h3>
-    <p class="text-xs text-[#575757] dark:text-zinc-400 max-w-xs">
-      Select an email from your inbox on the left to read its full content and copy verification codes.
+    <p class="text-xs text-[#575757] dark:text-zinc-400 max-w-xs leading-relaxed">
+      Select an email from your inbox to read its full content and copy verification codes.
     </p>
   </div>
 
   <!-- Loading spinner -->
-  <div id="email-detail-loading" class="hidden flex-col items-center justify-center p-8 text-center h-full min-h-[400px]">
+  <div id="email-detail-loading" class="hidden flex-col items-center justify-center p-6 sm:p-8 text-center h-full min-h-[360px] sm:min-h-[400px]">
     <div class="w-10 h-10 border-2 border-[#ea2804] border-t-transparent rounded-full animate-spin mb-3"></div>
     <p class="text-xs font-mono text-[#575757] dark:text-zinc-400">Loading email contents...</p>
   </div>
@@ -28,15 +28,15 @@ import Badge from '../ui/Badge.astro';
   <!-- Full Message Content (Hidden until loaded) -->
   <div id="email-detail-content" class="hidden h-full flex flex-col">
     <!-- Message Top Bar -->
-    <div class="p-4 md:p-5 border-b border-black/5 dark:border-white/10 space-y-3">
+    <div class="p-3.5 sm:p-5 border-b border-black/5 dark:border-white/10 space-y-3">
       <!-- Back button (mobile) + Actions -->
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
         <button
           id="email-detail-back-btn"
           type="button"
-          class="md:hidden inline-flex items-center gap-1.5 text-xs font-semibold text-[#ea2804] hover:text-[#c01f00] cursor-pointer"
+          class="md:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ea2804]/10 text-xs font-bold text-[#ea2804] hover:bg-[#ea2804]/20 transition-colors cursor-pointer"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
             <polyline points="15 18 9 12 15 6"></polyline>
           </svg>
           Back to Inbox
@@ -45,10 +45,10 @@ import Badge from '../ui/Badge.astro';
         <div class="flex items-center gap-2 ml-auto">
           <!-- View switcher tabs -->
           <div class="inline-flex p-0.5 rounded-full bg-black/5 dark:bg-white/10 text-xs">
-            <button id="tab-html-btn" type="button" class="px-3 py-1 rounded-full font-medium transition-all bg-white dark:bg-zinc-800 text-[#202020] dark:text-white shadow-xs">
+            <button id="tab-html-btn" type="button" class="px-2.5 sm:px-3 py-1 rounded-full font-medium transition-all bg-white dark:bg-zinc-800 text-[#202020] dark:text-white shadow-xs cursor-pointer">
               HTML
             </button>
-            <button id="tab-text-btn" type="button" class="px-3 py-1 rounded-full font-medium transition-all text-[#575757] dark:text-zinc-400 hover:text-[#202020] dark:hover:text-white">
+            <button id="tab-text-btn" type="button" class="px-2.5 sm:px-3 py-1 rounded-full font-medium transition-all text-[#575757] dark:text-zinc-400 hover:text-[#202020] dark:hover:text-white cursor-pointer">
               Text
             </button>
           </div>
@@ -57,8 +57,9 @@ import Badge from '../ui/Badge.astro';
           <button
             id="download-email-btn"
             type="button"
-            class="w-8 h-8 rounded-full flex items-center justify-center text-[#575757] dark:text-zinc-400 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-[#575757] dark:text-zinc-400 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
             title="Download email"
+            aria-label="Download email text"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -71,8 +72,9 @@ import Badge from '../ui/Badge.astro';
           <button
             id="delete-msg-btn"
             type="button"
-            class="w-8 h-8 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
             title="Delete this message"
+            aria-label="Delete message"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <polyline points="3 6 5 6 21 6"></polyline>
@@ -83,66 +85,66 @@ import Badge from '../ui/Badge.astro';
       </div>
 
       <!-- Subject Headline -->
-      <h2 id="msg-subject-display" class="font-display text-lg md:text-xl font-bold text-[#202020] dark:text-[#fcfcfc] break-words">
+      <h2 id="msg-subject-display" class="font-display text-base sm:text-lg md:text-xl font-bold text-[#202020] dark:text-[#fcfcfc] break-words">
         Subject
       </h2>
 
       <!-- Sender / Metadata Info -->
-      <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
-        <div class="flex items-center gap-2.5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+        <div class="flex items-start sm:items-center gap-2.5 min-w-0 flex-1">
           <div id="sender-avatar" class="w-8 h-8 rounded-full bg-[#ea2804]/10 text-[#ea2804] dark:bg-[#ea2804]/20 dark:text-[#ff6a3d] font-bold flex items-center justify-center uppercase shrink-0">
             S
           </div>
-          <div>
-            <div class="flex items-center gap-1.5">
-              <span id="msg-from-name" class="font-bold text-[#202020] dark:text-[#fcfcfc]">Sender</span>
-              <span class="text-[#8d8d8d] dark:text-zinc-500">&lt;<span id="msg-from-address" class="font-mono">sender@example.com</span>&gt;</span>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span id="msg-from-name" class="font-bold text-[#202020] dark:text-[#fcfcfc] break-words">Sender</span>
+              <span class="text-[#8d8d8d] dark:text-zinc-500 break-all">&lt;<span id="msg-from-address" class="font-mono">sender@example.com</span>&gt;</span>
             </div>
-            <div class="text-[11px] text-[#8d8d8d] dark:text-zinc-500">
+            <div class="text-[11px] text-[#8d8d8d] dark:text-zinc-500 break-all">
               To: <span id="msg-to-address" class="font-mono">you@tempo.mail</span>
             </div>
           </div>
         </div>
 
-        <div class="text-right">
+        <div class="text-left sm:text-right shrink-0">
           <span id="msg-date-full" class="text-[11px] text-[#8d8d8d] dark:text-zinc-400 font-mono block">Date</span>
         </div>
       </div>
     </div>
 
     <!-- Smart OTP / Verification Code Banner (Dynamically shown if code found) -->
-    <div id="otp-highlight-banner" class="hidden mx-4 my-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#ea2804]/15 via-[#ff6a3d]/15 to-[#ea2804]/15 border border-[#ea2804]/30 dark:border-[#ea2804]/40 shadow-md">
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div class="flex items-center gap-2.5">
+    <div id="otp-highlight-banner" class="hidden mx-3 sm:mx-4 my-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#ea2804]/15 via-[#ff6a3d]/15 to-[#ea2804]/15 border border-[#ea2804]/30 dark:border-[#ea2804]/40 shadow-md">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 min-w-0">
           <div class="w-8 h-8 rounded-full bg-[#ea2804] text-white flex items-center justify-center shrink-0 shadow-xs">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
             </svg>
           </div>
-          <div>
+          <div class="min-w-0">
             <span class="text-[10px] font-bold tracking-wider uppercase text-[#ea2804] dark:text-[#ff6a3d] block">
               Verification Code Detected
             </span>
-            <div class="font-mono text-2xl font-black tracking-widest text-[#202020] dark:text-white" id="detected-otp-code">
+            <div class="font-mono text-xl sm:text-2xl font-black tracking-widest text-[#202020] dark:text-white break-all" id="detected-otp-code">
               123456
             </div>
           </div>
         </div>
 
         <Button variant="primary" size="sm" id="copy-otp-btn" class="w-full sm:w-auto shrink-0 shadow-sm">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
           </svg>
-          Copy Code
+          <span>Copy Code</span>
         </Button>
       </div>
     </div>
 
     <!-- Verification Link Quick Action (If detected) -->
-    <div id="verify-link-banner" class="hidden mx-4 mb-3 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs flex items-center justify-between gap-2">
-      <div class="flex items-center gap-2 truncate">
-        <span class="text-blue-500 font-bold">🔗 Activation Link:</span>
+    <div id="verify-link-banner" class="hidden mx-3 sm:mx-4 mb-3 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+      <div class="flex items-center gap-2 min-w-0 flex-1">
+        <span class="text-blue-500 font-bold shrink-0">🔗 Link:</span>
         <span id="detected-verify-url" class="font-mono text-blue-600 dark:text-blue-400 truncate"></span>
       </div>
       <a
@@ -150,26 +152,26 @@ import Badge from '../ui/Badge.astro';
         href="#"
         target="_blank"
         rel="noopener noreferrer"
-        class="shrink-0 font-semibold text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
+        class="shrink-0 font-semibold text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1 w-full sm:w-auto justify-center sm:justify-start py-1 px-2.5 sm:p-0 rounded-lg sm:rounded-none bg-blue-500/10 sm:bg-transparent"
       >
         Open Link ↗
       </a>
     </div>
 
     <!-- Email Render Views -->
-    <div class="flex-1 overflow-hidden relative p-4">
+    <div class="flex-1 overflow-hidden relative p-3 sm:p-4 min-h-[360px] sm:min-h-[420px]">
       <!-- Sandboxed HTML iframe view -->
-      <div id="html-view-wrapper" class="w-full h-full rounded-xl overflow-hidden bg-white shadow-inner">
+      <div id="html-view-wrapper" class="w-full h-full min-h-[360px] sm:min-h-[420px] rounded-xl overflow-hidden bg-white shadow-inner">
         <iframe
           id="email-html-frame"
           title="Email content"
           sandbox="allow-popups allow-popups-to-escape-sandbox"
-          class="w-full h-full border-0"
+          class="w-full h-full min-h-[360px] sm:min-h-[420px] border-0"
         ></iframe>
       </div>
 
       <!-- Clean Text View -->
-      <div id="text-view-wrapper" class="hidden w-full h-full overflow-y-auto p-4 rounded-xl bg-white/70 dark:bg-zinc-950/60 border border-black/5 dark:border-white/5 font-mono text-xs text-[#202020] dark:text-zinc-200 whitespace-pre-wrap select-text">
+      <div id="text-view-wrapper" class="hidden w-full h-full min-h-[360px] sm:min-h-[420px] overflow-y-auto p-4 rounded-xl bg-white/70 dark:bg-zinc-950/60 border border-black/5 dark:border-white/5 font-mono text-xs text-[#202020] dark:text-zinc-200 whitespace-pre-wrap select-text">
         <div id="email-text-content"></div>
       </div>
     </div>

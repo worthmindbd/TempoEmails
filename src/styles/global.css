@@ -54,6 +54,8 @@
 html {
   scroll-behavior: smooth;
   font-family: var(--font-sans);
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body {
@@ -62,8 +64,14 @@ body {
   color: var(--color-ink);
   transition: background-color 0.3s ease, color 0.3s ease;
   min-height: 100vh;
+  overflow-x: hidden;
+  max-width: 100vw;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+button, a, input, select {
+  touch-action: manipulation;
 }
 
 html.dark body {

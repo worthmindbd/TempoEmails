@@ -412,6 +412,13 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
           emailDetailPane.classList.remove('hidden');
           emailDetailPane.classList.add('block');
         }
+        // Smoothly scroll to the mailbox island on mobile
+        const mailboxManager = document.getElementById('mailbox-manager');
+        if (mailboxManager) {
+          const yOffset = -70; // Header height compensation
+          const y = mailboxManager.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
       }
 
       try {
@@ -734,7 +741,7 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
       const checkIcon = document.getElementById('check-icon');
       const copyText = document.getElementById('copy-btn-text');
 
-      copyBtn?.addEventListener('click', async () => {
+      const performCopy = async () => {
         if (!this.account) return;
         const ok = await copyToClipboard(this.account.address, 'Email copied to clipboard!');
         if (ok && copyIcon && checkIcon && copyText) {
@@ -747,7 +754,10 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
             copyText.textContent = 'Copy Address';
           }, 2000);
         }
-      });
+      };
+
+      copyBtn?.addEventListener('click', performCopy);
+      document.getElementById('current-email-display')?.addEventListener('click', performCopy);
 
       // 2. Refresh button
       document.getElementById('refresh-inbox-btn')?.addEventListener('click', () => {
