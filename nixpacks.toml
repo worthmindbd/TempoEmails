@@ -1,13 +1,17 @@
 # Nixpacks configuration for Dokploy
+[variables]
+NODE_ENV = "production"
+NPM_CONFIG_PRODUCTION = "false"
+NIXPACKS_PATH = ""
+
 [phases.setup]
 nixPkgs = ["nodejs_22"]
 
 [phases.install]
-cmds = ["npm ci"]
+cmds = ["npm ci --include=dev"]
 
 [phases.build]
 cmds = ["npm run build"]
 
 [start]
 cmd = "npm run start"
-
