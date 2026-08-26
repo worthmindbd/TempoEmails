@@ -32,7 +32,7 @@ const breadcrumbSchema = {
       '@type': 'ListItem',
       position: 1,
       name: 'Home',
-      item: canonicalURL.origin,
+      item: `${canonicalURL.origin}/`,
     },
     ...(category
       ? [
@@ -76,14 +76,14 @@ const articleSchema = publishDate
       author: {
         '@type': 'Organization',
         name: 'TempoEmails Editorial Team',
-        url: canonicalURL.origin,
+        url: `${canonicalURL.origin}/`,
       },
       publisher: {
         '@type': 'Organization',
         name: 'TempoEmails',
         logo: {
           '@type': 'ImageObject',
-          url: `${canonicalURL.origin}/favicon.svg`,
+          url: `${canonicalURL.origin}/android-chrome-512x512.png`,
         },
       },
       image: `${canonicalURL.origin}/og-image.png`,
@@ -97,6 +97,9 @@ const articleSchema = publishDate
   description={description}
   keywords={keywords}
   ogType={publishDate ? 'article' : 'website'}
+  publishDate={publishDate}
+  category={category}
+  isApp={false}
 >
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   {articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}

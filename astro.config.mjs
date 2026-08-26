@@ -50,12 +50,12 @@ export default defineConfig({
           item.lastmod = new Date(blogDates[pathname]).toISOString();
         } else if (['/about', '/contact'].includes(pathname)) {
           // Info pages
-          item.priority = 0.7;
-          item.changefreq = ChangeFreqEnum.MONTHLY;
+          item.priority = 0.8;
+          item.changefreq = ChangeFreqEnum.WEEKLY;
           item.lastmod = new Date().toISOString();
         } else {
           // Legal pages
-          item.priority = 0.5;
+          item.priority = 0.6;
           item.changefreq = ChangeFreqEnum.MONTHLY;
           item.lastmod = new Date().toISOString();
         }

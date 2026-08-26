@@ -12,6 +12,10 @@ interface Props {
   keywords?: string;
   ogImage?: string;
   ogType?: string;
+  noindex?: boolean;
+  isApp?: boolean;
+  publishDate?: string;
+  category?: string;
 }
 
 const {
@@ -20,6 +24,10 @@ const {
   keywords = 'temp mail, temporary email, disposable email, throwaway email, burner email, fake email generator, 10 minute mail, 24 hour temp mail, temp mail for discord, temporary email for chatgpt, temp mail for telegram, temporary mail for steam, disposable email for facebook, disposable mail rest api, free temporary inbox, anonymous temp email no log',
   ogImage = '/og-image.png',
   ogType = 'website',
+  noindex = false,
+  isApp = false,
+  publishDate,
+  category,
 } = Astro.props;
 
 const siteUrl = Astro.site?.origin || SITE_CONFIG.siteUrl;
@@ -35,20 +43,15 @@ const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'TempoEmails',
-  url: canonicalURL.origin,
+  url: `${canonicalURL.origin}/`,
   description: 'Instant, anonymous disposable email addresses with automatic OTP verification code extraction.',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${canonicalURL.origin}/blog?q={search_term_string}`,
-    'query-input': 'required name=search_term_string',
-  },
 };
 
 const webAppSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: 'TempoEmails',
-  url: canonicalURL.origin,
+  url: `${canonicalURL.origin}/`,
   applicationCategory: 'UtilityApplication',
   operatingSystem: 'All',
   browserRequirements: 'Requires JavaScript. Requires HTML5.',
@@ -72,8 +75,8 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'TempoEmails',
-  url: canonicalURL.origin,
-  logo: new URL('/favicon.svg', canonicalURL.origin).href,
+  url: `${canonicalURL.origin}/`,
+  logo: new URL('/android-chrome-512x512.png', canonicalURL.origin).href,
   sameAs: [
     'https://github.com/TempoEmails',
   ],
@@ -105,12 +108,21 @@ const organizationSchema = {
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
     <!-- Search Engine Indexing Directives -->
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    {noindex ? (
+      <>
+        <meta name="robots" content="noindex, follow" />
+        <meta name="googlebot" content="noindex, follow" />
+        <meta name="bingbot" content="noindex, follow" />
+      </>
+    ) : (
+      <>
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+      </>
+    )}
     <link rel="canonical" href={canonicalURL.href} />
-    <link rel="sitemap" type="application/xml" title="Sitemap Index" href="/sitemap-index.xml" />
-    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap-index.xml" />
 
     <!-- Open Graph / Social Media Preview Meta Tags -->
     <meta property="og:site_name" content="TempoEmails" />
@@ -125,6 +137,14 @@ const organizationSchema = {
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={title} />
     <meta property="og:locale" content="en_US" />
+    {ogType === 'article' && publishDate && (
+      <>
+        <meta property="article:published_time" content={publishDate} />
+        <meta property="article:modified_time" content={publishDate} />
+        {category && <meta property="article:section" content={category} />}
+        <meta property="article:author" content="TempoEmails Editorial Team" />
+      </>
+    )}
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -159,7 +179,7 @@ const organizationSchema = {
 
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
-    <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />
+    {isApp && <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />}
     <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
 
     <!-- Google Fonts: Bricolage Grotesque (Display), Inter (Body), JetBrains Mono (Code) -->
