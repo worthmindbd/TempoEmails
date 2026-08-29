@@ -11,10 +11,10 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'Can I send emails using TempoEmails?',
+      name: 'Can I send emails from TempoEmails?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. To ensure high deliverability, protect sender domain reputation, and prevent spamming abuse, TempoEmails is strictly a receive-only disposable email service. You can receive verification codes, activation links, and confirmation emails instantly.',
+        text: 'No. TempoEmails is receive-only. Blocking outbound mail keeps our domains off spam blocklists, so your verification emails and activation codes arrive reliably without getting filtered.',
       },
     },
     {
@@ -22,7 +22,7 @@ const faqSchema = {
       name: 'How fast do verification emails and OTPs arrive?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Incoming emails and OTP codes typically arrive within 2 to 5 seconds. The inbox features automatic smart polling so you never need to manually refresh the page.',
+        text: 'Most incoming emails and OTP codes arrive within 2 to 5 seconds. The inbox automatically checks for new messages every 10 seconds, so you never need to refresh the page.',
       },
     },
     {
@@ -30,15 +30,15 @@ const faqSchema = {
       name: 'How long do temporary emails stay active?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your temporary mailbox remains active as long as you keep this browser tab or session open, and is saved in your browser session history so you do not lose it upon refreshing. You can also manually delete it whenever you are finished.',
+        text: 'Your temporary inbox stays active for your browser session. You can switch between up to 8 recent inboxes from the History drawer, or delete them anytime with one click.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Is TempoEmails 100% free?',
+      name: 'Is TempoEmails completely free?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes, TempoEmails is completely free to use without any hidden fees, subscription requirements, or limits on received emails.',
+        text: 'Yes. TempoEmails is 100% free with no limits on how many emails you can receive, no hidden fees, and no paid tiers.',
       },
     },
     {
@@ -46,7 +46,7 @@ const faqSchema = {
       name: 'Do I need to sign up or provide personal details?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Never. You are automatically provided with a disposable email address the moment you visit the website. No name, password, phone number, or personal information is ever requested.',
+        text: 'No. You get a working disposable address the second you open the website. We never ask for your name, phone number, real email, or password.',
       },
     },
     {
@@ -54,7 +54,7 @@ const faqSchema = {
       name: 'Can I choose my own custom email username?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes! Click the "Custom" button in the address bar to pick your preferred username alias and choose from our active domain pool.',
+        text: 'Yes. Click the "Custom" button in the address bar to pick your own username and choose from our available domain names.',
       },
     },
   ],
@@ -63,7 +63,7 @@ const faqSchema = {
 
 <Layout
   title="TempoEmails — Free Disposable Temporary Email & Verification Codes"
-  description="Get a free disposable temporary email address instantly. Auto-extract OTP verification codes for Discord, ChatGPT, Steam & apps with zero logs."
+  description="Get an instant disposable temporary email address. Grab OTP verification codes, activation links, and confirmation messages with zero spam and zero logs."
   keywords="temp mail, temporary email, disposable email, throwaway email, burner email, fake email generator, 10 minute mail, 24 hour temp mail, temp mail for discord, temporary email for chatgpt, temp mail for telegram, temporary mail for steam, disposable email rest api"
   isApp={true}
 >
@@ -80,7 +80,7 @@ const faqSchema = {
 
     <!-- Subtitle -->
     <p class="text-sm sm:text-lg text-[#575757] dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">
-      Generate a disposable burner inbox in one click. Receive signup verification codes, activation OTPs, and confirmation links without ever exposing your personal email.
+      Get a temporary burner inbox in one click. Grab signup verification codes, OTPs, and activation links without exposing your personal email.
     </p>
   </section>
 

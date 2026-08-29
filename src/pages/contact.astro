@@ -97,17 +97,17 @@ const faqSchema = {
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    We are always here to help! Whether you have questions about using TempoEmails, encountered a technical glitch, wish to suggest a new feature, or want to explore partnership opportunities, our team is ready to assist you.
+    Have a question about TempoEmails, spotted a bug, or want to suggest a feature? Pick the channel below that best fits your needs, and we'll get back to you.
   </p>
 
   <blockquote class="border-l-4 border-[#ea2804] pl-4 italic text-[#575757] dark:text-zinc-400 mb-6">
-    <strong>Estimated Response Time:</strong> We review all incoming inquiries and typically respond within <strong>24 to 48 business hours</strong> (Monday through Friday, UTC).
+    <strong>Response time:</strong> We check incoming messages daily and typically respond within <strong>24 to 48 hours</strong> (Monday–Friday, UTC).
   </blockquote>
 
   <!-- Direct Contact Channels -->
   <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Direct Contact Channels</h2>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    To ensure prompt routing, please choose the channel that best matches your inquiry:
+    Choose the right email for faster assistance:
   </p>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -219,7 +219,7 @@ const faqSchema = {
   <!-- Frequently Asked Questions -->
   <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Frequently Asked Questions</h2>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Before sending an email, you may find instant answers to common topics below:
+    You might find quick answers to your questions below:
   </p>
 
   <div class="space-y-6 mb-8">
@@ -228,21 +228,21 @@ const faqSchema = {
         Why didn't my verification email or OTP arrive?
       </h3>
       <p class="text-sm text-[#575757] dark:text-zinc-300 leading-relaxed mb-3">
-        Most verification messages arrive in your TempoEmails inbox within 5 to 15 seconds. If you have not received an expected message:
+        Most verification messages arrive in your TempoEmails inbox within 2 to 5 seconds. If you haven't received an expected message:
       </p>
       <ul class="list-disc pl-5 space-y-1.5 text-sm text-[#575757] dark:text-zinc-300">
-        <li>Some third-party senders impose queue delays of several minutes before dispatching confirmation codes.</li>
-        <li>Certain platforms restrict known disposable email domains. Click the <strong>"Change"</strong> button on the homepage to generate an inbox on an alternate domain.</li>
-        <li>Double-check that the sender received the exact character string of your generated temporary address.</li>
+        <li>Some services introduce a 1–2 minute sending delay before sending confirmation codes.</li>
+        <li>Certain websites block specific disposable email domains. Click <strong>"Change"</strong> or <strong>"Custom"</strong> on the homepage to switch to a different domain.</li>
+        <li>Double-check that the address was copied and pasted correctly into the signup form.</li>
       </ul>
     </div>
 
     <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
       <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-2">
-        Can I send emails using TempoEmails?
+        Can I send emails from TempoEmails?
       </h3>
       <p class="text-sm text-[#575757] dark:text-zinc-300 leading-relaxed">
-        No. TempoEmails is strictly a <strong>receive-only</strong> service. We deliberately block outbound email transmission to prevent spam campaigns, phishing vectors, and ensure high IP deliverability across all our active domains.
+        No. TempoEmails is receive-only. Blocking outbound mail ensures our domains stay off spam blocklists so your verification emails arrive without issues.
       </p>
     </div>
 
@@ -251,7 +251,7 @@ const faqSchema = {
         Can I recover a deleted or expired temporary mailbox?
       </h3>
       <p class="text-sm text-[#575757] dark:text-zinc-300 leading-relaxed">
-        No. In compliance with our strict zero-retention privacy policy, once an inbox expires or is manually deleted, all received messages, attachments, and tokens are permanently destroyed. We do not maintain backups or recovery archives.
+        No. Under our strict zero-retention privacy policy, once an inbox is deleted or expires, all message contents are permanently purged. We do not keep backups or archives.
       </p>
     </div>
 
@@ -260,7 +260,7 @@ const faqSchema = {
         How do I report abuse, phishing, or send a DMCA notice?
       </h3>
       <p class="text-sm text-[#575757] dark:text-zinc-300 leading-relaxed">
-        We actively cooperate with service providers, postmasters, and security researchers. Please email <a href={`mailto:${SITE_CONFIG.emails.abuse}`} class="text-[#ea2804] hover:underline font-semibold">{SITE_CONFIG.emails.abuse}</a> with full message headers, offending domain details, and relevant evidence for expedited resolution.
+        Please email <a href={`mailto:${SITE_CONFIG.emails.abuse}`} class="text-[#ea2804] hover:underline font-semibold">{SITE_CONFIG.emails.abuse}</a> with message headers, URLs, and details for quick resolution.
       </p>
     </div>
   </div>

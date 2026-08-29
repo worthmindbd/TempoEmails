@@ -15,14 +15,14 @@ import Badge from '../ui/Badge.astro';
       No message selected
     </h3>
     <p class="text-xs text-[#575757] dark:text-zinc-400 max-w-xs leading-relaxed">
-      Select an email from your inbox to read its full content and copy verification codes.
+      Select an email from your inbox to read it and copy verification codes.
     </p>
   </div>
 
   <!-- Loading spinner -->
   <div id="email-detail-loading" class="hidden flex-col items-center justify-center p-6 sm:p-8 text-center h-full min-h-[360px] sm:min-h-[400px]">
     <div class="w-10 h-10 border-2 border-[#ea2804] border-t-transparent rounded-full animate-spin mb-3"></div>
-    <p class="text-xs font-mono text-[#575757] dark:text-zinc-400">Loading email contents...</p>
+    <p class="text-xs font-mono text-[#575757] dark:text-zinc-400">Loading email...</p>
   </div>
 
   <!-- Full Message Content (Hidden until loaded) -->
