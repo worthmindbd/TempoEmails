@@ -294,4 +294,23 @@ export class StorageManager {
       console.warn('LocalStorage error removing cached message:', e);
     }
   }
+
+  // Theme Settings
+  static getTheme(): 'light' | 'dark' {
+    if (typeof window === 'undefined') return 'light';
+    try {
+      return localStorage.getItem(STORAGE_KEYS.SETTINGS_THEME) === 'dark' ? 'dark' : 'light';
+    } catch {
+      return 'light';
+    }
+  }
+
+  static setTheme(theme: 'light' | 'dark'): void {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(STORAGE_KEYS.SETTINGS_THEME, theme);
+    } catch (e) {
+      console.warn('LocalStorage error setting theme:', e);
+    }
+  }
 }
