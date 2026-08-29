@@ -2,59 +2,61 @@
 import Layout from '../layouts/Layout.astro';
 import MailboxManager from '../components/app/MailboxManager.astro';
 import OtpShowcase from '../components/sections/OtpShowcase.astro';
+import UseCases from '../components/sections/UseCases.astro';
 import Features from '../components/sections/Features.astro';
 import HowItWorks from '../components/sections/HowItWorks.astro';
 import Faq from '../components/sections/Faq.astro';
+
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'Can I send emails from TempoEmails?',
+      name: 'What is temp mail and how does a disposable temporary email work?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. TempoEmails is receive-only. Blocking outbound mail keeps our domains off spam blocklists, so your verification emails and activation codes arrive reliably without getting filtered.',
+        text: 'Temp mail (also known as disposable email, burner email, or 10 minute mail) provides an instant temporary email address to receive incoming messages, activation links, and OTP verification codes without exposing your personal email address.',
       },
     },
     {
       '@type': 'Question',
-      name: 'How fast do verification emails and OTPs arrive?',
+      name: 'Can I use TempoEmails as a 10 minute mail for OTP verification codes?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Most incoming emails and OTP codes arrive within 2 to 5 seconds. The inbox automatically checks for new messages every 10 seconds, so you never need to refresh the page.',
+        text: 'Yes! TempoEmails features an intelligent OTP and verification code extractor. Incoming 4-to-8 digit verification tokens and magic confirmation links are automatically detected and highlighted with a 1-click copy button.',
       },
     },
     {
       '@type': 'Question',
-      name: 'How long do temporary emails stay active?',
+      name: 'Can I use temporary email for Discord, ChatGPT, Telegram, or Steam?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your temporary inbox stays active for your browser session. You can switch between up to 8 recent inboxes from the History drawer, or delete them anytime with one click.',
+        text: 'Yes. TempoEmails works with platforms like Discord, ChatGPT, OpenAI, Telegram, Steam, Reddit, and various online trial services. If a service filters a specific domain, click "Change" or "Custom" to switch to an alternate active domain.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Is TempoEmails completely free?',
+      name: 'Can I send outbound emails from TempoEmails?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. TempoEmails is 100% free with no limits on how many emails you can receive, no hidden fees, and no paid tiers.',
+        text: 'No. TempoEmails is strictly receive-only. Blocking outbound mail prevents spam abuses and protects our domain deliverability, ensuring your signup and verification emails arrive quickly without delay.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Do I need to sign up or provide personal details?',
+      name: 'Can I choose my own custom temp mail username and domain?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'No. You get a working disposable address the second you open the website. We never ask for your name, phone number, real email, or password.',
+        text: 'Yes. Click the "Custom" button in the address bar to create your own custom email username and select from our available active domains.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Can I choose my own custom email username?',
+      name: 'Is TempoEmails completely free with zero logs and no registration?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Click the "Custom" button in the address bar to pick your own username and choose from our available domain names.',
+        text: 'Yes. TempoEmails is 100% free with no registration, no passwords, and zero personal logs. Your messages exist in temporary memory and are deleted automatically when you close or wipe your session.',
       },
     },
   ],
@@ -62,25 +64,31 @@ const faqSchema = {
 ---
 
 <Layout
-  title="TempoEmails — Free Disposable Temporary Email & Verification Codes"
-  description="Get an instant disposable temporary email address. Grab OTP verification codes, activation links, and confirmation messages with zero spam and zero logs."
-  keywords="temp mail, temporary email, disposable email, throwaway email, burner email, fake email generator, 10 minute mail, 24 hour temp mail, temp mail for discord, temporary email for chatgpt, temp mail for telegram, temporary mail for steam, disposable email rest api"
+  title="Temp Mail — Free Disposable Temporary Email & Fake Email Generator"
+  description="Instant free temp mail and disposable temporary email address. Receive OTP verification codes, activation links, and burner email messages with zero spam and zero logs."
+  keywords="temp mail, tempmail, temporary email, disposable email, fake email, fake email generator, 10 minute mail, 10minutemail, burner email, throwaway email, trash mail, dropmail, receive otp online email, temp mail otp, temporary email for verification, temp mail for discord, temporary email for chatgpt, temp mail for telegram, temporary mail for steam, fake email for free trial, anonymous temp email, custom temp mail"
   isApp={true}
 >
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
   <!-- Hero Section -->
   <section class="relative pt-8 pb-5 sm:pt-12 sm:pb-8 md:pt-16 md:pb-10 px-4 sm:px-6 lg:px-8 text-center max-w-5xl mx-auto space-y-4 sm:space-y-5">
+    <!-- Highlight Badge -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#ea2804]/10 text-[#ea2804] dark:bg-[#ea2804]/20 dark:text-[#ff6a3d] border border-[#ea2804]/20">
+      <span>⚡ Instant Temp Mail & 10 Minute Burner Inbox</span>
+    </div>
+
     <!-- Editorial Display Headline (DESIGN.md specification) -->
     <h1 class="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight leading-[1.08] sm:leading-[1.05]">
-      Temporary email. <br class="hidden sm:inline" />
+      Free Temp Mail. <br class="hidden sm:inline" />
       <span class="bg-gradient-to-r from-[#ea2804] via-[#ff6a3d] to-[#ea2804] bg-clip-text text-transparent">
-        Instant privacy.
+        Disposable Email in Seconds.
       </span>
     </h1>
 
     <!-- Subtitle -->
     <p class="text-sm sm:text-lg text-[#575757] dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">
-      Get a temporary burner inbox in one click. Grab signup verification codes, OTPs, and activation links without exposing your personal email.
+      Generate an instant disposable temporary email address. Receive signup verification codes, OTPs, and activation links with zero spam, zero logs, and no registration.
     </p>
   </section>
 
@@ -91,6 +99,9 @@ const faqSchema = {
 
   <!-- OTP Feature Showcase -->
   <OtpShowcase />
+
+  <!-- Popular Use Cases Grid (Discord, ChatGPT, Telegram, Steam, QA Testing) -->
+  <UseCases />
 
   <!-- Features Grid -->
   <Features />
