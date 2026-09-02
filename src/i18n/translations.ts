@@ -237,6 +237,7 @@ export interface TranslationSchema {
     pageNotFoundDesc: string;
     goToHomepage: string;
     readOurBlog: string;
+    translationNotice: string;
   };
   pages: {
     about: {
@@ -573,7 +574,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageExpired": "expired.",
       "pageNotFoundDesc": "Just like a temporary email, this page has disappeared. But don't worry — your disposable inbox is still waiting for you.",
       "goToHomepage": "Go to Homepage",
-      "readOurBlog": "Read Our Blog"
+      "readOurBlog": "Read Our Blog",
+      "translationNotice": "This article is currently displayed in English. Full translation is in progress."
     },
     "pages": {
       "about": {
@@ -908,7 +910,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageExpired": "ha caducado.",
       "pageNotFoundDesc": "Al igual que un correo temporal, esta página ha desaparecido. Pero no se preocupe, su buzón desechable sigue esperándole.",
       "goToHomepage": "Ir a la Página Principal",
-      "readOurBlog": "Leer Nuestro Blog"
+      "readOurBlog": "Leer Nuestro Blog",
+      "translationNotice": "Este artículo se muestra actualmente en inglés. La traducción completa está en proceso."
     },
     "pages": {
       "about": {
@@ -1243,7 +1246,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageExpired": "expirou.",
       "pageNotFoundDesc": "Assim como um e-mail temporário, esta página desapareceu. Mas não se preocupe — sua caixa de entrada descartável ainda está esperando por você.",
       "goToHomepage": "Ir para a Página Inicial",
-      "readOurBlog": "Ler Nosso Blog"
+      "readOurBlog": "Ler Nosso Blog",
+      "translationNotice": "Este artigo está atualmente em inglês. A tradução completa está em andamento."
     },
     "pages": {
       "about": {
@@ -1578,7 +1582,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageExpired": "expiré.",
       "pageNotFoundDesc": "Tout comme un e-mail temporaire, cette page a disparu. Ne vous inquiétez pas — votre boîte de réception jetable vous attend.",
       "goToHomepage": "Retourner à l'Accueil",
-      "readOurBlog": "Lire Notre Blog"
+      "readOurBlog": "Lire Notre Blog",
+      "translationNotice": "Cet article est actuellement affiché en anglais. La traduction complète est en cours."
     },
     "pages": {
       "about": {
@@ -1913,7 +1918,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageExpired": "abgelaufen.",
       "pageNotFoundDesc": "Genau wie eine temporäre E-Mail ist diese Seite verschwunden. Ihr Wegwerf-Posteingang wartet jedoch weiterhin auf Sie.",
       "goToHomepage": "Zur Startseite",
-      "readOurBlog": "Blog lesen"
+      "readOurBlog": "Blog lesen",
+      "translationNotice": "Dieser Artikel wird derzeit auf Englisch angezeigt. Die vollständige Übersetzung ist in Arbeit."
     },
     "pages": {
       "about": {
@@ -2248,7 +2254,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageExpired": "истёк.",
       "pageNotFoundDesc": "Как и временное письмо, эта страница исчезла. Но ваш одноразовый ящик по-прежнему готов к работе.",
       "goToHomepage": "Перейти на главную",
-      "readOurBlog": "Читать наш блог"
+      "readOurBlog": "Читать наш блог",
+      "translationNotice": "Эта статья в настоящее время отображается на английском языке. Полный перевод в процессе."
     },
     "pages": {
       "about": {
@@ -2583,7 +2590,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageExpired": "过期。",
       "pageNotFoundDesc": "就像临时邮件一样，该页面已销毁。但别担心，您的临时收件箱仍在待命。",
       "goToHomepage": "前往首页",
-      "readOurBlog": "阅读博客"
+      "readOurBlog": "阅读博客",
+      "translationNotice": "本文目前以英文显示。完整翻译正在进行中。"
     },
     "pages": {
       "about": {
@@ -2918,7 +2926,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageExpired": "期限切れです。",
       "pageNotFoundDesc": "使い捨てメールと同様に、このページは消去されました。捨てメアドはいつでも利用可能です。",
       "goToHomepage": "トップページへ",
-      "readOurBlog": "ブログを読む"
+      "readOurBlog": "ブログを読む",
+      "translationNotice": "この記事は現在英語で表示されています。全編翻訳を進めています。"
     },
     "pages": {
       "about": {
@@ -3253,7 +3262,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageExpired": "انتهت صلاحيتها.",
       "pageNotFoundDesc": "تمامًا كالبريد المؤقت، اختفت هذه الصفحة. لكن لا تقلق — صندوق بريدك المؤقت في انتظارك.",
       "goToHomepage": "الانتقال للصفحة الرئيسية",
-      "readOurBlog": "قراءة المدونة"
+      "readOurBlog": "قراءة المدونة",
+      "translationNotice": "هذا المقال معروض حاليًا باللغة الإنجليزية. الترجمة الكاملة قيد التنفيذ."
     },
     "pages": {
       "about": {
@@ -3588,7 +3598,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageExpired": "kedaluwarsa.",
       "pageNotFoundDesc": "Sama seperti email sementara, halaman ini telah hilang. Jangan khawatir — kotak masuk sementara Anda masih siap digunakan.",
       "goToHomepage": "Kembali ke Beranda",
-      "readOurBlog": "Baca Blog Kami"
+      "readOurBlog": "Baca Blog Kami",
+      "translationNotice": "Artikel ini saat ini ditampilkan dalam bahasa Inggris. Terjemahan lengkap sedang diproses."
     },
     "pages": {
       "about": {

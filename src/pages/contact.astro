@@ -1,7 +1,8 @@
 ---
 import ContentLayout from '../layouts/ContentLayout.astro';
 import { SITE_CONFIG } from '../lib/config';
-import { useTranslation, getLocaleFromUrl } from '../i18n/utils';
+import { useTranslation, getLocaleFromUrl, getLocalizedPath } from '../i18n/utils';
+import { getContactPageData } from '../i18n/pages-data';
 import type { Locale } from '../i18n/languages';
 
 interface Props {
@@ -11,17 +12,19 @@ interface Props {
 const { locale } = Astro.props;
 const currentLocale = locale || getLocaleFromUrl(Astro.url);
 const t = useTranslation(currentLocale);
+const contact = getContactPageData(currentLocale);
 
 const siteUrl = Astro.site?.origin || SITE_CONFIG.siteUrl;
-const contactUrl = `${siteUrl}/contact/`;
+const contactUrl = `${siteUrl}${getLocalizedPath('/contact/', currentLocale)}`;
 
 // JSON-LD Structured Data: ContactPage + Organization ContactPoints
 const contactPageSchema = {
   '@context': 'https://schema.org',
   '@type': 'ContactPage',
-  name: 'Contact TempoEmails Support & Team',
-  description: 'Get in touch with the TempoEmails team for technical support, bug reports, abuse and DMCA notices, business inquiries, or developer API access.',
+  name: t.pages.contact.title,
+  description: t.pages.contact.description,
   url: contactUrl,
+  inLanguage: currentLocale,
   mainEntity: {
     '@type': 'Organization',
     name: 'TempoEmails',
@@ -32,25 +35,21 @@ const contactPageSchema = {
         '@type': 'ContactPoint',
         email: SITE_CONFIG.emails.support,
         contactType: 'technical support',
-        availableLanguage: ['English'],
       },
       {
         '@type': 'ContactPoint',
         email: SITE_CONFIG.emails.contact,
         contactType: 'customer support',
-        availableLanguage: ['English'],
       },
       {
         '@type': 'ContactPoint',
         email: SITE_CONFIG.emails.abuse,
         contactType: 'abuse reports',
-        availableLanguage: ['English'],
       },
       {
         '@type': 'ContactPoint',
         email: SITE_CONFIG.emails.business,
         contactType: 'business inquiries',
-        availableLanguage: ['English'],
       },
     ],
   },
@@ -60,40 +59,15 @@ const contactPageSchema = {
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: [
-    {
-      '@type': 'Question',
-      name: "Why didn't my verification email or OTP arrive?",
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Most emails arrive within 5 to 15 seconds. If delayed, check if the sender applies deliberate queue delays, try changing your mailbox domain with the Change Address button if the service blocks disposable domains, and confirm the address was typed accurately.',
-      },
+  inLanguage: currentLocale,
+  mainEntity: contact.faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: f.a + (f.list ? ' ' + f.list.join(' ') : ''),
     },
-    {
-      '@type': 'Question',
-      name: 'Can I send outbound emails from TempoEmails?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'No. TempoEmails is strictly a receive-only disposable email platform to prevent spam transmission, malware relays, and protect domain IP deliverability.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'Can I recover a deleted or expired temporary mailbox?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'No. Under our strict zero-retention privacy policy, once an inbox is deleted or expires, all message contents and metadata are permanently destroyed from memory with no backup archives.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'How do I report abuse, spam relays, or submit a DMCA notice?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: `Please contact our compliance team directly at ${SITE_CONFIG.emails.abuse} with pertinent message headers, URLs, and details. We take swift action on malicious activity.`,
-      },
-    },
-  ],
+  })),
 };
 ---
 
@@ -108,248 +82,134 @@ const faqSchema = {
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Have a question about TempoEmails, spotted a bug, or want to suggest a feature? Pick the channel below that best fits your needs, and we'll get back to you.
+    {contact.lead}
   </p>
 
   <blockquote class="border-l-4 border-[#ea2804] pl-4 italic text-[#575757] dark:text-zinc-400 mb-6">
-    <strong>Response time:</strong> We check incoming messages daily and typically respond within <strong>24 to 48 hours</strong> (Monday–Friday, UTC).
+    {contact.responseTime}
   </blockquote>
 
   <!-- Direct Contact Channels -->
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Direct Contact Channels</h2>
+  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+    {contact.channelsHeading}
+  </h2>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Choose the right email for faster assistance:
+    {contact.channelsSub}
   </p>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-    <!-- Technical Support -->
-    <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-3">
-      <div class="flex items-center gap-2 text-[#ea2804]">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
-        </svg>
-        <h3 class="font-display font-bold text-base text-[#202020] dark:text-[#fcfcfc]">Technical Support & Bugs</h3>
+    {contact.channels.map((ch, idx) => (
+      <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-3">
+        <div class="flex items-center gap-2 text-[#ea2804]">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            {idx === 0 && <path d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>}
+            {idx === 1 && <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>}
+            {idx === 2 && <path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>}
+            {idx === 3 && <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>}
+          </svg>
+          <h3 class="font-display font-bold text-base text-[#202020] dark:text-[#fcfcfc]">{ch.title}</h3>
+        </div>
+        <p class="text-xs text-[#575757] dark:text-zinc-400">
+          {ch.desc}
+        </p>
+        <div class="flex items-center justify-between pt-1">
+          <a href={`mailto:${ch.email}`} class="text-sm font-mono font-semibold text-[#ea2804] hover:underline break-all">
+            {ch.email}
+          </a>
+          <button
+            type="button"
+            data-copy-email={ch.email}
+            data-copied-text={t.common.copied}
+            class="copy-email-btn px-2.5 py-1 text-xs font-mono rounded-lg bg-black/5 dark:bg-white/10 hover:bg-[#ea2804]/10 hover:text-[#ea2804] transition-colors"
+            title={t.addressBar.copyAddress}
+          >
+            {ch.copyLabel}
+          </button>
+        </div>
       </div>
-      <p class="text-xs text-[#575757] dark:text-zinc-400">
-        Report inbox delivery issues, UI rendering glitches, or unexpected connectivity errors.
-      </p>
-      <div class="flex items-center justify-between pt-1">
-        <a href={`mailto:${SITE_CONFIG.emails.support}`} class="text-sm font-mono font-semibold text-[#ea2804] hover:underline break-all">
-          {SITE_CONFIG.emails.support}
-        </a>
-        <button
-          type="button"
-          data-copy-email={SITE_CONFIG.emails.support}
-          class="copy-email-btn px-2.5 py-1 text-xs font-mono rounded-lg bg-black/5 dark:bg-white/10 hover:bg-[#ea2804]/10 hover:text-[#ea2804] transition-colors"
-          title="Copy email address"
-        >
-          Copy
-        </button>
-      </div>
-    </div>
-
-    <!-- General Inquiries -->
-    <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-3">
-      <div class="flex items-center gap-2 text-[#ea2804]">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-        </svg>
-        <h3 class="font-display font-bold text-base text-[#202020] dark:text-[#fcfcfc]">General Inquiries</h3>
-      </div>
-      <p class="text-xs text-[#575757] dark:text-zinc-400">
-        Questions about our temporary email features, user feedback, and general questions.
-      </p>
-      <div class="flex items-center justify-between pt-1">
-        <a href={`mailto:${SITE_CONFIG.emails.contact}`} class="text-sm font-mono font-semibold text-[#ea2804] hover:underline break-all">
-          {SITE_CONFIG.emails.contact}
-        </a>
-        <button
-          type="button"
-          data-copy-email={SITE_CONFIG.emails.contact}
-          class="copy-email-btn px-2.5 py-1 text-xs font-mono rounded-lg bg-black/5 dark:bg-white/10 hover:bg-[#ea2804]/10 hover:text-[#ea2804] transition-colors"
-          title="Copy email address"
-        >
-          Copy
-        </button>
-      </div>
-    </div>
-
-    <!-- Business & Partnerships -->
-    <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-3">
-      <div class="flex items-center gap-2 text-[#ea2804]">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-        </svg>
-        <h3 class="font-display font-bold text-base text-[#202020] dark:text-[#fcfcfc]">Business & Partnerships</h3>
-      </div>
-      <p class="text-xs text-[#575757] dark:text-zinc-400">
-        Advertising inquiries, domain integrations, commercial licensing, and developer API requests.
-      </p>
-      <div class="flex items-center justify-between pt-1">
-        <a href={`mailto:${SITE_CONFIG.emails.business}`} class="text-sm font-mono font-semibold text-[#ea2804] hover:underline break-all">
-          {SITE_CONFIG.emails.business}
-        </a>
-        <button
-          type="button"
-          data-copy-email={SITE_CONFIG.emails.business}
-          class="copy-email-btn px-2.5 py-1 text-xs font-mono rounded-lg bg-black/5 dark:bg-white/10 hover:bg-[#ea2804]/10 hover:text-[#ea2804] transition-colors"
-          title="Copy email address"
-        >
-          Copy
-        </button>
-      </div>
-    </div>
-
-    <!-- Abuse & Legal Reports -->
-    <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-3">
-      <div class="flex items-center gap-2 text-[#ea2804]">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-        </svg>
-        <h3 class="font-display font-bold text-base text-[#202020] dark:text-[#fcfcfc]">Abuse & Legal Reports</h3>
-      </div>
-      <p class="text-xs text-[#575757] dark:text-zinc-400">
-        Report terms violations, spam originators, phishing attempts, or DMCA compliance notices.
-      </p>
-      <div class="flex items-center justify-between pt-1">
-        <a href={`mailto:${SITE_CONFIG.emails.abuse}`} class="text-sm font-mono font-semibold text-[#ea2804] hover:underline break-all">
-          {SITE_CONFIG.emails.abuse}
-        </a>
-        <button
-          type="button"
-          data-copy-email={SITE_CONFIG.emails.abuse}
-          class="copy-email-btn px-2.5 py-1 text-xs font-mono rounded-lg bg-black/5 dark:bg-white/10 hover:bg-[#ea2804]/10 hover:text-[#ea2804] transition-colors"
-          title="Copy email address"
-        >
-          Copy
-        </button>
-      </div>
-    </div>
+    ))}
   </div>
 
   <!-- Frequently Asked Questions -->
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Frequently Asked Questions</h2>
+  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+    {contact.faqHeading}
+  </h2>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    You might find quick answers to your questions below:
+    {contact.faqSub}
   </p>
 
   <div class="space-y-6 mb-8">
-    <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-      <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-2">
-        Why didn't my verification email or OTP arrive?
-      </h3>
-      <p class="text-sm text-[#575757] dark:text-zinc-300 leading-relaxed mb-3">
-        Most verification messages arrive in your TempoEmails inbox within 2 to 5 seconds. If you haven't received an expected message:
-      </p>
-      <ul class="list-disc pl-5 space-y-1.5 text-sm text-[#575757] dark:text-zinc-300">
-        <li>Some services introduce a 1–2 minute sending delay before sending confirmation codes.</li>
-        <li>Certain websites block specific disposable email domains. Click <strong>"Change"</strong> or <strong>"Custom"</strong> on the homepage to switch to a different domain.</li>
-        <li>Double-check that the address was copied and pasted correctly into the signup form.</li>
-      </ul>
-    </div>
-
-    <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-      <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-2">
-        Can I send emails from TempoEmails?
-      </h3>
-      <p class="text-sm text-[#575757] dark:text-zinc-300 leading-relaxed">
-        No. TempoEmails is receive-only. Blocking outbound mail ensures our domains stay off spam blocklists so your verification emails arrive without issues.
-      </p>
-    </div>
-
-    <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-      <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-2">
-        Can I recover a deleted or expired temporary mailbox?
-      </h3>
-      <p class="text-sm text-[#575757] dark:text-zinc-300 leading-relaxed">
-        No. Under our strict zero-retention privacy policy, once an inbox is deleted or expires, all message contents are permanently purged. We do not keep backups or archives.
-      </p>
-    </div>
-
-    <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-      <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-2">
-        How do I report abuse, phishing, or send a DMCA notice?
-      </h3>
-      <p class="text-sm text-[#575757] dark:text-zinc-300 leading-relaxed">
-        Please email <a href={`mailto:${SITE_CONFIG.emails.abuse}`} class="text-[#ea2804] hover:underline font-semibold">{SITE_CONFIG.emails.abuse}</a> with message headers, URLs, and details for quick resolution.
-      </p>
-    </div>
+    {contact.faqs.map((f) => (
+      <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
+        <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-2">
+          {f.q}
+        </h3>
+        <p class="text-sm text-[#575757] dark:text-zinc-300 leading-relaxed mb-3">
+          {f.a}
+        </p>
+        {f.list && f.list.length > 0 && (
+          <ul class="list-disc pl-5 space-y-1.5 text-sm text-[#575757] dark:text-zinc-300">
+            {f.list.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+    ))}
   </div>
 
   <!-- Helpful Guides & Educational Resources -->
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Helpful Guides & Educational Resources</h2>
+  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+    {contact.resourcesHeading}
+  </h2>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Learn more about how disposable emails operate, how OTP extraction works, and best practices for online privacy:
+    {contact.resourcesSub}
   </p>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-    <a
-      href="/blog/understanding-otp-verification-codes/"
-      class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-[#ea2804]/30 hover:bg-[#ea2804]/5 transition-all group"
-    >
-      <div class="text-xs font-mono text-[#ea2804] font-semibold mb-1">Guide</div>
-      <div class="font-display font-bold text-sm text-[#202020] dark:text-[#fcfcfc] group-hover:text-[#ea2804] transition-colors">
-        Understanding OTP Verification Codes →
-      </div>
-      <p class="text-xs text-[#575757] dark:text-zinc-400 mt-1">How automated OTP parsers detect 4-8 digit verification tokens.</p>
-    </a>
-
-    <a
-      href="/blog/how-temporary-email-works/"
-      class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-[#ea2804]/30 hover:bg-[#ea2804]/5 transition-all group"
-    >
-      <div class="text-xs font-mono text-[#ea2804] font-semibold mb-1">Architecture</div>
-      <div class="font-display font-bold text-sm text-[#202020] dark:text-[#fcfcfc] group-hover:text-[#ea2804] transition-colors">
-        How Temporary Email Works →
-      </div>
-      <p class="text-xs text-[#575757] dark:text-zinc-400 mt-1">Under the hood of MX records, inboxes, and automatic purging.</p>
-    </a>
-
-    <a
-      href="/blog/how-disposable-email-protects-privacy/"
-      class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-[#ea2804]/30 hover:bg-[#ea2804]/5 transition-all group"
-    >
-      <div class="text-xs font-mono text-[#ea2804] font-semibold mb-1">Privacy</div>
-      <div class="font-display font-bold text-sm text-[#202020] dark:text-[#fcfcfc] group-hover:text-[#ea2804] transition-colors">
-        How Disposable Email Protects Privacy →
-      </div>
-      <p class="text-xs text-[#575757] dark:text-zinc-400 mt-1">Preventing data harvesting, cross-site profiling, and spam traps.</p>
-    </a>
-
-    <a
-      href="/blog/email-privacy-best-practices/"
-      class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-[#ea2804]/30 hover:bg-[#ea2804]/5 transition-all group"
-    >
-      <div class="text-xs font-mono text-[#ea2804] font-semibold mb-1">Security</div>
-      <div class="font-display font-bold text-sm text-[#202020] dark:text-[#fcfcfc] group-hover:text-[#ea2804] transition-colors">
-        Email Privacy Best Practices →
-      </div>
-      <p class="text-xs text-[#575757] dark:text-zinc-400 mt-1">Actionable steps to safeguard your primary email address.</p>
-    </a>
+    {contact.resources.map((r) => (
+      <a
+        href={getLocalizedPath(r.slug, currentLocale)}
+        class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-[#ea2804]/30 hover:bg-[#ea2804]/5 transition-all group"
+      >
+        <div class="text-xs font-mono text-[#ea2804] font-semibold mb-1">{r.badge}</div>
+        <div class="font-display font-bold text-sm text-[#202020] dark:text-[#fcfcfc] group-hover:text-[#ea2804] transition-colors">
+          {r.title}
+        </div>
+        <p class="text-xs text-[#575757] dark:text-zinc-400 mt-1">{r.desc}</p>
+      </a>
+    ))}
   </div>
 
   <!-- Tips for Bug Reports -->
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Tips for Submitting Bug Reports</h2>
+  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+    {contact.bugReportHeading}
+  </h2>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    When sending technical bug reports to <a href={`mailto:${SITE_CONFIG.emails.support}`} class="text-[#ea2804] hover:underline font-semibold">{SITE_CONFIG.emails.support}</a>, including the following details helps our engineering team diagnose issues quickly:
+    {contact.bugReportIntro}
   </p>
   <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-6">
-    <li>Your browser name and version (e.g., Chrome 132, Firefox 135, Safari iOS).</li>
-    <li>Your operating system (e.g., macOS Sonoma, Windows 11, Ubuntu 24.04, Android 15).</li>
-    <li>The specific disposable domain you were using (e.g., <code>@{SITE_CONFIG.domain}</code>).</li>
-    <li>A brief summary of what occurred versus what was expected.</li>
-    <li><strong>Security Notice:</strong> Never include passwords, recovery keys, or sensitive personal data in your email.</li>
+    {contact.bugReportPoints.map((pt) => (
+      <li>{pt}</li>
+    ))}
   </ul>
 
   <!-- Legal and Compliance Links -->
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Legal and Policy Inquiries</h2>
+  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+    {contact.legalHeading}
+  </h2>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    For regulatory compliance, privacy policies, and terms of service documentation:
+    {contact.legalIntro}
   </p>
   <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-4">
-    <li><a href="/privacy-policy/" class="text-[#ea2804] hover:underline">Privacy Policy</a> — Data handling, cookies, and user rights.</li>
-    <li><a href="/terms-of-service/" class="text-[#ea2804] hover:underline">Terms of Service</a> — Terms of use and acceptable activity.</li>
-    <li><a href="/disclaimer/" class="text-[#ea2804] hover:underline">Disclaimer</a> — Service limitations and warranties.</li>
+    {contact.legalLinks.map((l) => (
+      <li>
+        <a href={getLocalizedPath(l.slug, currentLocale)} class="text-[#ea2804] hover:underline font-semibold">
+          {l.label}
+        </a>
+        {' — '}{l.desc}
+      </li>
+    ))}
   </ul>
 </ContentLayout>
 

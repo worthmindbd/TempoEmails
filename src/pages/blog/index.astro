@@ -5,6 +5,8 @@ import Badge from '../../components/ui/Badge.astro';
 import { useTranslation, getLocaleFromUrl, getLocalizedPath } from '../../i18n/utils';
 import type { Locale } from '../../i18n/languages';
 
+import { getBlogArticles } from '../../i18n/blog-data';
+
 interface Props {
   locale?: Locale;
 }
@@ -14,114 +16,8 @@ const currentLocale = locale || getLocaleFromUrl(Astro.url);
 const t = useTranslation(currentLocale);
 const homeUrl = currentLocale === 'en' ? '/' : `/${currentLocale}/`;
 
-// Blog articles data — ordered by publish date (newest first)
-const articles = [
-  {
-    title: 'The Rise of Disposable Email Services: A Brief History',
-    description: 'Explore the evolution of disposable email services from early spam solutions to modern privacy tools used by millions worldwide.',
-    category: 'Technology',
-    date: '2026-08-20',
-    slug: '/blog/rise-of-disposable-email/',
-  },
-  {
-    title: 'Best Practices for Managing Multiple Online Accounts',
-    description: 'Learn how to organize and secure dozens of online accounts without sacrificing convenience or security.',
-    category: 'Guides',
-    date: '2026-08-18',
-    slug: '/blog/managing-multiple-online-accounts/',
-  },
-  {
-    title: '10 Essential Tips for Protecting Your Identity Online',
-    description: 'Practical tips to safeguard your digital identity from data breaches, social engineering, and online surveillance.',
-    category: 'Security',
-    date: '2026-08-15',
-    slug: '/blog/protecting-identity-online/',
-  },
-  {
-    title: 'Why Every Website Wants Your Email Address',
-    description: 'Understand the real reasons companies collect your email address and how to protect yourself from data exploitation.',
-    category: 'Privacy',
-    date: '2026-08-12',
-    slug: '/blog/why-companies-want-your-email/',
-  },
-  {
-    title: 'How Temporary Email Works Behind the Scenes',
-    description: 'A technical deep-dive into how disposable email services work — from DNS routing to API-driven inboxes and automatic message expiration.',
-    category: 'Technology',
-    date: '2026-08-10',
-    slug: '/blog/how-temporary-email-works/',
-  },
-  {
-    title: 'Temporary Email vs. Email Aliases: Which Should You Use?',
-    description: 'Compare disposable temporary email addresses with email aliases to decide which privacy solution best fits your needs.',
-    category: 'Guides',
-    date: '2026-08-08',
-    slug: '/blog/temporary-email-vs-email-aliases/',
-  },
-  {
-    title: 'Email Privacy Best Practices for 2026',
-    description: 'Comprehensive guide to protecting your email privacy — from using disposable addresses to avoiding phishing and managing permissions.',
-    category: 'Privacy',
-    date: '2026-08-05',
-    slug: '/blog/email-privacy-best-practices/',
-  },
-  {
-    title: 'How to Recognize and Avoid Phishing Emails',
-    description: 'Learn to identify phishing emails with real examples, warning signs, and protective measures to keep your accounts safe.',
-    category: 'Security',
-    date: '2026-08-03',
-    slug: '/blog/understanding-phishing-emails/',
-  },
-  {
-    title: 'Understanding OTP Verification Codes: A Complete Guide',
-    description: 'Everything you need to know about OTP verification codes — how they work, why they\'re used, and how to manage them effectively.',
-    category: 'Security',
-    date: '2026-08-01',
-    slug: '/blog/understanding-otp-verification-codes/',
-  },
-  {
-    title: 'Data Privacy Laws You Should Know: GDPR, CCPA, and Beyond',
-    description: 'A clear breakdown of major data privacy regulations worldwide and how they protect your personal information online.',
-    category: 'Privacy',
-    date: '2026-07-28',
-    slug: '/blog/data-privacy-laws-explained/',
-  },
-  {
-    title: 'Complete Guide to Online Account Security',
-    description: 'Protect your online accounts with this comprehensive security guide covering passwords, 2FA, email safety, and privacy practices.',
-    category: 'Security',
-    date: '2026-07-25',
-    slug: '/blog/online-account-security-guide/',
-  },
-  {
-    title: 'How Disposable Email Protects Your Online Privacy',
-    description: 'Learn the privacy benefits of using disposable email addresses and how they shield you from tracking, data harvesting, and unwanted marketing.',
-    category: 'Privacy',
-    date: '2026-07-22',
-    slug: '/blog/how-disposable-email-protects-privacy/',
-  },
-  {
-    title: 'What Is Email Tracking and How to Stop It',
-    description: 'Understand how companies track your email activity with invisible pixels and links, and learn practical steps to protect yourself.',
-    category: 'Security',
-    date: '2026-07-18',
-    slug: '/blog/what-is-email-tracking/',
-  },
-  {
-    title: 'Why You Should Use a Temporary Email Address',
-    description: 'Discover why disposable email addresses are essential for protecting your privacy and avoiding spam when signing up for online services.',
-    category: 'Privacy',
-    date: '2026-07-15',
-    slug: '/blog/why-use-temporary-email/',
-  },
-  {
-    title: 'How to Avoid Spam Emails: The Ultimate Guide',
-    description: 'Learn proven strategies to reduce spam in your inbox, from using disposable email addresses to managing subscriptions.',
-    category: 'Guides',
-    date: '2026-07-10',
-    slug: '/blog/how-to-avoid-spam/',
-  },
-];
+// Localized blog articles data — ordered by publish date (newest first)
+const articles = getBlogArticles(currentLocale);
 
 const categories = [...new Set(articles.map(a => a.category))];
 

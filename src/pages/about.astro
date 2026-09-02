@@ -1,7 +1,8 @@
 ---
 import ContentLayout from '../layouts/ContentLayout.astro';
 import { SITE_CONFIG } from '../lib/config';
-import { useTranslation, getLocaleFromUrl } from '../i18n/utils';
+import { useTranslation, getLocaleFromUrl, getLocalizedPath } from '../i18n/utils';
+import { getAboutPageData } from '../i18n/pages-data';
 import type { Locale } from '../i18n/languages';
 
 interface Props {
@@ -11,6 +12,8 @@ interface Props {
 const { locale } = Astro.props;
 const currentLocale = locale || getLocaleFromUrl(Astro.url);
 const t = useTranslation(currentLocale);
+const about = getAboutPageData(currentLocale);
+const contactUrl = getLocalizedPath('/contact/', currentLocale);
 ---
 
 <ContentLayout
@@ -20,72 +23,55 @@ const t = useTranslation(currentLocale);
   keywords="about tempoemails, free temp mail service, disposable temporary email provider, 10 minute mail mission, anonymous burner email, privacy first email"
 >
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    You shouldn't have to hand over your personal email address just to read an article, try out a new app, download a file, or claim a one-time discount.
+    {about.lead}
   </p>
 
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    We built <strong>TempoEmails</strong> because your real inbox deserves protection. When you share your primary email with every service you encounter online, you end up on marketing lists, get tracked across websites, and risk having your credentials leaked in third-party data breaches.
+    {about.story}
   </p>
 
   <blockquote class="border-l-4 border-[#ea2804] pl-4 italic text-[#575757] dark:text-zinc-400 mb-6">
-    TempoEmails gives you a fast, disposable burner inbox in one click. Receive your verification code, activate your account, and move on — leaving zero spam behind.
+    {about.quote}
   </blockquote>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Why We Built TempoEmails</h2>
+  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+    {about.whyHeading}
+  </h2>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Most temporary email sites on the web are frustrating to use. They are covered in intrusive ads, take forever to refresh, use blacklisted domains that get rejected by signup forms, or make you scroll through long, messy email templates just to find a single 6-digit confirmation code.
+    {about.whyP1}
   </p>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    We wanted something better: a clean, fast, privacy-first tool that just works.
+    {about.whyP2}
   </p>
 
   <div class="space-y-4 mb-6">
-    <div class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-      <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">⚡ Automatic Code Detection</h3>
-      <p class="text-sm text-[#575757] dark:text-zinc-400">
-        No more searching through long promotional emails. TempoEmails automatically detects 4-to-8 digit OTP codes and activation links, pinning them to the top with a one-click copy button.
-      </p>
-    </div>
-
-    <div class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-      <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">📬 Live Auto-Refreshing Inbox</h3>
-      <p class="text-sm text-[#575757] dark:text-zinc-400">
-        Incoming emails land in your browser within seconds. The inbox updates automatically every 10 seconds, so you don't have to keep clicking refresh.
-      </p>
-    </div>
-
-    <div class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-      <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">📱 Mobile QR Code Scanner</h3>
-      <p class="text-sm text-[#575757] dark:text-zinc-400">
-        Need to sign up on your phone while browsing on your computer? Scan the QR code on your screen to open or copy your active temporary inbox on mobile instantly.
-      </p>
-    </div>
-
-    <div class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-      <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">🌐 Active Domain Pool</h3>
-      <p class="text-sm text-[#575757] dark:text-zinc-400">
-        We maintain multiple deliverable domain names. If a particular site blocks one domain, simply click "Change" or "Custom" to switch to another active domain.
-      </p>
-    </div>
-
-    <div class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-      <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">🔒 Zero Logs & Total Anonymity</h3>
-      <p class="text-sm text-[#575757] dark:text-zinc-400">
-        We don't log your personal identity or track your activity. Your messages live temporarily in memory and are permanently purged when your session ends.
-      </p>
-    </div>
+    {about.features.map((f) => (
+      <div class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
+        <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">
+          {f.icon} {f.title}
+        </h3>
+        <p class="text-sm text-[#575757] dark:text-zinc-400">
+          {f.desc}
+        </p>
+      </div>
+    ))}
   </div>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Our Privacy Principles</h2>
+  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+    {about.principlesHeading}
+  </h2>
   <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-6">
-    <li><strong>No registration required:</strong> We never ask for your real name, phone number, personal email, or password.</li>
-    <li><strong>Temporary by design:</strong> Messages are automatically deleted after their short lifespan expires. Once deleted, they are gone forever.</li>
-    <li><strong>100% free:</strong> Privacy shouldn't be a paid privilege. TempoEmails is completely free with no limits on how many emails you can receive.</li>
-    <li><strong>Great for developers & QA:</strong> Perfect for testing signup flows, password resets, and automated notification pipelines.</li>
+    {about.principles.map((p) => (
+      <li>
+        <strong>{p.label}:</strong> {p.desc}
+      </li>
+    ))}
   </ul>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">Questions or Feedback?</h2>
+  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+    {about.questionsHeading}
+  </h2>
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    We're always looking for ways to improve TempoEmails. If you have feature suggestions, questions, or need support, check out our <a href="/contact/" class="text-[#ea2804] hover:underline">Contact page</a> or drop us an email at <a href={`mailto:${SITE_CONFIG.emails.contact}`} class="text-[#ea2804] hover:underline font-semibold">{SITE_CONFIG.emails.contact}</a>.
+    {about.questionsLead} <a href={contactUrl} class="text-[#ea2804] hover:underline font-semibold">{about.contactPageLink}</a> {currentLocale === 'en' ? 'or drop us an email at' : '—'} <a href={`mailto:${SITE_CONFIG.emails.contact}`} class="text-[#ea2804] hover:underline font-semibold">{SITE_CONFIG.emails.contact}</a>.
   </p>
 </ContentLayout>

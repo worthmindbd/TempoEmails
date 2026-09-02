@@ -2,6 +2,7 @@
 import Layout from './Layout.astro';
 import { SITE_CONFIG } from '../lib/config';
 import { useTranslation, getLocaleFromUrl, getLocalizedPath } from '../i18n/utils';
+import { getBlogArticleBySlug } from '../i18n/blog-data';
 import type { Locale } from '../i18n/languages';
 
 interface Props {
@@ -16,6 +17,23 @@ interface Props {
 const { title, description, publishDate, category, keywords, locale } = Astro.props;
 const currentLocale = locale || getLocaleFromUrl(Astro.url);
 const t = useTranslation(currentLocale);
+
+// If this is a blog post, fetch localized title & description if available
+const pathSegments = Astro.url.pathname.split('/').filter(Boolean);
+const currentSlug = pathSegments[pathSegments.length - 1] || '';
+const localizedArticle = category ? getBlogArticleBySlug(currentSlug, currentLocale) : undefined;
+const displayTitle = localizedArticle?.title || title;
+const displayDescription = localizedArticle?.description || description;
+
+function getCategoryLabel(cat?: string) {
+  if (!cat) return '';
+  if (cat === 'Privacy') return t.common.privacy;
+  if (cat === 'Security') return t.common.security;
+  if (cat === 'Guides') return t.common.guide;
+  if (cat === 'Technology') return t.common.architecture;
+  return cat;
+}
+const displayCategory = getCategoryLabel(category);
 
 const siteUrl = Astro.site?.origin || SITE_CONFIG.siteUrl;
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
@@ -52,7 +70,7 @@ const breadcrumbSchema = {
           {
             '@type': 'ListItem',
             position: 3,
-            name: title,
+            name: displayTitle,
             item: canonicalURL.href,
           },
         ]
@@ -60,7 +78,7 @@ const breadcrumbSchema = {
           {
             '@type': 'ListItem',
             position: 2,
-            name: title,
+            name: displayTitle,
             item: canonicalURL.href,
           },
         ]),
@@ -72,8 +90,8 @@ const articleSchema = publishDate
   ? {
       '@context': 'https://schema.org',
       '@type': 'Article',
-      headline: title,
-      description: description,
+      headline: displayTitle,
+      description: displayDescription,
       datePublished: publishDate,
       dateModified: publishDate,
       mainEntityOfPage: {
@@ -94,18 +112,18 @@ const articleSchema = publishDate
         },
       },
       image: `${canonicalURL.origin}/og-image.png`,
-      articleSection: category || 'Privacy',
+      articleSection: displayCategory || 'Privacy',
     }
   : null;
 ---
 
 <Layout
-  title={`${title} — TempoEmails`}
-  description={description}
+  title={`${displayTitle} — TempoEmails`}
+  description={displayDescription}
   keywords={keywords}
   ogType={publishDate ? 'article' : 'website'}
   publishDate={publishDate}
-  category={category}
+  category={displayCategory}
   locale={currentLocale}
   isApp={false}
 >
@@ -122,35 +140,64 @@ const articleSchema = publishDate
           <span>→</span>
         </>
       )}
-      <span class="text-[#575757] dark:text-zinc-300 truncate max-w-[200px] sm:max-w-none">{title}</span>
+      <span class="text-[#575757] dark:text-zinc-300 truncate max-w-[200px] sm:max-w-none">{displayTitle}</span>
     </nav>
 
     <!-- Article Header -->
     <header class="mb-10 space-y-4">
-      {category && (
+      {displayCategory && (
         <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#ea2804]/10 text-[#ea2804] dark:bg-[#ea2804]/20 dark:text-[#ff6a3d]">
-          {category}
+          {displayCategory}
         </span>
       )}
 
       <h1 class="font-display text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight leading-tight break-words">
-        {title}
+        {displayTitle}
       </h1>
 
-      {(formattedDate || category) && (
+      {(formattedDate || displayCategory) && (
         <div class="flex items-center gap-3 text-xs font-mono text-[#8d8d8d] dark:text-zinc-500 pt-1">
           {formattedDate && (
             <time datetime={publishDate}>
               {formattedDate}
             </time>
           )}
-          {formattedDate && category && <span>•</span>}
-          {category && <span>{category}</span>}
+          {formattedDate && displayCategory && <span>•</span>}
+          {displayCategory && <span>{displayCategory}</span>}
         </div>
       )}
 
       <div class="w-16 h-1 rounded-full bg-gradient-to-r from-[#ea2804] to-[#ff6a3d]"></div>
     </header>
+
+    <!-- Multilingual Translation Notice Banner for non-default locales -->
+    {currentLocale !== 'en' && category && (
+      <aside
+        class="mb-8 p-4 sm:p-5 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 dark:border-amber-500/30 flex items-start gap-3.5 text-[#202020] dark:text-zinc-200"
+        role="note"
+        aria-label="Translation Notice"
+      >
+        <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 text-base select-none">
+          🌐
+        </div>
+        <div class="flex-1 text-xs sm:text-sm leading-relaxed">
+          <p class="font-semibold text-amber-900 dark:text-amber-300 mb-0.5">
+            {t.common.translationNotice}
+          </p>
+          <p class="text-[#575757] dark:text-zinc-400 text-xs">
+            {currentLocale === 'es' && "El contenido del artículo se presenta en su idioma de publicación original mientras completamos la revisión editorial."}
+            {currentLocale === 'pt' && "O conteúdo do artigo está no idioma de publicação original enquanto concluímos a revisão editorial."}
+            {currentLocale === 'fr' && "Le texte de cet article est conservé en anglais le temps de finaliser notre révision éditoriale."}
+            {currentLocale === 'de' && "Der Text wird in der englischen Originalfassung bereitgestellt, während die redaktionelle Übersetzung finalisiert wird."}
+            {currentLocale === 'ru' && "Текст статьи представлен на языке оригинала, пока завершается редакционный перевод."}
+            {currentLocale === 'zh' && "在编辑团队完成全篇本地化审校之前，正文内容保留英文原文供您参考。"}
+            {currentLocale === 'ja' && "翻訳校正が完了するまでの間、記事本文は英語原文のまま掲載しております。"}
+            {currentLocale === 'ar' && "يتم عرض محتوى المقال بلغته الأصلية ريثما نكتمل من المراجعة التحريرية الشاملة."}
+            {currentLocale === 'id' && "Isi artikel ditampilkan dalam bahasa asli sembari tim editorial menyelesaikan ulasan terjemahan."}
+          </p>
+        </div>
+      </aside>
+    )}
 
     <!-- Article Content -->
     <div class="content-body space-y-1">
