@@ -1,6 +1,8 @@
 ---
 import Layout from './Layout.astro';
 import { SITE_CONFIG } from '../lib/config';
+import { useTranslation, getLocaleFromUrl, getLocalizedPath } from '../i18n/utils';
+import type { Locale } from '../i18n/languages';
 
 interface Props {
   title: string;
@@ -8,15 +10,20 @@ interface Props {
   publishDate?: string;
   category?: string;
   keywords?: string;
+  locale?: Locale;
 }
 
-const { title, description, publishDate, category, keywords } = Astro.props;
+const { title, description, publishDate, category, keywords, locale } = Astro.props;
+const currentLocale = locale || getLocaleFromUrl(Astro.url);
+const t = useTranslation(currentLocale);
 
 const siteUrl = Astro.site?.origin || SITE_CONFIG.siteUrl;
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+const homeUrl = currentLocale === 'en' ? '/' : `/${currentLocale}/`;
+const blogUrl = getLocalizedPath('/blog/', currentLocale);
 
 const formattedDate = publishDate
-  ? new Date(publishDate).toLocaleDateString('en-US', {
+  ? new Date(publishDate).toLocaleDateString(currentLocale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -31,16 +38,16 @@ const breadcrumbSchema = {
     {
       '@type': 'ListItem',
       position: 1,
-      name: 'Home',
-      item: `${canonicalURL.origin}/`,
+      name: t.common.home,
+      item: `${canonicalURL.origin}${homeUrl}`,
     },
     ...(category
       ? [
           {
             '@type': 'ListItem',
             position: 2,
-            name: 'Blog',
-            item: `${canonicalURL.origin}/blog/`,
+            name: t.common.blog,
+            item: `${canonicalURL.origin}${blogUrl}`,
           },
           {
             '@type': 'ListItem',
@@ -99,6 +106,7 @@ const articleSchema = publishDate
   ogType={publishDate ? 'article' : 'website'}
   publishDate={publishDate}
   category={category}
+  locale={currentLocale}
   isApp={false}
 >
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
@@ -106,11 +114,11 @@ const articleSchema = publishDate
   <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
     <!-- Breadcrumb Navigation -->
     <nav class="mb-8 flex flex-wrap items-center gap-2 text-xs font-mono text-[#8d8d8d] dark:text-zinc-500">
-      <a href="/" class="hover:text-[#ea2804] transition-colors shrink-0">Home</a>
+      <a href={homeUrl} class="hover:text-[#ea2804] transition-colors shrink-0">{t.common.home}</a>
       <span>→</span>
       {category && (
         <>
-          <a href="/blog/" class="hover:text-[#ea2804] transition-colors shrink-0">Blog</a>
+          <a href={blogUrl} class="hover:text-[#ea2804] transition-colors shrink-0">{t.common.blog}</a>
           <span>→</span>
         </>
       )}
@@ -153,20 +161,20 @@ const articleSchema = publishDate
     <footer class="mt-16 pt-8 border-t border-black/10 dark:border-white/10">
       <div class="flex flex-wrap items-center gap-4">
         <a
-          href="/"
+          href={homeUrl}
           class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path d="M19 12H5M12 19l-7-7 7-7"></path>
           </svg>
-          Back to Home
+          {t.common.backToHome}
         </a>
         {category && (
           <a
-            href="/blog/"
+            href={blogUrl}
             class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-[#ea2804] hover:underline"
           >
-            ← All Articles
+            {t.common.allArticles}
           </a>
         )}
       </div>

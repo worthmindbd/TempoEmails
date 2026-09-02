@@ -26,29 +26,53 @@ export default defineConfig({
   trailingSlash: 'always',
   // Production domain (can be overridden via SITE_URL env variable in Docker/Dokploy)
   site: process.env.SITE_URL || 'https://tempoemails.com',
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'es', 'pt', 'fr', 'de', 'ru', 'zh', 'ja', 'ar', 'id'],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
   integrations: [
     sitemap({
       filter: (page) => !page.includes('/404'),
+      i18n: {
+        defaultLocale: 'en',
+        locales: {
+          en: 'en',
+          es: 'es',
+          pt: 'pt',
+          fr: 'fr',
+          de: 'de',
+          ru: 'ru',
+          zh: 'zh-CN',
+          ja: 'ja',
+          ar: 'ar',
+          id: 'id',
+        },
+      },
       serialize(item) {
         const url = new URL(item.url);
         const pathname = url.pathname.replace(/\/$/, '');
+        const localePrefixMatch = pathname.match(/^\/(es|pt|fr|de|ru|zh|ja|ar|id)(\/.*)?$/);
+        const normalizedPath = localePrefixMatch ? (localePrefixMatch[2] || '') : pathname;
 
-        if (pathname === '') {
-          // Homepage
+        if (normalizedPath === '') {
+          // Homepage (all language variants)
           item.priority = 1.0;
           item.changefreq = ChangeFreqEnum.DAILY;
           item.lastmod = new Date().toISOString();
-        } else if (pathname === '/blog') {
+        } else if (normalizedPath === '/blog') {
           // Blog index
           item.priority = 0.9;
           item.changefreq = ChangeFreqEnum.DAILY;
           item.lastmod = new Date().toISOString();
-        } else if (blogDates[pathname]) {
+        } else if (blogDates[normalizedPath]) {
           // Blog articles
           item.priority = 0.8;
           item.changefreq = ChangeFreqEnum.WEEKLY;
-          item.lastmod = new Date(blogDates[pathname]).toISOString();
-        } else if (['/about', '/contact'].includes(pathname)) {
+          item.lastmod = new Date(blogDates[normalizedPath]).toISOString();
+        } else if (['/about', '/contact'].includes(normalizedPath)) {
           // Info pages
           item.priority = 0.8;
           item.changefreq = ChangeFreqEnum.WEEKLY;

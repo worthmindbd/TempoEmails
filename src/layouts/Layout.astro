@@ -4,6 +4,8 @@ import Footer from '../components/sections/Footer.astro';
 import ToastContainer from '../components/ui/ToastContainer.astro';
 import CookieConsent from '../components/ui/CookieConsent.astro';
 import { SITE_CONFIG } from '../lib/config';
+import { LANGUAGES, DEFAULT_LOCALE, type Locale } from '../i18n/languages';
+import { getLocaleFromUrl, getAlternateLinks, getClientI18nPayload, useTranslation } from '../i18n/utils';
 import '../styles/global.css';
 
 interface Props {
@@ -16,6 +18,7 @@ interface Props {
   isApp?: boolean;
   publishDate?: string;
   category?: string;
+  locale?: Locale;
 }
 
 const {
@@ -28,11 +31,17 @@ const {
   isApp = false,
   publishDate,
   category,
+  locale,
 } = Astro.props;
+
+const currentLocale = locale || getLocaleFromUrl(Astro.url);
+const currentLangInfo = LANGUAGES[currentLocale] || LANGUAGES[DEFAULT_LOCALE];
+const clientI18nPayload = getClientI18nPayload(currentLocale);
 
 const siteUrl = Astro.site?.origin || SITE_CONFIG.siteUrl;
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 const ogImageURL = new URL(ogImage, siteUrl);
+const alternateLinks = getAlternateLinks(Astro.url.pathname, siteUrl);
 
 // Google Analytics 4 & AdSense
 const gaId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID;
@@ -44,14 +53,16 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: 'TempoEmails',
   url: `${canonicalURL.origin}/`,
-  description: 'Free temp mail, disposable temporary email generator, and 10 minute burner inbox with automatic OTP and verification code extraction.',
+  inLanguage: currentLocale,
+  description: description,
 };
 
 const webAppSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
-  name: 'TempoEmails — Free Temp Mail & Disposable Email Generator',
-  url: `${canonicalURL.origin}/`,
+  name: title,
+  url: canonicalURL.href,
+  inLanguage: currentLocale,
   applicationCategory: 'UtilityApplication',
   operatingSystem: 'All',
   browserRequirements: 'Requires JavaScript. Requires HTML5.',
@@ -85,7 +96,7 @@ const organizationSchema = {
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang={currentLocale} dir={currentLangInfo.dir} class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -123,6 +134,12 @@ const organizationSchema = {
       </>
     )}
     <link rel="canonical" href={canonicalURL.href} />
+    
+    <!-- Internationalization & Hreflang SEO Tags -->
+    {alternateLinks.map(({ hreflang, href }) => (
+      <link rel="alternate" hreflang={hreflang} href={href} />
+    ))}
+
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap-index.xml" />
 
     <!-- Open Graph / Social Media Preview Meta Tags -->
@@ -137,7 +154,12 @@ const organizationSchema = {
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={title} />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={currentLangInfo.ogLocale} />
+    {Object.values(LANGUAGES)
+      .filter((l) => l.code !== currentLocale)
+      .map((l) => (
+        <meta property="og:locale:alternate" content={l.ogLocale} />
+      ))}
     {ogType === 'article' && publishDate && (
       <>
         <meta property="article:published_time" content={publishDate} />
@@ -191,6 +213,11 @@ const organizationSchema = {
       rel="stylesheet"
     />
 
+    <!-- Injected Client-Side Translations for Vanilla Components -->
+    <script is:inline define:vars={{ clientI18nPayload }}>
+      window.__TEMPO_I18N__ = clientI18nPayload;
+    </script>
+
     <!-- Zero-FOUC Theme Script -->
     <script is:inline>
       (function () {
@@ -207,15 +234,15 @@ const organizationSchema = {
     <!-- Atmospheric Ambient Glow Mesh Background -->
     <div class="fixed inset-0 hero-glow-mesh pointer-events-none z-0"></div>
 
-    <Header />
+    <Header currentLocale={currentLocale} />
 
     <main class="flex-1 relative z-10">
       <slot />
     </main>
 
-    <Footer />
+    <Footer currentLocale={currentLocale} />
 
     <ToastContainer />
-    <CookieConsent />
+    <CookieConsent locale={currentLocale} />
   </body>
 </html>

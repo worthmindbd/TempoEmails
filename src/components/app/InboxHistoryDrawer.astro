@@ -1,5 +1,14 @@
 ---
 import Button from '../ui/Button.astro';
+import { useTranslation } from '../../i18n/utils';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = useTranslation(locale);
 ---
 
 <div
@@ -18,12 +27,12 @@ import Button from '../ui/Button.astro';
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
         </div>
-        <h3 id="history-modal-title" class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc]">Recent Inboxes</h3>
+        <h3 id="history-modal-title" class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc]">{t.historyDrawer.title}</h3>
       </div>
       <button
         id="history-modal-close"
         type="button"
-        class="w-8 h-8 rounded-full flex items-center justify-center text-[#8d8d8d] hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+        class="w-8 h-8 rounded-full flex items-center justify-center text-[#8d8d8d] hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
         aria-label="Close history modal"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -34,12 +43,12 @@ import Button from '../ui/Button.astro';
     </div>
 
     <p class="text-xs text-[#575757] dark:text-zinc-400 mb-4">
-      Switch between inboxes you've generated in this browser session.
+      {t.historyDrawer.desc}
     </p>
 
     <!-- Inboxes List -->
     <div id="history-inboxes-list" class="space-y-2 max-h-64 overflow-y-auto pr-1">
-      <div class="text-center py-6 text-xs text-[#8d8d8d]">No previous inboxes found in this session.</div>
+      <div class="text-center py-6 text-xs text-[#8d8d8d]">{t.historyDrawer.emptyTitle}</div>
     </div>
 
     <div class="flex justify-between items-center pt-4 mt-2 border-t border-black/5 dark:border-white/10">
@@ -48,10 +57,10 @@ import Button from '../ui/Button.astro';
         type="button"
         class="text-xs text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-medium transition-colors cursor-pointer"
       >
-        Clear All History
+        {t.historyDrawer.clearAll}
       </button>
       <Button variant="ghost" size="sm" id="history-modal-done">
-        Done
+        {t.confirmModal.confirm}
       </Button>
     </div>
   </div>

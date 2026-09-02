@@ -1,4 +1,21 @@
 ---
+import LanguageSelector from '../ui/LanguageSelector.astro';
+import { useTranslation, getLocalizedPath } from '../../i18n/utils';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  currentLocale?: Locale;
+}
+
+const { currentLocale = 'en' } = Astro.props;
+const t = useTranslation(currentLocale);
+const homeUrl = currentLocale === 'en' ? '/' : `/${currentLocale}/`;
+const aboutUrl = getLocalizedPath('/about/', currentLocale);
+const contactUrl = getLocalizedPath('/contact/', currentLocale);
+const blogUrl = getLocalizedPath('/blog/', currentLocale);
+const privacyUrl = getLocalizedPath('/privacy-policy/', currentLocale);
+const termsUrl = getLocalizedPath('/terms-of-service/', currentLocale);
+const disclaimerUrl = getLocalizedPath('/disclaimer/', currentLocale);
 ---
 
 <footer class="w-full bg-[#0e0e11] text-[#fcfcfc] border-t border-white/10 mt-20 pt-16 pb-12">
@@ -7,55 +24,62 @@
       <!-- Brand column -->
       <div class="md:col-span-4 space-y-4">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#ea2804] to-[#ff6a3d] flex items-center justify-center text-white font-bold">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="4"></circle>
-              <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"></path>
-            </svg>
-          </div>
-          <span class="font-display text-xl font-black tracking-tight text-white">
-            Tempo<span class="text-[#ea2804]">Emails</span>
-          </span>
+          <a href={homeUrl} class="flex items-center gap-2.5 group">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#ea2804] to-[#ff6a3d] flex items-center justify-center text-white font-bold">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"></path>
+              </svg>
+            </div>
+            <span class="font-display text-xl font-black tracking-tight text-white">
+              Tempo<span class="text-[#ea2804]">Emails</span>
+            </span>
+          </a>
         </div>
         <p class="text-xs text-zinc-400 max-w-sm leading-relaxed">
-          Free disposable email generator. Receive verification codes and OTPs instantly while keeping your personal inbox safe from spam.
+          {t.footer.brandDesc}
         </p>
+
+        <!-- Footer Language Selector -->
+        <div class="pt-2">
+          <LanguageSelector currentLocale={currentLocale} variant="footer" />
+        </div>
       </div>
 
       <!-- Quick Links -->
       <div class="md:col-span-2 space-y-3">
         <h3 class="font-display text-sm font-bold text-white tracking-wide uppercase">
-          Quick Links
+          {t.footer.quickLinks}
         </h3>
         <ul class="space-y-2 text-xs text-zinc-400">
-          <li><a href="/#mailbox-manager" class="hover:text-white transition-colors">Instant Inbox</a></li>
-          <li><a href="/#features" class="hover:text-white transition-colors">Features</a></li>
-          <li><a href="/#how-it-works" class="hover:text-white transition-colors">How It Works</a></li>
-          <li><a href="/#faq" class="hover:text-white transition-colors">FAQ</a></li>
+          <li><a href={`${homeUrl}#mailbox-manager`} class="hover:text-white transition-colors">{t.footer.instantInbox}</a></li>
+          <li><a href={`${homeUrl}#features`} class="hover:text-white transition-colors">{t.nav.features}</a></li>
+          <li><a href={`${homeUrl}#how-it-works`} class="hover:text-white transition-colors">{t.nav.howItWorks}</a></li>
+          <li><a href={`${homeUrl}#faq`} class="hover:text-white transition-colors">{t.nav.faq}</a></li>
         </ul>
       </div>
 
       <!-- Company -->
       <div class="md:col-span-2 space-y-3">
         <h3 class="font-display text-sm font-bold text-white tracking-wide uppercase">
-          Company
+          {t.footer.company}
         </h3>
         <ul class="space-y-2 text-xs text-zinc-400">
-          <li><a href="/about/" class="hover:text-white transition-colors">About Us</a></li>
-          <li><a href="/contact/" class="hover:text-white transition-colors">Contact</a></li>
-          <li><a href="/blog/" class="hover:text-white transition-colors">Blog</a></li>
+          <li><a href={aboutUrl} class="hover:text-white transition-colors">{t.nav.about}</a></li>
+          <li><a href={contactUrl} class="hover:text-white transition-colors">{t.nav.contact}</a></li>
+          <li><a href={blogUrl} class="hover:text-white transition-colors">{t.nav.blog}</a></li>
         </ul>
       </div>
 
       <!-- Legal -->
       <div class="md:col-span-4 space-y-3">
         <h3 class="font-display text-sm font-bold text-white tracking-wide uppercase">
-          Legal
+          {t.footer.legal}
         </h3>
         <ul class="space-y-2 text-xs text-zinc-400">
-          <li><a href="/privacy-policy/" class="hover:text-white transition-colors">Privacy Policy</a></li>
-          <li><a href="/terms-of-service/" class="hover:text-white transition-colors">Terms of Service</a></li>
-          <li><a href="/disclaimer/" class="hover:text-white transition-colors">Disclaimer</a></li>
+          <li><a href={privacyUrl} class="hover:text-white transition-colors">{t.footer.privacyPolicy}</a></li>
+          <li><a href={termsUrl} class="hover:text-white transition-colors">{t.footer.termsOfService}</a></li>
+          <li><a href={disclaimerUrl} class="hover:text-white transition-colors">{t.footer.disclaimer}</a></li>
         </ul>
       </div>
     </div>
@@ -63,14 +87,14 @@
     <!-- Copyright Row -->
     <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 font-mono text-center sm:text-left">
       <div>
-        © {new Date().getFullYear()} TempoEmails. All rights reserved.
+        © {new Date().getFullYear()} TempoEmails. {t.footer.allRightsReserved}
       </div>
       <div class="flex flex-wrap items-center justify-center sm:justify-end gap-3 sm:gap-4">
-        <a href="/privacy-policy/" class="hover:text-white transition-colors">Privacy Policy</a>
+        <a href={privacyUrl} class="hover:text-white transition-colors">{t.footer.privacyPolicy}</a>
         <span>•</span>
-        <a href="/terms-of-service/" class="hover:text-white transition-colors">Terms</a>
+        <a href={termsUrl} class="hover:text-white transition-colors">{t.footer.termsOfService}</a>
         <span>•</span>
-        <a href="/contact/" class="hover:text-white transition-colors">Contact</a>
+        <a href={contactUrl} class="hover:text-white transition-colors">{t.nav.contact}</a>
       </div>
     </div>
   </div>

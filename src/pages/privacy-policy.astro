@@ -1,11 +1,22 @@
 ---
 import ContentLayout from '../layouts/ContentLayout.astro';
 import { SITE_CONFIG } from '../lib/config';
+import { useTranslation, getLocaleFromUrl } from '../i18n/utils';
+import type { Locale } from '../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale } = Astro.props;
+const currentLocale = locale || getLocaleFromUrl(Astro.url);
+const t = useTranslation(currentLocale);
 ---
 
 <ContentLayout
-  title="Privacy Policy"
-  description="TempoEmails Privacy Policy: zero logs, ephemeral in-memory processing, GDPR/CCPA compliant disposable email generator with no registration required."
+  title={t.pages.privacy.title}
+  description={t.pages.privacy.description}
+  locale={currentLocale}
   keywords="temp mail zero logs usa, privacy compliant temp mail us, temporary mail generator europe gdpr compliant, anonymous temporary inbox no log, encrypted throwaway email service"
 >
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">

@@ -1,31 +1,40 @@
 ---
 import GlassCard from '../ui/GlassCard.astro';
 import Badge from '../ui/Badge.astro';
+import { useTranslation } from '../../i18n/utils';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = useTranslation(locale);
 
 const faqs = [
   {
-    q: 'What is temp mail and how does a disposable temporary email work?',
-    a: 'Temp mail (also known as disposable email, burner email, or 10 minute mail) provides an instant temporary email address to receive incoming messages, activation links, and OTP verification codes without exposing your personal email address.',
+    q: t.faq.q1,
+    a: t.faq.a1,
   },
   {
-    q: 'Can I use TempoEmails as a 10 minute mail for OTP verification codes?',
-    a: 'Yes! TempoEmails features an intelligent OTP and verification code extractor. Incoming 4-to-8 digit verification tokens and magic confirmation links are automatically detected and highlighted with a 1-click copy button.',
+    q: t.faq.q2,
+    a: t.faq.a2,
   },
   {
-    q: 'Can I use temporary email for Discord, ChatGPT, Telegram, or Steam?',
-    a: 'Yes. TempoEmails works with platforms like Discord, ChatGPT, OpenAI, Telegram, Steam, Reddit, and various online trial services. If a service filters a specific domain, click "Change" or "Custom" to switch to an alternate active domain.',
+    q: t.faq.q3,
+    a: t.faq.a3,
   },
   {
-    q: 'Can I send outbound emails from TempoEmails?',
-    a: 'No. TempoEmails is strictly receive-only. Blocking outbound mail prevents spam abuses and protects our domain deliverability, ensuring your signup and verification emails arrive quickly without delay.',
+    q: t.faq.q4,
+    a: t.faq.a4,
   },
   {
-    q: 'Can I choose my own custom temp mail username and domain?',
-    a: 'Yes. Click the "Custom" button in the address bar to create your own custom email username and select from our available active domains.',
+    q: t.faq.q5,
+    a: t.faq.a5,
   },
   {
-    q: 'Is TempoEmails completely free with zero logs and no registration?',
-    a: 'Yes. TempoEmails is 100% free with no registration, no passwords, and zero personal logs. Your messages exist in temporary memory and are deleted automatically when you close or wipe your session.',
+    q: t.faq.q6,
+    a: t.faq.a6,
   },
 ];
 ---
@@ -33,10 +42,10 @@ const faqs = [
 <section id="faq" class="w-full max-w-4xl mx-auto my-16 px-4">
   <div class="text-center mb-10 space-y-3">
     <Badge variant="neutral" size="md">
-      Frequently Asked Questions
+      {t.faq.badge}
     </Badge>
     <h2 class="font-display text-3xl md:text-4xl font-black text-[#202020] dark:text-[#fcfcfc] tracking-tight">
-      Common questions & answers.
+      {t.faq.title}
     </h2>
   </div>
 

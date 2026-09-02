@@ -1,0 +1,42 @@
+---
+import { NON_DEFAULT_LOCALES, type Locale } from '../../../i18n/languages';
+
+export async function getStaticPaths() {
+  const blogModules = import.meta.glob('../../blog/*.astro');
+  const slugs = Object.keys(blogModules)
+    .map((file) => file.split('/').pop()?.replace('.astro', ''))
+    .filter((slug): slug is string => Boolean(slug && slug !== 'index'));
+
+  const paths = [];
+  for (const lang of NON_DEFAULT_LOCALES) {
+    for (const slug of slugs) {
+      paths.push({
+        params: { lang, slug },
+        props: { slug },
+      });
+    }
+  }
+  return paths;
+}
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const { lang } = Astro.params;
+const locale = lang as Locale;
+
+const blogModules = import.meta.glob('../../blog/*.astro');
+const targetPath = `../../blog/${slug}.astro`;
+const loadModule = blogModules[targetPath];
+
+if (!loadModule) {
+  throw new Error(`Blog article '${slug}' not found.`);
+}
+
+const mod = (await loadModule()) as any;
+const PostComponent = mod.default;
+---
+
+<PostComponent locale={locale} />

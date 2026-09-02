@@ -1,6 +1,15 @@
 ---
 import Button from '../ui/Button.astro';
 import Badge from '../ui/Badge.astro';
+import { useTranslation } from '../../i18n/utils';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = useTranslation(locale);
 ---
 
 <div id="email-detail-container" class="h-full flex flex-col bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm">
@@ -12,17 +21,17 @@ import Badge from '../ui/Badge.astro';
       </svg>
     </div>
     <h3 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">
-      No message selected
+      {t.emailDetail.noMessageTitle}
     </h3>
     <p class="text-xs text-[#575757] dark:text-zinc-400 max-w-xs leading-relaxed">
-      Select an email from your inbox to read it and copy verification codes.
+      {t.emailDetail.noMessageDesc}
     </p>
   </div>
 
   <!-- Loading spinner -->
   <div id="email-detail-loading" class="hidden flex-col items-center justify-center p-6 sm:p-8 text-center h-full min-h-[360px] sm:min-h-[400px]">
     <div class="w-10 h-10 border-2 border-[#ea2804] border-t-transparent rounded-full animate-spin mb-3"></div>
-    <p class="text-xs font-mono text-[#575757] dark:text-zinc-400">Loading email...</p>
+    <p class="text-xs font-mono text-[#575757] dark:text-zinc-400">{t.emailDetail.loading}</p>
   </div>
 
   <!-- Full Message Content (Hidden until loaded) -->
@@ -39,17 +48,17 @@ import Badge from '../ui/Badge.astro';
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
             <polyline points="15 18 9 12 15 6"></polyline>
           </svg>
-          Back to Inbox
+          {t.emailDetail.backToInbox}
         </button>
 
         <div class="flex items-center gap-2 ml-auto">
           <!-- View switcher tabs -->
           <div class="inline-flex p-0.5 rounded-full bg-black/5 dark:bg-white/10 text-xs">
             <button id="tab-html-btn" type="button" class="px-2.5 sm:px-3 py-1 rounded-full font-medium transition-all bg-white dark:bg-zinc-800 text-[#202020] dark:text-white shadow-xs cursor-pointer">
-              HTML
+              {t.emailDetail.htmlTab}
             </button>
             <button id="tab-text-btn" type="button" class="px-2.5 sm:px-3 py-1 rounded-full font-medium transition-all text-[#575757] dark:text-zinc-400 hover:text-[#202020] dark:hover:text-white cursor-pointer">
-              Text
+              {t.emailDetail.textTab}
             </button>
           </div>
 
@@ -58,7 +67,7 @@ import Badge from '../ui/Badge.astro';
             id="download-email-btn"
             type="button"
             class="w-8 h-8 rounded-full flex items-center justify-center text-[#575757] dark:text-zinc-400 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
-            title="Download email"
+            title={t.emailDetail.downloadTooltip}
             aria-label="Download email text"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -73,7 +82,7 @@ import Badge from '../ui/Badge.astro';
             id="delete-msg-btn"
             type="button"
             class="w-8 h-8 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
-            title="Delete this message"
+            title={t.emailDetail.deleteTooltip}
             aria-label="Delete message"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -86,7 +95,7 @@ import Badge from '../ui/Badge.astro';
 
       <!-- Subject Headline -->
       <h2 id="msg-subject-display" class="font-display text-base sm:text-lg md:text-xl font-bold text-[#202020] dark:text-[#fcfcfc] break-words">
-        Subject
+        {t.emailDetail.noSubject || 'Subject'}
       </h2>
 
       <!-- Sender / Metadata Info -->
@@ -97,17 +106,17 @@ import Badge from '../ui/Badge.astro';
           </div>
           <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-center gap-1.5">
-              <span id="msg-from-name" class="font-bold text-[#202020] dark:text-[#fcfcfc] break-words">Sender</span>
+              <span id="msg-from-name" class="font-bold text-[#202020] dark:text-[#fcfcfc] break-words">{t.emailDetail.defaultSender || 'Sender'}</span>
               <span class="text-[#8d8d8d] dark:text-zinc-500 break-all">&lt;<span id="msg-from-address" class="font-mono">sender@example.com</span>&gt;</span>
             </div>
             <div class="text-[11px] text-[#8d8d8d] dark:text-zinc-500 break-all">
-              To: <span id="msg-to-address" class="font-mono">you@tempo.mail</span>
+              <span id="msg-to-label">{t.emailDetail.toLabel || 'To:'}</span> <span id="msg-to-address" class="font-mono">you@tempo.mail</span>
             </div>
           </div>
         </div>
 
         <div class="text-left sm:text-right shrink-0">
-          <span id="msg-date-full" class="text-[11px] text-[#8d8d8d] dark:text-zinc-400 font-mono block">Date</span>
+          <span id="msg-date-full" class="text-[11px] text-[#8d8d8d] dark:text-zinc-400 font-mono block">{t.emailDetail.defaultDate || 'Date'}</span>
         </div>
       </div>
     </div>
@@ -123,7 +132,7 @@ import Badge from '../ui/Badge.astro';
           </div>
           <div class="min-w-0">
             <span class="text-[10px] font-bold tracking-wider uppercase text-[#ea2804] dark:text-[#ff6a3d] block">
-              Verification Code Detected
+              {t.emailDetail.otpDetected}
             </span>
             <div class="font-mono text-xl sm:text-2xl font-black tracking-widest text-[#202020] dark:text-white break-all" id="detected-otp-code">
               123456
@@ -136,7 +145,7 @@ import Badge from '../ui/Badge.astro';
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
           </svg>
-          <span>Copy Code</span>
+          <span>{t.emailDetail.copyOtp}</span>
         </Button>
       </div>
     </div>
@@ -144,7 +153,7 @@ import Badge from '../ui/Badge.astro';
     <!-- Verification Link Quick Action (If detected) -->
     <div id="verify-link-banner" class="hidden mx-3 sm:mx-4 mb-3 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
       <div class="flex items-center gap-2 min-w-0 flex-1">
-        <span class="text-blue-500 font-bold shrink-0">🔗 Link:</span>
+        <span class="text-blue-500 font-bold shrink-0">🔗 {t.emailDetail.verifyLink}</span>
         <span id="detected-verify-url" class="font-mono text-blue-600 dark:text-blue-400 truncate"></span>
       </div>
       <a
@@ -154,7 +163,7 @@ import Badge from '../ui/Badge.astro';
         rel="noopener noreferrer"
         class="shrink-0 font-semibold text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1 w-full sm:w-auto justify-center sm:justify-start py-1 px-2.5 sm:p-0 rounded-lg sm:rounded-none bg-blue-500/10 sm:bg-transparent"
       >
-        Open Link ↗
+        {t.emailDetail.openLink}
       </a>
     </div>
 

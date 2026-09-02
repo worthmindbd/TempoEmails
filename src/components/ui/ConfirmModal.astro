@@ -1,5 +1,14 @@
 ---
 import Button from './Button.astro';
+import { useTranslation } from '../../i18n/utils';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = useTranslation(locale);
 ---
 
 <div
@@ -42,10 +51,10 @@ import Button from './Button.astro';
       <!-- Title & Description -->
       <div class="flex-1 min-w-0 pt-0.5">
         <h3 id="confirm-modal-title" class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc]">
-          Confirm Action
+          {t.confirmModal.confirm}
         </h3>
         <p id="confirm-modal-description" class="text-xs text-[#575757] dark:text-zinc-400 mt-1 leading-relaxed">
-          Are you sure you want to proceed with this action?
+          {t.confirmModal.changeAddressDesc}
         </p>
       </div>
     </div>
@@ -53,14 +62,14 @@ import Button from './Button.astro';
     <!-- Actions -->
     <div class="flex gap-2.5 pt-3">
       <Button variant="ghost" size="md" id="confirm-modal-cancel" class="flex-1" type="button">
-        Cancel
+        {t.confirmModal.cancel}
       </Button>
       <button
         id="confirm-modal-action"
         type="button"
         class="flex-1 h-10 px-5 rounded-full font-sans font-semibold text-xs transition-all duration-200 inline-flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95 bg-[#ea2804] hover:bg-[#d02403] text-white"
       >
-        Confirm
+        {t.confirmModal.confirm}
       </button>
     </div>
   </div>
@@ -71,10 +80,10 @@ import Button from './Button.astro';
   let confirmResolve: ((value: boolean) => void) | null = null;
 
   (window as any).showConfirmDialog = function ({
-    title = 'Confirm Action',
-    description = 'Are you sure you want to proceed?',
-    confirmText = 'Confirm',
-    cancelText = 'Cancel',
+    title,
+    description,
+    confirmText,
+    cancelText,
     variant = 'primary',
     iconType = 'random',
   }: {
@@ -85,6 +94,12 @@ import Button from './Button.astro';
     variant?: 'primary' | 'danger';
     iconType?: 'random' | 'trash' | 'warning';
   }): Promise<boolean> {
+    const i18n = (window as any).__TEMPO_I18N__?.confirmModal;
+    const resolvedTitle = title || i18n?.confirm || 'Confirm Action';
+    const resolvedDescription = description || i18n?.changeAddressDesc || 'Are you sure you want to proceed?';
+    const resolvedConfirmText = confirmText || i18n?.confirm || 'Confirm';
+    const resolvedCancelText = cancelText || i18n?.cancel || 'Cancel';
+
     return new Promise((resolve) => {
       confirmResolve = resolve;
 
@@ -100,12 +115,12 @@ import Button from './Button.astro';
       const iconTrash = document.getElementById('confirm-icon-trash');
       const iconWarning = document.getElementById('confirm-icon-warning');
 
-      if (titleEl) titleEl.textContent = title;
-      if (descEl) descEl.textContent = description;
-      if (cancelBtn) cancelBtn.textContent = cancelText;
+      if (titleEl) titleEl.textContent = resolvedTitle;
+      if (descEl) descEl.textContent = resolvedDescription;
+      if (cancelBtn) cancelBtn.textContent = resolvedCancelText;
 
       if (actionBtn) {
-        actionBtn.textContent = confirmText;
+        actionBtn.textContent = resolvedConfirmText;
         if (variant === 'danger') {
           actionBtn.className =
             'flex-1 h-10 px-5 rounded-full font-sans font-semibold text-xs transition-all duration-200 inline-flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95 bg-rose-600 hover:bg-rose-700 text-white';

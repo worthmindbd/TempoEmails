@@ -7,32 +7,39 @@ import QrCodeModal from './QrCodeModal.astro';
 import CustomInboxModal from './CustomInboxModal.astro';
 import InboxHistoryDrawer from './InboxHistoryDrawer.astro';
 import ConfirmModal from '../ui/ConfirmModal.astro';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
 ---
 
 <div id="mailbox-manager" class="w-full max-w-6xl mx-auto space-y-5">
   <!-- Top Address & Action Controls Island -->
-  <EmailAddressBar />
+  <EmailAddressBar locale={locale} />
 
   <!-- Main Inbox Grid (Split View on Desktop, Toggle on Mobile) -->
   <GlassCard variant="panel" class="overflow-hidden border border-white/60 dark:border-white/10 shadow-2xl">
     <div class="grid grid-cols-1 md:grid-cols-12 min-h-[540px]">
       <!-- Left Column: Inbox List (md:col-span-5 or 4) -->
       <div id="inbox-list-pane" class="md:col-span-5 lg:col-span-4 border-r border-black/5 dark:border-white/10 h-full">
-        <InboxList />
+        <InboxList locale={locale} />
       </div>
 
       <!-- Right Column: Email Reader Detail (md:col-span-7 or 8) -->
       <div id="email-detail-pane" class="hidden md:block md:col-span-7 lg:col-span-8 h-full">
-        <EmailDetail />
+        <EmailDetail locale={locale} />
       </div>
     </div>
   </GlassCard>
 
   <!-- Modals -->
-  <QrCodeModal />
-  <CustomInboxModal />
-  <InboxHistoryDrawer />
-  <ConfirmModal />
+  <QrCodeModal locale={locale} />
+  <CustomInboxModal locale={locale} />
+  <InboxHistoryDrawer locale={locale} />
+  <ConfirmModal locale={locale} />
 </div>
 
 <script>
@@ -83,9 +90,10 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
         await this.fetchMessages(true);
       } catch (err) {
         console.error('Failed to init mailbox:', err);
+        const i18n = (window as any).__TEMPO_I18N__;
         window.dispatchEvent(
           new CustomEvent('tempomail:toast', {
-            detail: { message: 'Failed to initialize mailbox. Please try refreshing.', type: 'error' },
+            detail: { message: i18n?.toasts?.initFailed || 'Failed to initialize mailbox. Please try refreshing.', type: 'error' },
           })
         );
       } finally {
@@ -323,14 +331,17 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
       const emptyState = document.getElementById('inbox-empty-state');
       const listContainer = document.getElementById('inbox-items-list');
       const countBadge = document.getElementById('inbox-count-badge');
+      const i18n = (window as any).__TEMPO_I18N__;
 
       if (countBadge) {
         countBadge.textContent = String(this.messages.length);
         const unread = this.messages.filter((m) => !m.seen).length;
         if (unread > 0) {
-          countBadge.title = `${unread} unread email${unread > 1 ? 's' : ''}`;
+          const unreadLabel = unread > 1 ? (i18n?.inboxList?.unreadEmails || 'unread emails') : (i18n?.inboxList?.unreadEmail || 'unread email');
+          countBadge.title = `${unread} ${unreadLabel}`;
         } else {
-          countBadge.title = `${this.messages.length} email${this.messages.length !== 1 ? 's' : ''}`;
+          const totalLabel = this.messages.length !== 1 ? (i18n?.inboxList?.totalEmails || 'emails') : (i18n?.inboxList?.totalEmail || 'email');
+          countBadge.title = `${this.messages.length} ${totalLabel}`;
         }
       }
 
@@ -352,6 +363,9 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
         const isSelected = this.selectedMessage && this.selectedMessage.id === msg.id;
         const initial = (msg.from.name || msg.from.address || 'U').charAt(0).toUpperCase();
         const isUnread = !msg.seen;
+        const unreadBadgeText = i18n?.inboxList?.unreadBadge || 'Unread';
+        const noSubjectText = i18n?.emailDetail?.noSubject || '(No Subject)';
+        const clickToViewText = i18n?.inboxList?.clickToView || 'Click to view email details...';
 
         item.className = `p-4 cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/5 relative flex items-start gap-3 border-b border-black/5 dark:border-white/5 ${
           isSelected ? 'bg-[#ea2804]/10 dark:bg-[#ea2804]/15 border-l-4 border-l-[#ea2804]' : ''
@@ -360,7 +374,7 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
         item.innerHTML = `
           <div class="relative w-9 h-9 rounded-full bg-gradient-to-br from-[#ea2804] to-[#ff6a3d] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
             ${initial}
-            ${isUnread ? '<span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 border-2 border-white dark:border-zinc-900 rounded-full" title="Unread"></span>' : ''}
+            ${isUnread ? `<span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 border-2 border-white dark:border-zinc-900 rounded-full" title="${unreadBadgeText}"></span>` : ''}
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between gap-1 mb-1">
@@ -368,10 +382,10 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
               <span class="text-[10px] text-[#8d8d8d] dark:text-zinc-400 font-mono shrink-0">${formatRelativeTime(msg.createdAt)}</span>
             </div>
             <div class="text-xs ${isUnread ? 'font-bold text-[#101010] dark:text-white' : 'font-medium text-[#3a3a3a] dark:text-zinc-300'} truncate mb-1">
-              ${msg.subject || '(No Subject)'}
+              ${msg.subject || noSubjectText}
             </div>
             <div class="text-[11px] text-[#8d8d8d] dark:text-zinc-400 line-clamp-1">
-              ${msg.intro || 'Click to view email details...'}
+              ${msg.intro || clickToViewText}
             </div>
             ${
               msg.extractedOtp
@@ -429,9 +443,10 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
         this.renderMessageList();
       } catch (err) {
         console.error('Failed to load message detail:', err);
+        const i18n = (window as any).__TEMPO_I18N__;
         window.dispatchEvent(
           new CustomEvent('tempomail:toast', {
-            detail: { message: 'Failed to load message content.', type: 'error' },
+            detail: { message: i18n?.toasts?.loadMessageFailed || 'Failed to load message content.', type: 'error' },
           })
         );
       } finally {
@@ -443,6 +458,7 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
       const msg = this.selectedMessage;
       if (!msg) return;
 
+      const i18n = (window as any).__TEMPO_I18N__;
       const content = document.getElementById('email-detail-content');
       const subject = document.getElementById('msg-subject-display');
       const fromName = document.getElementById('msg-from-name');
@@ -459,8 +475,8 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
       const textContent = document.getElementById('email-text-content');
 
       if (content) content.classList.remove('hidden');
-      if (subject) subject.textContent = msg.subject || '(No Subject)';
-      if (fromName) fromName.textContent = msg.from.name || 'Unknown Sender';
+      if (subject) subject.textContent = msg.subject || i18n?.emailDetail?.noSubject || '(No Subject)';
+      if (fromName) fromName.textContent = msg.from.name || i18n?.emailDetail?.defaultSender || 'Unknown Sender';
       if (fromAddr) fromAddr.textContent = msg.from.address;
       if (toAddr) toAddr.textContent = msg.to.map((t) => t.address).join(', ') || this.account?.address || '';
       if (dateFull) dateFull.textContent = formatFullDateTime(msg.createdAt);
@@ -565,9 +581,10 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
       }
 
       await this.fetchMessages();
+      const i18n = (window as any).__TEMPO_I18N__;
       window.dispatchEvent(
         new CustomEvent('tempomail:toast', {
-          detail: { message: 'Message deleted', type: 'success' },
+          detail: { message: i18n?.toasts?.messageDeleted || 'Message deleted', type: 'success' },
         })
       );
     }
@@ -727,9 +744,11 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
 
       this.connectRealtimeStream();
       this.fetchMessages();
+      const i18n = (window as any).__TEMPO_I18N__;
+      const switchedMsg = (i18n?.toasts?.switchedTo || 'Switched to {address}').replace('{address}', targetAccount.address);
       window.dispatchEvent(
         new CustomEvent('tempomail:toast', {
-          detail: { message: `Switched to ${targetAccount.address}`, type: 'success' },
+          detail: { message: switchedMsg, type: 'success' },
         })
       );
     }
@@ -743,15 +762,17 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
 
       const performCopy = async () => {
         if (!this.account) return;
-        const ok = await copyToClipboard(this.account.address, 'Email copied to clipboard!');
+        const i18n = (window as any).__TEMPO_I18N__;
+        const copyToastMsg = (i18n?.common?.copyEmailToast || i18n?.toasts?.copiedToClipboard || 'Copied {email} to clipboard!').replace('{email}', this.account.address);
+        const ok = await copyToClipboard(this.account.address, copyToastMsg);
         if (ok && copyIcon && checkIcon && copyText) {
           copyIcon.classList.add('hidden');
           checkIcon.classList.remove('hidden');
-          copyText.textContent = 'Copied!';
+          copyText.textContent = i18n?.common?.copied || 'Copied!';
           setTimeout(() => {
             copyIcon.classList.remove('hidden');
             checkIcon.classList.add('hidden');
-            copyText.textContent = 'Copy Address';
+            copyText.textContent = i18n?.addressBar?.copyAddress || 'Copy Address';
           }, 2000);
         }
       };
@@ -766,12 +787,13 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
 
       // 3. Change / Randomize button
       document.getElementById('change-email-btn')?.addEventListener('click', async () => {
+        const i18n = (window as any).__TEMPO_I18N__;
         const currentDomain = this.account?.address.split('@')[1];
         const ok = await (window as any).showConfirmDialog({
-          title: 'Generate New Email?',
-          description: 'This will create a fresh temporary mailbox with a new domain. Your current mailbox remains saved in history.',
-          confirmText: 'Generate New',
-          cancelText: 'Keep Current',
+          title: i18n?.confirmModal?.changeAddressTitle || 'Generate New Email?',
+          description: i18n?.confirmModal?.changeAddressDesc || 'This will create a fresh temporary mailbox with a new domain. Your current mailbox remains saved in history.',
+          confirmText: i18n?.confirmModal?.confirm || 'Generate New',
+          cancelText: i18n?.confirmModal?.cancel || 'Keep Current',
           variant: 'primary',
           iconType: 'random',
         });
@@ -779,7 +801,7 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
           await this.loadInitialMailbox(true, undefined, currentDomain);
           window.dispatchEvent(
             new CustomEvent('tempomail:toast', {
-              detail: { message: 'Generated fresh temporary inbox with new domain!', type: 'success' },
+              detail: { message: i18n?.toasts?.generatedNew || 'Generated fresh temporary inbox with new domain!', type: 'success' },
             })
           );
         }
@@ -787,11 +809,12 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
 
       // 4. Delete current mailbox
       document.getElementById('delete-inbox-btn')?.addEventListener('click', async () => {
+        const i18n = (window as any).__TEMPO_I18N__;
         const ok = await (window as any).showConfirmDialog({
-          title: 'Delete This Mailbox?',
-          description: 'Are you sure you want to delete this temporary inbox and generate a fresh one?',
-          confirmText: 'Delete Mailbox',
-          cancelText: 'Cancel',
+          title: i18n?.confirmModal?.deleteInboxTitle || 'Delete This Mailbox?',
+          description: i18n?.confirmModal?.deleteInboxDesc || 'Are you sure you want to delete this temporary inbox and generate a fresh one?',
+          confirmText: i18n?.confirmModal?.confirm || 'Delete Mailbox',
+          cancelText: i18n?.confirmModal?.cancel || 'Cancel',
           variant: 'danger',
           iconType: 'trash',
         });
@@ -805,7 +828,7 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
             await this.fetchMessages();
             window.dispatchEvent(
               new CustomEvent('tempomail:toast', {
-                detail: { message: 'Mailbox deleted and fresh address generated!', type: 'success' },
+                detail: { message: i18n?.toasts?.mailboxDeleted || 'Mailbox deleted and fresh address generated!', type: 'success' },
               })
             );
           }
@@ -819,7 +842,11 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
         if (e.target === document.getElementById('qr-modal')) this.closeQrModal();
       });
       document.getElementById('qr-copy-btn')?.addEventListener('click', () => {
-        if (this.account) copyToClipboard(this.account.address, 'Email copied to clipboard!');
+        if (this.account) {
+          const i18n = (window as any).__TEMPO_I18N__;
+          const copyToastMsg = (i18n?.common?.copyEmailToast || i18n?.toasts?.copiedToClipboard || 'Copied {email} to clipboard!').replace('{email}', this.account.address);
+          copyToClipboard(this.account.address, copyToastMsg);
+        }
       });
 
       // 7. Custom email modal triggers
@@ -854,16 +881,19 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
           this.connectRealtimeStream();
           this.selectedMessage = null;
           await this.fetchMessages();
+          const i18n = (window as any).__TEMPO_I18N__;
+          const customCreatedTpl = i18n?.toasts?.customCreated || 'Created custom inbox: {address}';
           window.dispatchEvent(
             new CustomEvent('tempomail:toast', {
-              detail: { message: `Created custom inbox: ${this.account.address} (${this.account.provider.toUpperCase()})`, type: 'success' },
+              detail: { message: customCreatedTpl.replace('{address}', `${this.account.address} (${this.account.provider.toUpperCase()})`), type: 'success' },
             })
           );
         } catch (err: any) {
           console.error('Custom inbox creation failed:', err);
+          const i18n = (window as any).__TEMPO_I18N__;
           window.dispatchEvent(
             new CustomEvent('tempomail:toast', {
-              detail: { message: err?.message || 'Failed to create inbox. Please try a different username.', type: 'error' },
+              detail: { message: err?.message || i18n?.toasts?.customFailed || 'Failed to create inbox. Please try a different username.', type: 'error' },
             })
           );
         } finally {
@@ -883,9 +913,11 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
         const curIdx = provs.indexOf(this.account?.provider as any);
         const nextProvider = provs[(curIdx + 1) % provs.length] || 'mailtm';
         this.loadInitialMailbox(true, nextProvider);
+        const i18n = (window as any).__TEMPO_I18N__;
+        const provSwitchedTpl = i18n?.toasts?.providerSwitched || 'Switched active provider to {provider}';
         window.dispatchEvent(
           new CustomEvent('tempomail:toast', {
-            detail: { message: `Switched active provider to ${nextProvider.toUpperCase()}`, type: 'success' },
+            detail: { message: provSwitchedTpl.replace('{provider}', nextProvider.toUpperCase()), type: 'success' },
           })
         );
       });
@@ -898,11 +930,12 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
         if (e.target === document.getElementById('history-modal')) this.closeHistoryModal();
       });
       document.getElementById('clear-all-history-btn')?.addEventListener('click', async () => {
+        const i18n = (window as any).__TEMPO_I18N__;
         const ok = await (window as any).showConfirmDialog({
-          title: 'Clear All Inboxes?',
-          description: 'Are you sure you want to permanently remove all saved temporary inboxes from browser memory?',
-          confirmText: 'Clear Everything',
-          cancelText: 'Cancel',
+          title: i18n?.historyDrawer?.confirmClearTitle || 'Clear All Inboxes?',
+          description: i18n?.historyDrawer?.confirmClearDesc || 'Are you sure you want to permanently remove all saved temporary inboxes from browser memory?',
+          confirmText: i18n?.confirmModal?.confirm || 'Clear Everything',
+          cancelText: i18n?.confirmModal?.cancel || 'Cancel',
           variant: 'danger',
           iconType: 'trash',
         });
@@ -912,7 +945,7 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
           this.closeHistoryModal();
           window.dispatchEvent(
             new CustomEvent('tempomail:toast', {
-              detail: { message: 'All saved inboxes cleared from memory.', type: 'success' },
+              detail: { message: i18n?.toasts?.historyCleared || 'All saved inboxes cleared from memory.', type: 'success' },
             })
           );
         }
@@ -927,7 +960,9 @@ import ConfirmModal from '../ui/ConfirmModal.astro';
       // 10. Copy OTP code button
       document.getElementById('copy-otp-btn')?.addEventListener('click', () => {
         if (this.selectedMessage?.extractedOtp) {
-          copyToClipboard(this.selectedMessage.extractedOtp, `Verification Code ${this.selectedMessage.extractedOtp} copied!`);
+          const i18n = (window as any).__TEMPO_I18N__;
+          const otpTpl = i18n?.toasts?.otpCopied || 'Verification code {code} copied!';
+          copyToClipboard(this.selectedMessage.extractedOtp, otpTpl.replace('{code}', this.selectedMessage.extractedOtp));
         }
       });
 

@@ -1,0 +1,10 @@
+---
+import NotFoundPage from '../404.astro';
+import { NON_DEFAULT_LOCALES } from '../../i18n/languages';
+
+export function getStaticPaths() {
+  return NON_DEFAULT_LOCALES.map((lang) => ({ params: { lang } }));
+}
+---
+
+<NotFoundPage />

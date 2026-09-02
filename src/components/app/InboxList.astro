@@ -1,6 +1,15 @@
 ---
 import Badge from '../ui/Badge.astro';
 import Button from '../ui/Button.astro';
+import { useTranslation } from '../../i18n/utils';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = useTranslation(locale);
 ---
 
 <div class="h-full flex flex-col">
@@ -9,7 +18,7 @@ import Button from '../ui/Button.astro';
     <div class="flex items-center gap-2.5">
       <div class="w-2.5 h-2.5 rounded-full bg-[#ea2804] animate-pulse"></div>
       <h2 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc]">
-        Inbox
+        {t.inboxList.title}
       </h2>
       <span id="inbox-count-badge" class="text-xs px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 font-mono text-[#575757] dark:text-zinc-300 font-semibold">
         0
@@ -35,15 +44,15 @@ import Button from '../ui/Button.astro';
       </div>
 
       <h3 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">
-        Waiting for incoming emails...
+        {t.inboxList.emptyTitle}
       </h3>
       <p class="text-xs text-[#575757] dark:text-zinc-400 max-w-xs mb-4">
-        Copy your temporary address above and paste it into any signup form. New messages will appear here automatically.
+        {t.inboxList.emptyDesc}
       </p>
       
       <div class="flex items-center gap-2 text-[11px] font-mono text-[#8d8d8d] dark:text-zinc-500">
         <span class="w-2 h-2 rounded-full bg-[#2b9a66]"></span>
-        Auto-checking active
+        {t.inboxList.autoChecking}
       </div>
     </div>
 

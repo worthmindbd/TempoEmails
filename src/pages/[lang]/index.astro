@@ -1,19 +1,28 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import MailboxManager from '../components/app/MailboxManager.astro';
-import OtpShowcase from '../components/sections/OtpShowcase.astro';
-import UseCases from '../components/sections/UseCases.astro';
-import Features from '../components/sections/Features.astro';
-import HowItWorks from '../components/sections/HowItWorks.astro';
-import Faq from '../components/sections/Faq.astro';
-import { useTranslation } from '../i18n/utils';
+import Layout from '../../layouts/Layout.astro';
+import MailboxManager from '../../components/app/MailboxManager.astro';
+import OtpShowcase from '../../components/sections/OtpShowcase.astro';
+import UseCases from '../../components/sections/UseCases.astro';
+import Features from '../../components/sections/Features.astro';
+import HowItWorks from '../../components/sections/HowItWorks.astro';
+import Faq from '../../components/sections/Faq.astro';
+import { NON_DEFAULT_LOCALES, type Locale } from '../../i18n/languages';
+import { useTranslation } from '../../i18n/utils';
 
-const t = useTranslation('en');
+export function getStaticPaths() {
+  return NON_DEFAULT_LOCALES.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params;
+const currentLocale = lang as Locale;
+const t = useTranslation(currentLocale);
 
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  inLanguage: 'en',
+  inLanguage: currentLocale,
   mainEntity: [
     {
       '@type': 'Question',
@@ -71,7 +80,7 @@ const faqSchema = {
   title={t.meta.title}
   description={t.meta.description}
   keywords={t.meta.keywords}
-  locale="en"
+  locale={currentLocale}
   isApp={true}
 >
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
@@ -83,7 +92,7 @@ const faqSchema = {
       <span>{t.hero.badge}</span>
     </div>
 
-    <!-- Editorial Display Headline (DESIGN.md specification) -->
+    <!-- Editorial Display Headline -->
     <h1 class="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight leading-[1.08] sm:leading-[1.05]">
       {t.hero.titleLine1} <br class="hidden sm:inline" />
       <span class="bg-gradient-to-r from-[#ea2804] via-[#ff6a3d] to-[#ea2804] bg-clip-text text-transparent">
@@ -99,21 +108,21 @@ const faqSchema = {
 
   <!-- Interactive TempMail Box Island -->
   <section id="mailbox-manager" class="px-3 sm:px-6 lg:px-8 pb-12">
-    <MailboxManager locale="en" />
+    <MailboxManager locale={currentLocale} />
   </section>
 
   <!-- OTP Feature Showcase -->
-  <OtpShowcase locale="en" />
+  <OtpShowcase locale={currentLocale} />
 
-  <!-- Popular Use Cases Grid (Discord, ChatGPT, Telegram, Steam, QA Testing) -->
-  <UseCases locale="en" />
+  <!-- Popular Use Cases Grid -->
+  <UseCases locale={currentLocale} />
 
   <!-- Features Grid -->
-  <Features locale="en" />
+  <Features locale={currentLocale} />
 
   <!-- 4-Step Process Guide -->
-  <HowItWorks locale="en" />
+  <HowItWorks locale={currentLocale} />
 
   <!-- FAQ Accordion -->
-  <Faq locale="en" />
+  <Faq locale={currentLocale} />
 </Layout>

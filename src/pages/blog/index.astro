@@ -2,6 +2,17 @@
 import Layout from '../../layouts/Layout.astro';
 import GlassCard from '../../components/ui/GlassCard.astro';
 import Badge from '../../components/ui/Badge.astro';
+import { useTranslation, getLocaleFromUrl, getLocalizedPath } from '../../i18n/utils';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale } = Astro.props;
+const currentLocale = locale || getLocaleFromUrl(Astro.url);
+const t = useTranslation(currentLocale);
+const homeUrl = currentLocale === 'en' ? '/' : `/${currentLocale}/`;
 
 // Blog articles data — ordered by publish date (newest first)
 const articles = [
@@ -115,11 +126,19 @@ const articles = [
 const categories = [...new Set(articles.map(a => a.category))];
 
 function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString(currentLocale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
+}
+
+function getCategoryLabel(cat: string) {
+  if (cat === 'Privacy') return t.common.privacy;
+  if (cat === 'Security') return t.common.security;
+  if (cat === 'Guides') return t.common.guide;
+  if (cat === 'Technology') return t.common.architecture;
+  return cat;
 }
 
 const categoryColors: Record<string, string> = {
@@ -131,35 +150,32 @@ const categoryColors: Record<string, string> = {
 ---
 
 <Layout
-  title="Temp Mail, Privacy & Online Security Blog — TempoEmails"
-  description="Expert guides on free temp mail, disposable temporary email services, OTP verification codes, 10 minute mail, and digital privacy best practices."
-  keywords="temporary email blog, temp mail guides, disposable email security, 10 minute mail tutorials, otp verification guide, fake email privacy"
+  title={t.pages.blog.title}
+  description={t.pages.blog.description}
+  locale={currentLocale}
 >
   <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
     <!-- Header -->
     <div class="text-center mb-12 space-y-4">
       <Badge variant="neutral" size="md">
-        TempoEmails Blog
+        TempoEmails {t.common.blog}
       </Badge>
       <h1 class="font-display text-4xl sm:text-5xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight">
-        Privacy & Security
-        <span class="bg-gradient-to-r from-[#ea2804] via-[#ff6a3d] to-[#ea2804] bg-clip-text text-transparent">
-          Guides
-        </span>
+        {t.pages.blog.heading}
       </h1>
       <p class="text-base sm:text-lg text-[#575757] dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">
-        Practical guides on avoiding spam, managing online accounts, and protecting your primary email address.
+        {t.pages.blog.subheading}
       </p>
     </div>
 
     <!-- Category Filters -->
     <div class="flex flex-wrap items-center justify-center gap-2 mb-10">
       <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#ea2804]/10 text-[#ea2804] dark:bg-[#ea2804]/20 dark:text-[#ff6a3d] border border-[#ea2804]/20">
-        All ({articles.length})
+        {t.common.all} ({articles.length})
       </span>
       {categories.map(cat => (
         <span class={`px-3.5 py-1.5 rounded-full text-xs font-semibold ${categoryColors[cat] || 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400'}`}>
-          {cat} ({articles.filter(a => a.category === cat).length})
+          {getCategoryLabel(cat)} ({articles.filter(a => a.category === cat).length})
         </span>
       ))}
     </div>
@@ -167,12 +183,12 @@ const categoryColors: Record<string, string> = {
     <!-- Articles Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
       {articles.map((article) => (
-        <a href={article.slug} class="group block">
+        <a href={getLocalizedPath(article.slug, currentLocale)} class="group block">
           <GlassCard variant="card" class="h-full p-6 transition-all duration-200 group-hover:shadow-lg group-hover:border-[#ea2804]/20 dark:group-hover:border-[#ea2804]/30">
             <div class="space-y-3">
               <div class="flex items-center justify-between">
                 <span class={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${categoryColors[article.category] || 'bg-zinc-500/10 text-zinc-600'}`}>
-                  {article.category}
+                  {getCategoryLabel(article.category)}
                 </span>
                 <time class="text-[10px] font-mono text-[#8d8d8d] dark:text-zinc-500" datetime={article.date}>
                   {formatDate(article.date)}
@@ -188,7 +204,7 @@ const categoryColors: Record<string, string> = {
               </p>
 
               <div class="flex items-center gap-1.5 text-xs font-semibold text-[#ea2804] dark:text-[#ff6a3d] pt-1">
-                <span>Read article</span>
+                <span>{t.common.readArticle}</span>
                 <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <path d="M5 12h14M12 5l7 7-7 7"></path>
                 </svg>
@@ -202,13 +218,13 @@ const categoryColors: Record<string, string> = {
     <!-- Back to Home -->
     <div class="text-center mt-12">
       <a
-        href="/"
+        href={homeUrl}
         class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7"></path>
         </svg>
-        Back to Home
+        {t.common.backToHome}
       </a>
     </div>
   </section>

@@ -1,11 +1,22 @@
 ---
 import ContentLayout from '../layouts/ContentLayout.astro';
 import { SITE_CONFIG } from '../lib/config';
+import { useTranslation, getLocaleFromUrl } from '../i18n/utils';
+import type { Locale } from '../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale } = Astro.props;
+const currentLocale = locale || getLocaleFromUrl(Astro.url);
+const t = useTranslation(currentLocale);
 ---
 
 <ContentLayout
-  title="Terms of Service"
-  description="TempoEmails Terms of Service: guidelines for using our free disposable email service, receive-only architecture, developer API policies, and fair use terms."
+  title={t.pages.terms.title}
+  description={t.pages.terms.description}
+  locale={currentLocale}
   keywords="disposable email service, temporary email generator, receive only temp mail, developer api terms"
 >
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">

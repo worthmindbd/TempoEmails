@@ -1,12 +1,26 @@
 ---
 import ThemeToggle from '../ui/ThemeToggle.astro';
 import Button from '../ui/Button.astro';
+import LanguageSelector from '../ui/LanguageSelector.astro';
+import { useTranslation, getLocalizedPath } from '../../i18n/utils';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  currentLocale?: Locale;
+}
+
+const { currentLocale = 'en' } = Astro.props;
+const t = useTranslation(currentLocale);
+const homeUrl = currentLocale === 'en' ? '/' : `/${currentLocale}/`;
+const blogUrl = getLocalizedPath('/blog/', currentLocale);
+const aboutUrl = getLocalizedPath('/about/', currentLocale);
+const contactUrl = getLocalizedPath('/contact/', currentLocale);
 ---
 
 <header class="sticky top-0 z-40 w-full border-b border-black/5 dark:border-white/10 glass-panel backdrop-blur-xl transition-all duration-300">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
     <!-- Brand Wordmark Logo -->
-    <a href="/" class="flex items-center gap-2 sm:gap-2.5 group select-none shrink-0">
+    <a href={homeUrl} class="flex items-center gap-2 sm:gap-2.5 group select-none shrink-0">
       <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-[#ea2804] to-[#ff6a3d] flex items-center justify-center text-white shadow-md shadow-[#ea2804]/25 transition-transform group-hover:scale-105">
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="4"></circle>
@@ -25,28 +39,31 @@ import Button from '../ui/Button.astro';
 
     <!-- Desktop Navigation Links -->
     <nav class="hidden md:flex items-center gap-1">
-      <a href="/#features" class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        Features
+      <a href={`${homeUrl}#features`} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+        {t.nav.features}
       </a>
-      <a href="/#how-it-works" class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        How It Works
+      <a href={`${homeUrl}#how-it-works`} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+        {t.nav.howItWorks}
       </a>
-      <a href="/#faq" class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        FAQ
+      <a href={`${homeUrl}#faq`} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+        {t.nav.faq}
       </a>
-      <a href="/blog/" class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        Blog
+      <a href={blogUrl} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+        {t.nav.blog}
       </a>
-      <a href="/about/" class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        About
+      <a href={aboutUrl} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+        {t.nav.about}
       </a>
-      <a href="/contact/" class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        Contact
+      <a href={contactUrl} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+        {t.nav.contact}
       </a>
     </nav>
 
     <!-- Right Controls -->
     <div class="flex items-center gap-1.5 sm:gap-2">
+      <!-- Language Selector -->
+      <LanguageSelector currentLocale={currentLocale} variant="header" />
+
       <!-- Sound Chime Toggle -->
       <button
         id="sound-toggle-btn"
@@ -76,7 +93,7 @@ import Button from '../ui/Button.astro';
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        <span>History</span>
+        <span>{t.nav.history}</span>
       </button>
 
       <!-- Light / Dark Mode Toggle -->
@@ -113,48 +130,56 @@ import Button from '../ui/Button.astro';
   >
     <nav class="flex flex-col space-y-1">
       <a
-        href="/#features"
+        href={`${homeUrl}#features`}
         class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
       >
-        <span>Features</span>
+        <span>{t.nav.features}</span>
         <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
       </a>
       <a
-        href="/#how-it-works"
+        href={`${homeUrl}#how-it-works`}
         class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
       >
-        <span>How It Works</span>
+        <span>{t.nav.howItWorks}</span>
         <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
       </a>
       <a
-        href="/#faq"
+        href={`${homeUrl}#faq`}
         class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
       >
-        <span>FAQ</span>
+        <span>{t.nav.faq}</span>
         <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
       </a>
       <a
-        href="/blog/"
+        href={blogUrl}
         class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
       >
-        <span>Privacy & Security Blog</span>
+        <span>{t.nav.blog}</span>
         <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
       </a>
       <a
-        href="/about/"
+        href={aboutUrl}
         class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
       >
-        <span>About Us</span>
+        <span>{t.nav.about}</span>
         <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
       </a>
       <a
-        href="/contact/"
+        href={contactUrl}
         class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
       >
-        <span>Contact & Support</span>
+        <span>{t.nav.contact}</span>
         <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
       </a>
     </nav>
+
+    <!-- Mobile Language Selector Row -->
+    <div class="pt-2 border-t border-black/5 dark:border-white/10">
+      <div class="text-[10px] uppercase font-mono font-bold tracking-wider text-[#8d8d8d] dark:text-zinc-500 mb-1.5 px-1">
+        {t.nav.selectLanguage}
+      </div>
+      <LanguageSelector currentLocale={currentLocale} variant="drawer" />
+    </div>
 
     <!-- Mobile Quick History Button -->
     <div class="pt-2 border-t border-black/5 dark:border-white/10">
@@ -167,7 +192,7 @@ import Button from '../ui/Button.astro';
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        <span>View Recent Inboxes History</span>
+        <span>{t.nav.history}</span>
       </button>
     </div>
   </div>
@@ -197,10 +222,15 @@ import Button from '../ui/Button.astro';
     soundBtn?.addEventListener('click', () => {
       soundNotifier.toggle();
       updateSoundUI();
+      const i18n = (window as any).__TEMPO_I18N__;
+      const isEnabled = soundNotifier.isEnabled();
+      const soundMsg = isEnabled
+        ? (i18n?.toasts?.soundEnabled || '🔔 Sound notifications enabled')
+        : (i18n?.toasts?.soundMuted || '🔕 Sound notifications muted');
       window.dispatchEvent(
         new CustomEvent('tempomail:toast', {
           detail: {
-            message: soundNotifier.isEnabled() ? '🔔 Sound notifications enabled' : '🔕 Sound notifications muted',
+            message: soundMsg,
             type: 'success',
           },
         })

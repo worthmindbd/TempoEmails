@@ -1,27 +1,36 @@
 ---
 import GlassCard from '../ui/GlassCard.astro';
 import Badge from '../ui/Badge.astro';
+import { useTranslation } from '../../i18n/utils';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = useTranslation(locale);
 
 const steps = [
   {
     step: '01',
-    title: 'Generate Temp Mail Address',
-    description: 'Use the instant random email generator or click "Custom" to choose your own burner username and domain alias.',
+    title: t.howItWorks.step1Title,
+    description: t.howItWorks.step1Desc,
   },
   {
     step: '02',
-    title: 'Paste into Signups & Trials',
-    description: 'Use your disposable email on Discord, ChatGPT, Telegram, Steam, free trials, and gated whitepapers.',
+    title: t.howItWorks.step2Title,
+    description: t.howItWorks.step2Desc,
   },
   {
     step: '03',
-    title: 'Receive OTP Codes & Links',
-    description: 'Incoming emails land within seconds. The automated parser detects and highlights your verification OTP for 1-click copy.',
+    title: t.howItWorks.step3Title,
+    description: t.howItWorks.step3Desc,
   },
   {
     step: '04',
-    title: 'Walk Away 100% Spam-Free',
-    description: 'Once verified, delete the temporary mailbox or let it expire. Your personal inbox remains protected from spam forever.',
+    title: t.howItWorks.step4Title,
+    description: t.howItWorks.step4Desc,
   },
 ];
 ---
@@ -29,13 +38,13 @@ const steps = [
 <section id="how-it-works" class="w-full max-w-6xl mx-auto my-16 px-4">
   <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
     <Badge variant="neutral" size="md">
-      How It Works
+      {t.howItWorks.badge}
     </Badge>
     <h2 class="font-display text-3xl md:text-4xl font-black text-[#202020] dark:text-[#fcfcfc] tracking-tight">
-      How temporary email works in 4 easy steps.
+      {t.howItWorks.title}
     </h2>
     <p class="text-sm md:text-base text-[#575757] dark:text-zinc-400">
-      Generate a working disposable inbox instantly — no registration, no passwords, and 100% free.
+      {t.howItWorks.subtitle}
     </p>
   </div>
 
