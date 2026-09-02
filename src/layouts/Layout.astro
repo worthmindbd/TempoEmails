@@ -36,7 +36,7 @@ const ogImageURL = new URL(ogImage, siteUrl);
 
 // Google Analytics 4 & AdSense
 const gaId = import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID;
-const adsenseId = import.meta.env.PUBLIC_GOOGLE_ADSENSE_ID;
+const adsenseId = import.meta.env.PUBLIC_GOOGLE_ADSENSE_ID || 'ca-pub-2966554097255224';
 
 // JSON-LD Structured Data for WebSite, WebApplication, and Organization
 const websiteSchema = {
@@ -79,7 +79,7 @@ const organizationSchema = {
   url: `${canonicalURL.origin}/`,
   logo: new URL('/android-chrome-512x512.png', canonicalURL.origin).href,
   sameAs: [
-    'https://github.com/TempoEmails',
+    'https://github.com/worthmindbd/TempoEmails',
   ],
 };
 ---
