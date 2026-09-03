@@ -1,7 +1,7 @@
 ---
 import ContentLayout from '../layouts/ContentLayout.astro';
 import { SITE_CONFIG } from '../lib/config';
-import { useTranslation, getLocaleFromUrl } from '../i18n/utils';
+import { useTranslation, getLocaleFromUrl, getLocalizedPath } from '../i18n/utils';
 import type { Locale } from '../i18n/languages';
 
 interface Props {
@@ -11,6 +11,8 @@ interface Props {
 const { locale } = Astro.props;
 const currentLocale = locale || getLocaleFromUrl(Astro.url);
 const t = useTranslation(currentLocale);
+const contactUrl = getLocalizedPath('/contact/', currentLocale);
+const termsUrl = getLocalizedPath('/terms-of-service/', currentLocale);
 ---
 
 <ContentLayout
@@ -104,7 +106,7 @@ const t = useTranslation(currentLocale);
   </p>
   <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-4">
     <li><strong>Email:</strong> <a href={`mailto:${SITE_CONFIG.emails.contact}`} class="text-[#ea2804] hover:underline">{SITE_CONFIG.emails.contact}</a></li>
-    <li><strong>Contact Page:</strong> <a href="/contact/" class="text-[#ea2804] hover:underline">TempoEmails Support Desk</a></li>
-    <li><strong>Terms of Service:</strong> <a href="/terms-of-service/" class="text-[#ea2804] hover:underline">View Terms of Service</a></li>
+    <li><strong>Contact Page:</strong> <a href={contactUrl} class="text-[#ea2804] hover:underline">TempoEmails Support Desk</a></li>
+    <li><strong>Terms of Service:</strong> <a href={termsUrl} class="text-[#ea2804] hover:underline">View Terms of Service</a></li>
   </ul>
 </ContentLayout>

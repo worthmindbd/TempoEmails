@@ -35,7 +35,7 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/404'),
+      filter: (page) => !page.includes('/404') && !page.endsWith('.xml') && !page.endsWith('.txt'),
       i18n: {
         defaultLocale: 'en',
         locales: {
@@ -75,13 +75,13 @@ export default defineConfig({
         } else if (['/about', '/contact'].includes(normalizedPath)) {
           // Info pages
           item.priority = 0.8;
-          item.changefreq = ChangeFreqEnum.WEEKLY;
-          item.lastmod = new Date().toISOString();
+          item.changefreq = ChangeFreqEnum.MONTHLY;
+          item.lastmod = new Date('2026-08-20').toISOString();
         } else {
-          // Legal pages
+          // Legal pages (privacy policy, terms of service, disclaimer)
           item.priority = 0.6;
           item.changefreq = ChangeFreqEnum.MONTHLY;
-          item.lastmod = new Date().toISOString();
+          item.lastmod = new Date('2026-08-20').toISOString();
         }
         return item;
       },

@@ -14,6 +14,25 @@ const currentLocale = locale || getLocaleFromUrl(Astro.url);
 const t = useTranslation(currentLocale);
 const about = getAboutPageData(currentLocale);
 const contactUrl = getLocalizedPath('/contact/', currentLocale);
+
+const siteUrl = Astro.site?.origin || SITE_CONFIG.siteUrl;
+let normalizedPath = Astro.url.pathname;
+if (!normalizedPath.endsWith('/')) normalizedPath = `${normalizedPath}/`;
+const aboutUrl = new URL(normalizedPath, siteUrl);
+
+const aboutPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: t.pages.about.title,
+  description: t.pages.about.description,
+  url: aboutUrl.href,
+  inLanguage: currentLocale,
+  mainEntity: {
+    '@type': 'Organization',
+    '@id': `${aboutUrl.origin}/#organization`,
+    name: 'TempoEmails',
+  },
+};
 ---
 
 <ContentLayout
@@ -22,6 +41,7 @@ const contactUrl = getLocalizedPath('/contact/', currentLocale);
   locale={currentLocale}
   keywords="about tempoemails, free temp mail service, disposable temporary email provider, 10 minute mail mission, anonymous burner email, privacy first email"
 >
+  <script type="application/ld+json" set:html={JSON.stringify(aboutPageSchema)} />
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
     {about.lead}
   </p>

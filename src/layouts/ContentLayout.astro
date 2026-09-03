@@ -25,6 +25,14 @@ const localizedArticle = category ? getBlogArticleBySlug(currentSlug, currentLoc
 const displayTitle = localizedArticle?.title || title;
 const displayDescription = localizedArticle?.description || description;
 
+// Clean displayTitle for headings and breadcrumbs (strip redundant brand suffix if present)
+const cleanTitle = displayTitle.replace(/\s*[—–-]\s*TempoEmails.*$/i, '').trim();
+
+// Full title for the <title> tag: ensure brand is included once
+const metaTitle = displayTitle.includes('TempoEmails')
+  ? displayTitle
+  : `${displayTitle} — TempoEmails`;
+
 function getCategoryLabel(cat?: string) {
   if (!cat) return '';
   if (cat === 'Privacy') return t.common.privacy;
@@ -70,7 +78,7 @@ const breadcrumbSchema = {
           {
             '@type': 'ListItem',
             position: 3,
-            name: displayTitle,
+            name: cleanTitle,
             item: canonicalURL.href,
           },
         ]
@@ -78,7 +86,7 @@ const breadcrumbSchema = {
           {
             '@type': 'ListItem',
             position: 2,
-            name: displayTitle,
+            name: cleanTitle,
             item: canonicalURL.href,
           },
         ]),
@@ -90,10 +98,11 @@ const articleSchema = publishDate
   ? {
       '@context': 'https://schema.org',
       '@type': 'Article',
-      headline: displayTitle,
+      headline: cleanTitle,
       description: displayDescription,
-      datePublished: publishDate,
-      dateModified: publishDate,
+      inLanguage: currentLocale,
+      datePublished: new Date(publishDate).toISOString(),
+      dateModified: new Date(publishDate).toISOString(),
       mainEntityOfPage: {
         '@type': 'WebPage',
         '@id': canonicalURL.href,
@@ -118,11 +127,11 @@ const articleSchema = publishDate
 ---
 
 <Layout
-  title={`${displayTitle} — TempoEmails`}
+  title={metaTitle}
   description={displayDescription}
   keywords={keywords}
   ogType={publishDate ? 'article' : 'website'}
-  publishDate={publishDate}
+  publishDate={publishDate ? new Date(publishDate).toISOString() : undefined}
   category={displayCategory}
   locale={currentLocale}
   isApp={false}
@@ -140,7 +149,7 @@ const articleSchema = publishDate
           <span>→</span>
         </>
       )}
-      <span class="text-[#575757] dark:text-zinc-300 truncate max-w-[200px] sm:max-w-none">{displayTitle}</span>
+      <span class="text-[#575757] dark:text-zinc-300 truncate max-w-[200px] sm:max-w-none">{cleanTitle}</span>
     </nav>
 
     <!-- Article Header -->
@@ -152,7 +161,7 @@ const articleSchema = publishDate
       )}
 
       <h1 class="font-display text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight leading-tight break-words">
-        {displayTitle}
+        {cleanTitle}
       </h1>
 
       {(formattedDate || displayCategory) && (
@@ -203,6 +212,23 @@ const articleSchema = publishDate
     <div class="content-body space-y-1">
       <slot />
     </div>
+
+    <!-- Client-side internal link localization for non-default locales -->
+    {currentLocale !== 'en' && (
+      <script is:inline define:vars={{ currentLocale }}>
+        function localizeContentLinks() {
+          const links = document.querySelectorAll('.content-body a[href^="/"]');
+          links.forEach((a) => {
+            const href = a.getAttribute('href');
+            if (href && !href.startsWith(`/${currentLocale}/`) && !href.startsWith('/#') && !href.startsWith('//')) {
+              a.setAttribute('href', href === '/' ? `/${currentLocale}/` : `/${currentLocale}${href}`);
+            }
+          });
+        }
+        localizeContentLinks();
+        document.addEventListener('astro:page-load', localizeContentLinks);
+      </script>
+    )}
 
     <!-- Back to Home / Blog -->
     <footer class="mt-16 pt-8 border-t border-black/10 dark:border-white/10">

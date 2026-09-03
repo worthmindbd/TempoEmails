@@ -8,8 +8,9 @@ const getRobotsTxt = (baseUrl: string) => `
 User-agent: *
 Allow: /
 
-# Sitemap location
+# Sitemap locations
 Sitemap: ${baseUrl}/sitemap-index.xml
+Sitemap: ${baseUrl}/sitemap.xml
 `.trim();
 
 export const GET: APIRoute = ({ site }) => {

@@ -94,9 +94,9 @@ const t = useTranslation(locale);
       </div>
 
       <!-- Subject Headline -->
-      <h2 id="msg-subject-display" class="font-display text-base sm:text-lg md:text-xl font-bold text-[#202020] dark:text-[#fcfcfc] break-words">
+      <div id="msg-subject-display" role="heading" aria-level="3" class="font-display text-base sm:text-lg md:text-xl font-bold text-[#202020] dark:text-[#fcfcfc] break-words">
         {t.emailDetail.noSubject || 'Subject'}
-      </h2>
+      </div>
 
       <!-- Sender / Metadata Info -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">

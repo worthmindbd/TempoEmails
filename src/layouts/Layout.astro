@@ -39,7 +39,9 @@ const currentLangInfo = LANGUAGES[currentLocale] || LANGUAGES[DEFAULT_LOCALE];
 const clientI18nPayload = getClientI18nPayload(currentLocale);
 
 const siteUrl = Astro.site?.origin || SITE_CONFIG.siteUrl;
-const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+let normalizedPath = Astro.url.pathname;
+if (!normalizedPath.endsWith('/')) normalizedPath = `${normalizedPath}/`;
+const canonicalURL = new URL(normalizedPath, siteUrl);
 const ogImageURL = new URL(ogImage, siteUrl);
 const alternateLinks = getAlternateLinks(Astro.url.pathname, siteUrl);
 
@@ -86,6 +88,7 @@ const webAppSchema = {
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
+  '@id': `${canonicalURL.origin}/#organization`,
   name: 'TempoEmails',
   url: `${canonicalURL.origin}/`,
   logo: new URL('/android-chrome-512x512.png', canonicalURL.origin).href,
@@ -96,7 +99,7 @@ const organizationSchema = {
 ---
 
 <!doctype html>
-<html lang={currentLocale} dir={currentLangInfo.dir} class="scroll-smooth">
+<html lang={currentLangInfo.hreflang || currentLocale} dir={currentLangInfo.dir} class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -122,23 +125,23 @@ const organizationSchema = {
     <!-- Search Engine Indexing Directives -->
     {noindex ? (
       <>
-        <meta name="robots" content="noindex, follow" />
-        <meta name="googlebot" content="noindex, follow" />
-        <meta name="bingbot" content="noindex, follow" />
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="googlebot" content="noindex, nofollow" />
+        <meta name="bingbot" content="noindex, nofollow" />
       </>
     ) : (
       <>
         <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
         <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
         <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <link rel="canonical" href={canonicalURL.href} />
+        
+        <!-- Internationalization & Hreflang SEO Tags: rendered only on indexable pages -->
+        {alternateLinks.map(({ hreflang, href }) => (
+          <link rel="alternate" hreflang={hreflang} href={href} />
+        ))}
       </>
     )}
-    <link rel="canonical" href={canonicalURL.href} />
-    
-    <!-- Internationalization & Hreflang SEO Tags -->
-    {alternateLinks.map(({ hreflang, href }) => (
-      <link rel="alternate" hreflang={hreflang} href={href} />
-    ))}
 
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap-index.xml" />
 
@@ -201,9 +204,9 @@ const organizationSchema = {
     )}
 
     <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+    {isApp && <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />}
     {isApp && <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />}
-    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />}
 
     <!-- Google Fonts: Bricolage Grotesque (Display), Inter (Body), JetBrains Mono (Code) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
