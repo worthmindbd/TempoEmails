@@ -25,6 +25,7 @@ ENV ASTRO_TELEMETRY_DISABLED=1
 COPY --from=builder /app/package.json /app/package-lock.json* ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/server.mjs ./
 COPY --from=builder /app/astro.config.mjs ./
 
 EXPOSE 4321
