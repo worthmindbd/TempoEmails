@@ -9,6 +9,11 @@ const STORAGE_KEYS = {
   SETTINGS_SOUND: 'tempomail_sound_enabled',
 };
 
+// Retention limits so full email bodies cannot exhaust the ~5MB localStorage
+// quota and silently stop persistence (emails stop being saved).
+const MAX_CACHED_SUMMARIES = 100;
+const MAX_CACHED_DETAILS = 60;
+
 export class StorageManager {
   private static normalizeAddress(address: string): string {
     return (address || '').trim().toLowerCase();
@@ -126,9 +131,33 @@ export class StorageManager {
     if (typeof window === 'undefined') return;
     try {
       const normalized = this.normalizeAddress(address);
-      localStorage.setItem(`${STORAGE_KEYS.MESSAGES_CACHE_PREFIX}${normalized}`, JSON.stringify(messages));
+      this.writeWithQuotaEviction(
+        normalized,
+        `${STORAGE_KEYS.MESSAGES_CACHE_PREFIX}${normalized}`,
+        JSON.stringify(messages.slice(0, MAX_CACHED_SUMMARIES))
+      );
     } catch (e) {
       console.warn('LocalStorage error:', e);
+    }
+  }
+
+  /**
+   * Writes a payload; if the quota is exceeded, evicts cached details of other
+   * (older) accounts and retries once before giving up.
+   */
+  private static writeWithQuotaEviction(keepAddress: string, key: string, payload: string): void {
+    try {
+      localStorage.setItem(key, payload);
+    } catch (quotaErr) {
+      try {
+        for (const acc of this.getSavedAccounts().map((a) => this.normalizeAddress(a.address))) {
+          if (acc === keepAddress) continue;
+          localStorage.removeItem(`${STORAGE_KEYS.MESSAGES_DETAIL_CACHE_PREFIX}${acc}`);
+        }
+        localStorage.setItem(key, payload);
+      } catch (retryErr) {
+        throw retryErr;
+      }
     }
   }
 
@@ -169,12 +198,14 @@ export class StorageManager {
         }
       }
 
-      // 3. Sort by createdAt descending (newest first)
-      const merged = Array.from(map.values()).sort((a, b) => {
-        const timeA = new Date(a.createdAt).getTime() || 0;
-        const timeB = new Date(b.createdAt).getTime() || 0;
-        return timeB - timeA;
-      });
+      // 3. Sort by createdAt descending (newest first) and cap the list size
+      const merged = Array.from(map.values())
+        .sort((a, b) => {
+          const timeA = new Date(a.createdAt).getTime() || 0;
+          const timeB = new Date(b.createdAt).getTime() || 0;
+          return timeB - timeA;
+        })
+        .slice(0, MAX_CACHED_SUMMARIES);
 
       this.setCachedMessages(normalized, merged);
       return merged;
@@ -214,6 +245,16 @@ export class StorageManager {
       const map = this.getCachedMessageDetailsMap(normalized);
       map[detail.id] = detail;
 
+      // Cap the detail cache: evict the oldest full bodies so localStorage
+      // cannot fill up and silently stop persisting new emails.
+      const entries = Object.values(map).sort(
+        (a, b) => (new Date(b.createdAt).getTime() || 0) - (new Date(a.createdAt).getTime() || 0)
+      );
+      const cappedMap: Record<string, DetailedMailMessage> = {};
+      for (const entry of entries.slice(0, MAX_CACHED_DETAILS)) {
+        cappedMap[entry.id] = entry;
+      }
+
       // Keep summary list in sync
       const summaryList = this.getCachedMessages(normalized);
       const idx = summaryList.findIndex((m) => m.id === detail.id);
@@ -242,7 +283,11 @@ export class StorageManager {
         this.mergeAndSaveMessages(normalized, [summary]);
       }
 
-      localStorage.setItem(`${STORAGE_KEYS.MESSAGES_DETAIL_CACHE_PREFIX}${normalized}`, JSON.stringify(map));
+      this.writeWithQuotaEviction(
+        normalized,
+        `${STORAGE_KEYS.MESSAGES_DETAIL_CACHE_PREFIX}${normalized}`,
+        JSON.stringify(cappedMap)
+      );
     } catch (e) {
       console.warn('LocalStorage error setting message detail:', e);
     }

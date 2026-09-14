@@ -184,3 +184,14 @@ html.dark .hero-glow-mesh {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(120, 120, 120, 0.45);
 }
+
+/* Respect users who prefer reduced motion (pulses, rings, spinners) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

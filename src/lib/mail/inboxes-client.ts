@@ -1,7 +1,29 @@
 import type { MailAccount, MailDomain, MailMessage, DetailedMailMessage } from './types';
 import { extractOtpCode, extractVerificationLink } from '../utils/otp-extractor';
 
-const API_BASE = 'https://inboxes.com/api/v2';
+const API_BASE = '/api/mail/inboxes/api/v2';
+
+/** Known Inboxes.com network domains — used for exact-match provider routing. */
+export const INBOXES_KNOWN_DOMAINS = [
+  'getnada.com',
+  'getairmail.com',
+  'inboxbear.com',
+  'replyloop.com',
+  'dropjar.com',
+  'robot-mail.com',
+  'fivermail.com',
+  'temptami.com',
+  'tafmail.com',
+  'blondmail.com',
+  'chapsmail.com',
+  'clowmail.com',
+  'givmail.com',
+  'guysmail.com',
+  'vomoto.com',
+  'tupmail.com',
+  'getmule.com',
+  'gimpmail.com',
+];
 
 export class InboxesClient {
   private static generateRandomString(length: number = 8): string {
@@ -28,26 +50,7 @@ export class InboxesClient {
       }));
     } catch {
       // Fallback domain list from Inboxes.com
-      const fallbacks = [
-        'getnada.com',
-        'getairmail.com',
-        'inboxbear.com',
-        'replyloop.com',
-        'dropjar.com',
-        'robot-mail.com',
-        'fivermail.com',
-        'temptami.com',
-        'tafmail.com',
-        'blondmail.com',
-        'chapsmail.com',
-        'clowmail.com',
-        'givmail.com',
-        'guysmail.com',
-        'vomoto.com',
-        'tupmail.com',
-        'getmule.com',
-        'gimpmail.com',
-      ];
+      const fallbacks = INBOXES_KNOWN_DOMAINS;
       return fallbacks.map((domain, idx) => ({
         id: `inb_${idx}`,
         domain,
@@ -102,8 +105,10 @@ export class InboxesClient {
         };
       });
     } catch (err) {
+      // Rethrow so MailService can fall back to the localStorage cache
+      // (returning [] here would wrongly mark the fetch as "successful").
       console.warn('Inboxes.com getMessages error:', err);
-      return [];
+      throw err;
     }
   }
 

@@ -13,7 +13,7 @@ RUN npm ci --include=dev
 COPY . .
 RUN npm run build
 
-# Stage 2: Runner
+# Stage 2: Runner — static dist + the Node file/proxy server, no dependencies needed
 FROM node:22-alpine AS runner
 WORKDIR /app
 
@@ -22,12 +22,10 @@ ENV HOST=0.0.0.0
 ENV PORT=4321
 ENV ASTRO_TELEMETRY_DISABLED=1
 
-COPY --from=builder /app/package.json /app/package-lock.json* ./
-COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/server.mjs ./
-COPY --from=builder /app/astro.config.mjs ./
+COPY --from=builder /app/server ./server
 
 EXPOSE 4321
 
-CMD ["npm", "run", "start"]
+CMD ["node", "server.mjs"]

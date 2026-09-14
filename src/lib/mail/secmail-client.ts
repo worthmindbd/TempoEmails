@@ -1,7 +1,10 @@
 import type { MailAccount, MailDomain, MailMessage, DetailedMailMessage } from './types';
 import { extractOtpCode, extractVerificationLink } from '../utils/otp-extractor';
 
-const API_BASE = 'https://www.1secmail.com/api/v1/';
+// NOTE: The 1secmail public API has been shut down (returns 403). This client
+// is no longer offered for new accounts — it only serves previously stored
+// accounts through the same-origin proxy.
+const API_BASE = '/api/mail/secmail/api/v1/';
 
 export class SecMailClient {
   private static generateRandomString(length: number = 8): string {
@@ -77,8 +80,9 @@ export class SecMailClient {
         };
       });
     } catch (err) {
+      // Rethrow so MailService can fall back to the localStorage cache
       console.warn('1secmail getMessages error:', err);
-      return [];
+      throw err;
     }
   }
 

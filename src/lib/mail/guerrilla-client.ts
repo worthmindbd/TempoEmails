@@ -1,7 +1,7 @@
 import type { MailAccount, MailDomain, MailMessage, DetailedMailMessage } from './types';
 import { extractOtpCode, extractVerificationLink } from '../utils/otp-extractor';
 
-const GUERRILLA_API = 'https://api.guerrillamail.com/ajax.php';
+const GUERRILLA_API = '/api/mail/guerrilla/ajax.php';
 
 export const GUERRILLA_DOMAINS = [
   'sharklasers.com',
@@ -14,21 +14,28 @@ export const GUERRILLA_DOMAINS = [
   'guerrillamail.org',
 ];
 
+/**
+ * The Guerrilla AJAX API always assigns addresses on this domain and ignores
+ * any other requested domain (verified against the live API). We only ever
+ * advertise/return this one so displayed addresses always receive mail.
+ */
+export const GUERRILLA_DEFAULT_DOMAIN = 'guerrillamailblock.com';
+
 export class GuerrillaMailClient {
   private static sidToken: string | null = null;
 
   static async getDomains(): Promise<MailDomain[]> {
-    return GUERRILLA_DOMAINS.map((domain, idx) => ({
-      id: `gm_${idx}`,
-      domain,
-      isActive: true,
-      provider: 'guerrilla' as const,
-    }));
+    return [
+      {
+        id: 'gm_0',
+        domain: GUERRILLA_DEFAULT_DOMAIN,
+        isActive: true,
+        provider: 'guerrilla' as const,
+      },
+    ];
   }
 
-  static async createAccount(usernamePrefix?: string, domainName?: string): Promise<MailAccount> {
-    const domain = domainName || 'sharklasers.com';
-
+  static async createAccount(usernamePrefix?: string, _requestedDomain?: string): Promise<MailAccount> {
     // 1. Get initial session / address
     const initRes = await fetch(`${GUERRILLA_API}?f=get_email_address`);
     if (!initRes.ok) {
@@ -37,9 +44,11 @@ export class GuerrillaMailClient {
     const initData = await initRes.json();
     this.sidToken = initData.sid_token;
 
+    // The API-assigned address is the single source of truth — never fabricate
+    // a different domain client-side, or the address will not receive mail.
     let address = initData.email_addr;
 
-    // 2. If user specified a prefix, set custom username
+    // 2. If user specified a prefix, set custom username (domain stays API-assigned)
     if (usernamePrefix && this.sidToken) {
       const cleanUser = usernamePrefix.toLowerCase().replace(/[^a-z0-9._-]/g, '');
       const setRes = await fetch(
@@ -47,12 +56,10 @@ export class GuerrillaMailClient {
       );
       if (setRes.ok) {
         const setData = await setRes.json();
-        const baseUser = setData.email_addr?.split('@')[0] || cleanUser;
-        address = `${baseUser}@${domain}`;
+        if (setData.email_addr) {
+          address = setData.email_addr;
+        }
       }
-    } else if (domainName && domainName !== 'guerrillamailblock.com') {
-      const baseUser = address.split('@')[0];
-      address = `${baseUser}@${domain}`;
     }
 
     return {
@@ -96,8 +103,9 @@ export class GuerrillaMailClient {
         };
       });
     } catch (err) {
+      // Rethrow so MailService can fall back to the localStorage cache
       console.warn('Guerrilla getMessages error:', err);
-      return [];
+      throw err;
     }
   }
 

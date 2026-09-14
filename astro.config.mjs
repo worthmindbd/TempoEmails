@@ -2,6 +2,28 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
+import { handleMailProxy } from './server/mail-proxy.mjs';
+
+/**
+ * Dev/preview middleware mirroring the production proxy in server.mjs so the
+ * mail providers (which lack CORS headers for browsers) work with `astro dev`.
+ */
+function mailProxyPlugin() {
+  return {
+    name: 'tempo-mail-proxy',
+    enforce: 'pre',
+    configureServer(server) {
+      server.middlewares.use('/api/mail', (req, res) => {
+        handleMailProxy(req, res, req.url || '/');
+      });
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use('/api/mail', (req, res) => {
+        handleMailProxy(req, res, req.url || '/');
+      });
+    },
+  };
+}
 
 const blogDates = {
   '/blog/rise-of-disposable-email': '2026-08-20',
@@ -23,7 +45,9 @@ const blogDates = {
 
 // https://astro.build/config
 export default defineConfig({
-  trailingSlash: 'always',
+  // `always` for production builds; relaxed in dev so the same-origin mail
+  // proxy paths (/api/mail/..., see src/middleware.ts) reach the dev middleware.
+  trailingSlash: process.env.NODE_ENV === 'production' ? 'always' : 'ignore',
   // Production domain (can be overridden via SITE_URL env variable in Docker/Dokploy)
   site: process.env.SITE_URL || 'https://tempoemails.com',
   i18n: {
@@ -93,7 +117,7 @@ export default defineConfig({
     allowedHosts: true,
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), mailProxyPlugin()],
     preview: {
       allowedHosts: true,
     },

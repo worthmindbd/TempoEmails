@@ -180,29 +180,6 @@ const organizationSchema = {
     <meta name="twitter:image" content={ogImageURL.href} />
     <meta name="twitter:image:alt" content={title} />
 
-    <!-- Google Analytics 4 (gtag.js) -->
-    {gaId && (
-      <>
-        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
-        <script is:inline define:vars={{ gaId }}>
-          window.dataLayer = window.dataLayer || [];
-          function gtag() { dataLayer.push(arguments); }
-          gtag('js', new Date());
-          gtag('config', gaId, { page_path: window.location.pathname });
-        </script>
-      </>
-    )}
-
-    <!-- Google AdSense -->
-    {adsenseId && (
-      <script
-        is:inline
-        async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`}
-        crossorigin="anonymous"
-      />
-    )}
-
     <!-- Structured Data (JSON-LD) -->
     {isApp && <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />}
     {isApp && <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />}
@@ -224,11 +201,60 @@ const organizationSchema = {
     <!-- Zero-FOUC Theme Script -->
     <script is:inline>
       (function () {
-        const storedTheme = localStorage.getItem('theme');
-        if (storedTheme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
+        // Guarded: localStorage can throw when storage is blocked by the browser.
+        try {
+          const storedTheme = localStorage.getItem('theme');
+          if (storedTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch {
           document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+
+    <!--
+      Analytics & Ads are loaded ONLY after the visitor accepts cookies
+      (GDPR/ePrivacy). The consent choice is stored by CookieConsent.astro,
+      which dispatches a `tempomail:consent` event on accept.
+    -->
+    <script is:inline define:vars={{ gaId, adsenseId }}>
+      (function () {
+        function loadAnalytics() {
+          if (window.__tempoAnalyticsLoaded) return;
+          window.__tempoAnalyticsLoaded = true;
+
+          if (gaId && gaId.indexOf('XXXX') === -1) {
+            var ga = document.createElement('script');
+            ga.async = true;
+            ga.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+            document.head.appendChild(ga);
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', gaId, { page_path: window.location.pathname });
+          }
+
+          if (adsenseId && adsenseId.indexOf('XXXX') === -1) {
+            var ads = document.createElement('script');
+            ads.async = true;
+            ads.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + adsenseId;
+            ads.crossOrigin = 'anonymous';
+            document.head.appendChild(ads);
+          }
+        }
+
+        try {
+          if (localStorage.getItem('tempomail-cookie-consent') === 'accepted') {
+            loadAnalytics();
+          }
+          window.addEventListener('tempomail:consent', function (e) {
+            if (e.detail && e.detail.accepted) loadAnalytics();
+          });
+        } catch {
+          // Storage unavailable — do not load tracking scripts without consent.
         }
       })();
     </script>
@@ -237,7 +263,7 @@ const organizationSchema = {
     <!-- Atmospheric Ambient Glow Mesh Background -->
     <div class="fixed inset-0 hero-glow-mesh pointer-events-none z-0"></div>
 
-    <Header currentLocale={currentLocale} />
+    <Header currentLocale={currentLocale} isApp={isApp} />
 
     <main class="flex-1 relative z-10">
       <slot />

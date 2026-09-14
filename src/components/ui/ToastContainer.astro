@@ -29,7 +29,18 @@
           ? '<svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
           : '<svg class="w-4 h-4 text-[#ea2804] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
 
-      toast.innerHTML = `${icon}<span class="flex-1">${message}</span>`;
+      const iconWrapper = document.createElement('span');
+      iconWrapper.className = 'shrink-0 inline-flex';
+      // Icons are static trusted markup — safe to assign via innerHTML.
+      iconWrapper.innerHTML = icon;
+
+      const messageSpan = document.createElement('span');
+      messageSpan.className = 'flex-1';
+      // SECURITY: messages may embed user-influenced data (email addresses, OTP codes).
+      // Use textContent — never interpolate into innerHTML.
+      messageSpan.textContent = message;
+
+      toast.append(iconWrapper, messageSpan);
       container.appendChild(toast);
 
       // Trigger enter animation

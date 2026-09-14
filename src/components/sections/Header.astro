@@ -7,9 +7,10 @@ import type { Locale } from '../../i18n/languages';
 
 interface Props {
   currentLocale?: Locale;
+  isApp?: boolean;
 }
 
-const { currentLocale = 'en' } = Astro.props;
+const { currentLocale = 'en', isApp = false } = Astro.props;
 const t = useTranslation(currentLocale);
 const homeUrl = currentLocale === 'en' ? '/' : `/${currentLocale}/`;
 const blogUrl = getLocalizedPath('/blog/', currentLocale);
@@ -83,18 +84,22 @@ const contactUrl = getLocalizedPath('/contact/', currentLocale);
         </svg>
       </button>
 
-      <!-- Recent Inboxes History Button (Desktop & Tablet) -->
-      <button
-        id="header-history-btn"
-        type="button"
-        class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors shadow-xs cursor-pointer"
-      >
-        <svg class="w-3.5 h-3.5 text-[#ea2804]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polyline points="12 6 12 12 16 14"></polyline>
-        </svg>
-        <span>{t.nav.history}</span>
-      </button>
+      <!-- Recent Inboxes History Button (only rendered on pages that contain the
+           mailbox island — elsewhere the inbox-history modal does not exist and
+           the button would be dead) -->
+      {isApp && (
+        <button
+          id="header-history-btn"
+          type="button"
+          class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors shadow-xs cursor-pointer"
+        >
+          <svg class="w-3.5 h-3.5 text-[#ea2804]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>{t.nav.history}</span>
+        </button>
+      )}
 
       <!-- Light / Dark Mode Toggle -->
       <ThemeToggle />
@@ -182,19 +187,21 @@ const contactUrl = getLocalizedPath('/contact/', currentLocale);
     </div>
 
     <!-- Mobile Quick History Button -->
-    <div class="pt-2 border-t border-black/5 dark:border-white/10">
-      <button
-        id="mobile-history-btn"
-        type="button"
-        class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold bg-[#ea2804]/10 dark:bg-[#ea2804]/20 text-[#ea2804] dark:text-[#ff6a3d] border border-[#ea2804]/30 hover:bg-[#ea2804]/20 transition-all cursor-pointer"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polyline points="12 6 12 12 16 14"></polyline>
-        </svg>
-        <span>{t.nav.history}</span>
-      </button>
-    </div>
+    {isApp && (
+      <div class="pt-2 border-t border-black/5 dark:border-white/10">
+        <button
+          id="mobile-history-btn"
+          type="button"
+          class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold bg-[#ea2804]/10 dark:bg-[#ea2804]/20 text-[#ea2804] dark:text-[#ff6a3d] border border-[#ea2804]/30 hover:bg-[#ea2804]/20 transition-all cursor-pointer"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>{t.nav.history}</span>
+        </button>
+      </div>
+    )}
   </div>
 </header>
 

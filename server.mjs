@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import zlib from 'node:zlib';
+import { handleMailProxy } from './server/mail-proxy.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -57,6 +58,27 @@ const COMPRESSIBLE_TYPES = new Set([
 ]);
 
 const server = http.createServer((req, res) => {
+  void handleServerRequest(req, res);
+});
+
+async function handleServerRequest(req, res) {
+  // Same-origin mail API proxy (provider allowlist lives in server/mail-proxy.mjs).
+  // Runs before the static-file handling and before the GET/HEAD-only gate,
+  // so POST/DELETE (mail.tm auth, deletes) can be forwarded too.
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(req.url, 'http://localhost');
+  } catch {
+    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('Bad Request');
+    return;
+  }
+
+  if (parsedUrl.pathname === '/api/mail' || parsedUrl.pathname.startsWith('/api/mail/')) {
+    await handleMailProxy(req, res, parsedUrl.pathname.slice('/api/mail'.length) + parsedUrl.search);
+    return;
+  }
+
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.writeHead(405, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Method Not Allowed');
@@ -94,15 +116,6 @@ const server = http.createServer((req, res) => {
     }
   }
 
-  let parsedUrl;
-  try {
-    parsedUrl = new URL(req.url, 'http://localhost');
-  } catch {
-    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('Bad Request');
-    return;
-  }
-
   let pathname = decodeURIComponent(parsedUrl.pathname);
   let safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
   let filePath = path.join(DIST_DIR, safePath);
@@ -134,9 +147,22 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    // 404 fallback
-    const notFoundPath = path.join(DIST_DIR, '404.html');
-    if (fs.existsSync(notFoundPath)) {
+    // 404 fallback: prefer a localized 404 page when the path starts with a
+    // supported locale prefix, otherwise use the root 404 page. Astro emits
+    // both layouts (404.html and 404/index.html) depending on config.
+    const SUPPORTED_LOCALES = ['es', 'pt', 'fr', 'de', 'ru', 'zh', 'ja', 'ar', 'id'];
+    const pathLocale = pathname.split('/').filter(Boolean)[0];
+    const localeCandidates =
+      pathLocale && SUPPORTED_LOCALES.includes(pathLocale)
+        ? [
+            path.join(DIST_DIR, pathLocale, '404.html'),
+            path.join(DIST_DIR, pathLocale, '404', 'index.html'),
+          ]
+        : [];
+    const notFoundPath = [...localeCandidates, path.join(DIST_DIR, '404.html')].find((p) =>
+      fs.existsSync(p)
+    );
+    if (notFoundPath) {
       res.writeHead(404, {
         'Content-Type': 'text/html; charset=utf-8',
         'X-Content-Type-Options': 'nosniff',
@@ -194,7 +220,7 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, headers);
     fs.createReadStream(filePath).pipe(res);
   }
-});
+}
 
 server.listen(PORT, HOST, () => {
   console.log(`TempoEmails production server listening on http://${HOST}:${PORT}`);

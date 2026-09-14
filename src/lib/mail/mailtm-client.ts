@@ -1,6 +1,9 @@
 import type { MailAccount, MailDomain, MailMessage, DetailedMailMessage } from './types';
 import { extractOtpCode, extractVerificationLink } from '../utils/otp-extractor';
 
+const PROXY_BASE = '/api/mail/mailtm';
+const PROXY_BASE_GW = '/api/mail/mailgw';
+
 export class MailTmClient {
   private static generateRandomString(length: number = 10): string {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -11,13 +14,18 @@ export class MailTmClient {
     return result;
   }
 
+  /**
+   * Resolves the API base for requests. All traffic goes through the
+   * same-origin proxy (/api/mail/...) because api.mail.tm / api.mail.gw do not
+   * send CORS headers usable from other browser origins. Absolute legacy
+   * values (stored accounts) are migrated to proxy paths.
+   */
   static getApiBase(domainOrUrl?: string): string {
-    if (!domainOrUrl) return 'https://api.mail.tm';
-    if (domainOrUrl.startsWith('http')) return domainOrUrl;
-    if (domainOrUrl.includes('westcast') || domainOrUrl.includes('mail.gw')) {
-      return 'https://api.mail.gw';
-    }
-    return 'https://api.mail.tm';
+    if (!domainOrUrl) return PROXY_BASE;
+    if (domainOrUrl.startsWith('/api/mail/')) return domainOrUrl;
+    if (domainOrUrl.includes('westcast') || domainOrUrl.includes('mail.gw')) return PROXY_BASE_GW;
+    // Legacy absolute URLs (https://api.mail.tm / https://api.mail.gw)
+    return PROXY_BASE;
   }
 
   static async getDomains(): Promise<MailDomain[]> {
@@ -108,7 +116,31 @@ export class MailTmClient {
     };
   }
 
-  static async getMessages(token: string, apiBaseUrl: string = 'https://api.mail.tm'): Promise<MailMessage[]> {
+  /**
+   * Exchanges address + password for a fresh JWT. Used to silently renew an
+   * expired token instead of throwing the user's mailbox away.
+   */
+  static async login(address: string, password: string, apiBaseUrl: string = PROXY_BASE): Promise<string> {
+    const apiBase = this.getApiBase(apiBaseUrl);
+    const res = await fetch(`${apiBase}/token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ address, password }),
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to renew authentication token from ${apiBase}`);
+    }
+    const data = await res.json();
+    if (!data.token) {
+      throw new Error('Token renewal response did not contain a token');
+    }
+    return data.token;
+  }
+
+  static async getMessages(token: string, apiBaseUrl: string = PROXY_BASE): Promise<MailMessage[]> {
     const apiBase = this.getApiBase(apiBaseUrl);
     try {
       const res = await fetch(`${apiBase}/messages`, {
@@ -159,7 +191,7 @@ export class MailTmClient {
     }
   }
 
-  static async getMessageDetail(token: string, messageId: string, apiBaseUrl: string = 'https://api.mail.tm'): Promise<DetailedMailMessage> {
+  static async getMessageDetail(token: string, messageId: string, apiBaseUrl: string = PROXY_BASE): Promise<DetailedMailMessage> {
     const apiBase = this.getApiBase(apiBaseUrl);
     const res = await fetch(`${apiBase}/messages/${messageId}`, {
       headers: {
@@ -215,7 +247,7 @@ export class MailTmClient {
     };
   }
 
-  static async deleteMessage(token: string, messageId: string, apiBaseUrl: string = 'https://api.mail.tm'): Promise<boolean> {
+  static async deleteMessage(token: string, messageId: string, apiBaseUrl: string = PROXY_BASE): Promise<boolean> {
     const apiBase = this.getApiBase(apiBaseUrl);
     try {
       const res = await fetch(`${apiBase}/messages/${messageId}`, {

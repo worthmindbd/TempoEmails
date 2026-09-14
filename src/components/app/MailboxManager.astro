@@ -60,6 +60,7 @@ const { locale = 'en' } = Astro.props;
     private isPolling: boolean = false;
     private availableDomains: MailDomain[] = [];
     private sseSource: EventSource | null = null;
+    private addressDisplayBackup: string | null = null;
 
     async init() {
       this.bindEvents();
@@ -70,7 +71,7 @@ const { locale = 'en' } = Astro.props;
 
     async loadInitialMailbox(
       forceNew: boolean = false,
-      preferredProvider?: 'mailtm' | 'guerrilla' | 'secmail',
+      preferredProvider?: 'mailtm' | 'inboxes' | 'tempmaillol' | 'guerrilla',
       excludeDomain?: string
     ) {
       this.showAddressLoading(true);
@@ -81,6 +82,21 @@ const { locale = 'en' } = Astro.props;
       try {
         this.account = await MailService.getOrCreateAccount(forceNew, preferredProvider, excludeDomain);
         this.updateAddressDisplay();
+
+        // Warn clearly if every live provider is unreachable and the app fell
+        // back to the simulated inbox (it cannot receive real email).
+        if (this.account.provider === 'mock') {
+          const i18nWarn = (window as any).__TEMPO_I18N__;
+          window.dispatchEvent(
+            new CustomEvent('tempomail:toast', {
+              detail: {
+                message: i18nWarn?.toasts?.mockFallback || 'All mail providers are unreachable right now — this is a simulated inbox and cannot receive real email.',
+                type: 'error',
+                duration: 6000,
+              },
+            })
+          );
+        }
 
         // Immediately render locally stored messages for instant response
         this.messages = StorageManager.getCachedMessages(this.account.address);
@@ -141,14 +157,12 @@ const { locale = 'en' } = Astro.props;
 
       select.innerHTML = '';
 
+      // Only providers that genuinely support user-chosen usernames + domains
+      // are offered here. TempMail.lol assigns its own random address, and the
+      // simulated (mock) domains cannot receive real email at all.
       const mailtmDomains = this.availableDomains.filter((d) => d.provider === 'mailtm');
       const inboxesDomains = this.availableDomains.filter((d) => d.provider === 'inboxes');
-      const tempmailLolDomains = this.availableDomains.filter((d) => d.provider === 'tempmaillol');
       const guerrillaDomains = this.availableDomains.filter((d) => d.provider === 'guerrilla');
-      const secmailDomains = this.availableDomains.filter((d) => d.provider === 'secmail');
-      const otherDomains = this.availableDomains.filter(
-        (d) => !['mailtm', 'inboxes', 'tempmaillol', 'guerrilla', 'secmail'].includes(d.provider || '')
-      );
 
       if (mailtmDomains.length > 0) {
         const group = document.createElement('optgroup');
@@ -176,52 +190,13 @@ const { locale = 'en' } = Astro.props;
         select.appendChild(group);
       }
 
-      if (tempmailLolDomains.length > 0) {
-        const group = document.createElement('optgroup');
-        group.label = '⚡ TempMail.lol (Stealth Subdomains)';
-        tempmailLolDomains.forEach((d) => {
-          const opt = document.createElement('option');
-          opt.value = d.domain;
-          opt.dataset.provider = 'tempmaillol';
-          opt.textContent = `@${d.domain}`;
-          group.appendChild(opt);
-        });
-        select.appendChild(group);
-      }
-
       if (guerrillaDomains.length > 0) {
         const group = document.createElement('optgroup');
-        group.label = '🛡️ Guerrilla Mail (Sharklasers, Grr.la, etc.)';
+        group.label = '🛡️ Guerrilla Mail';
         guerrillaDomains.forEach((d) => {
           const opt = document.createElement('option');
           opt.value = d.domain;
           opt.dataset.provider = 'guerrilla';
-          opt.textContent = `@${d.domain}`;
-          group.appendChild(opt);
-        });
-        select.appendChild(group);
-      }
-
-      if (secmailDomains.length > 0) {
-        const group = document.createElement('optgroup');
-        group.label = '⚡ 1secmail (Fast / Stateless)';
-        secmailDomains.forEach((d) => {
-          const opt = document.createElement('option');
-          opt.value = d.domain;
-          opt.dataset.provider = 'secmail';
-          opt.textContent = `@${d.domain}`;
-          group.appendChild(opt);
-        });
-        select.appendChild(group);
-      }
-
-      if (otherDomains.length > 0) {
-        const group = document.createElement('optgroup');
-        group.label = '🛠️ Simulated Domains';
-        otherDomains.forEach((d) => {
-          const opt = document.createElement('option');
-          opt.value = d.domain;
-          opt.dataset.provider = 'mock';
           opt.textContent = `@${d.domain}`;
           group.appendChild(opt);
         });
@@ -255,10 +230,6 @@ const { locale = 'en' } = Astro.props;
           providerBadge.textContent = 'GUERRILLA';
           providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 font-mono font-bold cursor-pointer hover:opacity-80 transition-opacity';
           providerBadge.title = 'Click to switch provider';
-        } else if (prov === 'secmail') {
-          providerBadge.textContent = '1SECMAIL';
-          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/25 font-mono font-bold cursor-pointer hover:opacity-80 transition-opacity';
-          providerBadge.title = 'Click to switch provider';
         } else {
           providerBadge.textContent = 'MOCK';
           providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/25 font-mono font-bold';
@@ -270,7 +241,20 @@ const { locale = 'en' } = Astro.props;
       const display = document.getElementById('current-email-display');
       if (!display) return;
       if (loading) {
+        // Remember the current content so a failed load can restore it —
+        // previously a failed mailbox creation left a skeleton forever.
+        if (!this.addressDisplayBackup) {
+          this.addressDisplayBackup = display.innerHTML;
+        }
         display.innerHTML = '<span class="inline-block w-48 h-5 bg-black/10 dark:bg-white/10 animate-pulse rounded"></span>';
+      } else {
+        // If the address was NOT re-rendered yet (failure path) the skeleton is
+        // still showing — restore the previous content. On success paths
+        // updateAddressDisplay() already replaced the skeleton.
+        if (this.addressDisplayBackup && display.querySelector('.animate-pulse')) {
+          display.innerHTML = this.addressDisplayBackup;
+        }
+        this.addressDisplayBackup = null;
       }
     }
 
@@ -371,32 +355,57 @@ const { locale = 'en' } = Astro.props;
           isSelected ? 'bg-[#ea2804]/10 dark:bg-[#ea2804]/15 border-l-4 border-l-[#ea2804]' : ''
         }`;
 
-        item.innerHTML = `
-          <div class="relative w-9 h-9 rounded-full bg-gradient-to-br from-[#ea2804] to-[#ff6a3d] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-            ${initial}
-            ${isUnread ? `<span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 border-2 border-white dark:border-zinc-900 rounded-full" title="${unreadBadgeText}"></span>` : ''}
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between gap-1 mb-1">
-              <span class="font-bold text-xs ${isUnread ? 'text-[#ea2804] dark:text-[#ff6a3d]' : 'text-[#202020] dark:text-[#fcfcfc]'} truncate">${msg.from.name || msg.from.address}</span>
-              <span class="text-[10px] text-[#8d8d8d] dark:text-zinc-400 font-mono shrink-0">${formatRelativeTime(msg.createdAt)}</span>
-            </div>
-            <div class="text-xs ${isUnread ? 'font-bold text-[#101010] dark:text-white' : 'font-medium text-[#3a3a3a] dark:text-zinc-300'} truncate mb-1">
-              ${msg.subject || noSubjectText}
-            </div>
-            <div class="text-[11px] text-[#8d8d8d] dark:text-zinc-400 line-clamp-1">
-              ${msg.intro || clickToViewText}
-            </div>
-            ${
-              msg.extractedOtp
-                ? `<div class="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#ea2804]/10 dark:bg-[#ea2804]/20 border border-[#ea2804]/30 text-[#ea2804] dark:text-[#ff6a3d] font-mono text-[11px] font-bold">
-                    <span>⚡ OTP:</span>
-                    <span>${msg.extractedOtp}</span>
-                  </div>`
-                : ''
-            }
-          </div>
-        `;
+        // SECURITY: Build the item with DOM APIs + textContent only.
+        // Email fields (from.name, subject, intro, OTP) are attacker-controlled;
+        // never interpolate them into innerHTML.
+        const avatar = document.createElement('div');
+        avatar.className = 'relative w-9 h-9 rounded-full bg-gradient-to-br from-[#ea2804] to-[#ff6a3d] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs';
+        avatar.textContent = initial;
+        if (isUnread) {
+          const unreadDot = document.createElement('span');
+          unreadDot.className = 'absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 border-2 border-white dark:border-zinc-900 rounded-full';
+          unreadDot.title = unreadBadgeText;
+          avatar.appendChild(unreadDot);
+        }
+
+        const body = document.createElement('div');
+        body.className = 'flex-1 min-w-0';
+
+        const topRow = document.createElement('div');
+        topRow.className = 'flex items-center justify-between gap-1 mb-1';
+
+        const senderSpan = document.createElement('span');
+        senderSpan.className = `font-bold text-xs ${isUnread ? 'text-[#ea2804] dark:text-[#ff6a3d]' : 'text-[#202020] dark:text-[#fcfcfc]'} truncate`;
+        senderSpan.textContent = msg.from.name || msg.from.address;
+
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'text-[10px] text-[#8d8d8d] dark:text-zinc-400 font-mono shrink-0';
+        timeSpan.textContent = formatRelativeTime(msg.createdAt);
+
+        topRow.append(senderSpan, timeSpan);
+
+        const subjectDiv = document.createElement('div');
+        subjectDiv.className = `text-xs ${isUnread ? 'font-bold text-[#101010] dark:text-white' : 'font-medium text-[#3a3a3a] dark:text-zinc-300'} truncate mb-1`;
+        subjectDiv.textContent = msg.subject || noSubjectText;
+
+        const introDiv = document.createElement('div');
+        introDiv.className = 'text-[11px] text-[#8d8d8d] dark:text-zinc-400 line-clamp-1';
+        introDiv.textContent = msg.intro || clickToViewText;
+
+        body.append(topRow, subjectDiv, introDiv);
+
+        if (msg.extractedOtp) {
+          const otpBadge = document.createElement('div');
+          otpBadge.className = 'mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#ea2804]/10 dark:bg-[#ea2804]/20 border border-[#ea2804]/30 text-[#ea2804] dark:text-[#ff6a3d] font-mono text-[11px] font-bold';
+          const otpLabel = document.createElement('span');
+          otpLabel.textContent = '⚡ OTP:';
+          const otpValue = document.createElement('span');
+          otpValue.textContent = msg.extractedOtp;
+          otpBadge.append(otpLabel, otpValue);
+          body.appendChild(otpBadge);
+        }
+
+        item.append(avatar, body);
 
         item.addEventListener('click', () => {
           this.selectMessage(msg.id);
@@ -665,6 +674,7 @@ const { locale = 'en' } = Astro.props;
     }
 
     openHistoryModal() {
+      const i18n = (window as any).__TEMPO_I18N__;
       const modal = document.getElementById('history-modal');
       const content = document.getElementById('history-modal-content');
       const list = document.getElementById('history-inboxes-list');
@@ -673,11 +683,17 @@ const { locale = 'en' } = Astro.props;
 
       const saved = StorageManager.getSavedAccounts();
       if (saved.length === 0) {
-        list.innerHTML = '<div class="text-center py-6 text-xs text-[#8d8d8d]">No previous inboxes found in this session.</div>';
+        const emptyMsg = document.createElement('div');
+        emptyMsg.className = 'text-center py-6 text-xs text-[#8d8d8d]';
+        emptyMsg.textContent = i18n?.historyDrawer?.emptyTitle || 'No previous inboxes found in this session.';
+        list.innerHTML = '';
+        list.appendChild(emptyMsg);
       } else {
         list.innerHTML = '';
         saved.forEach((acc) => {
           const isCurrent = this.account && this.account.address.toLowerCase() === acc.address.toLowerCase();
+
+          // SECURITY: DOM APIs + textContent only (addresses are user-influenced data).
           const item = document.createElement('div');
           item.className = `flex items-center justify-between p-3 rounded-xl border text-xs transition-all ${
             isCurrent
@@ -685,27 +701,43 @@ const { locale = 'en' } = Astro.props;
               : 'bg-black/5 dark:bg-white/5 border-transparent hover:border-black/10 dark:hover:border-white/10'
           }`;
 
-          item.innerHTML = `
-            <div class="flex items-center gap-2 truncate cursor-pointer flex-1" data-switch-address="${acc.address}">
-              <span class="w-2 h-2 rounded-full ${isCurrent ? 'bg-[#ea2804]' : 'bg-[#8d8d8d]'}"></span>
-              <span class="font-mono text-[#202020] dark:text-zinc-200 truncate">${acc.address}</span>
-            </div>
-            <div class="flex items-center gap-1.5 shrink-0">
-              ${isCurrent ? '<span class="text-[10px] text-[#ea2804] uppercase font-bold tracking-wider">Active</span>' : ''}
-              <button type="button" class="text-rose-500 hover:text-rose-700 p-1 transition-colors cursor-pointer" data-delete-address="${acc.address}" title="Delete from history">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-          `;
+          const switchBtn = document.createElement('div');
+          switchBtn.className = 'flex items-center gap-2 truncate cursor-pointer flex-1';
+          const statusDot = document.createElement('span');
+          statusDot.className = `w-2 h-2 rounded-full ${isCurrent ? 'bg-[#ea2804]' : 'bg-[#8d8d8d]'}`;
+          const addressSpan = document.createElement('span');
+          addressSpan.className = 'font-mono text-[#202020] dark:text-zinc-200 truncate';
+          addressSpan.textContent = acc.address;
+          switchBtn.append(statusDot, addressSpan);
+
+          const actions = document.createElement('div');
+          actions.className = 'flex items-center gap-1.5 shrink-0';
+
+          if (isCurrent) {
+            const activeLabel = document.createElement('span');
+            activeLabel.className = 'text-[10px] text-[#ea2804] uppercase font-bold tracking-wider';
+            activeLabel.textContent = i18n?.historyDrawer?.activeInbox || 'Active';
+            actions.appendChild(activeLabel);
+          }
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.type = 'button';
+          deleteBtn.className = 'text-rose-500 hover:text-rose-700 p-1 transition-colors cursor-pointer';
+          deleteBtn.title = i18n?.historyDrawer?.clearAll || 'Delete from history';
+          deleteBtn.setAttribute('aria-label', i18n?.historyDrawer?.clearAll || 'Delete from history');
+          deleteBtn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+          actions.appendChild(deleteBtn);
+          item.append(switchBtn, actions);
 
           // Bind switch click
-          item.querySelector('[data-switch-address]')?.addEventListener('click', () => {
+          switchBtn.addEventListener('click', () => {
             this.switchInbox(acc);
             this.closeHistoryModal();
           });
 
           // Bind delete click
-          item.querySelector('[data-delete-address]')?.addEventListener('click', (e) => {
+          deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             StorageManager.removeSavedAccount(acc.address);
             this.openHistoryModal(); // Refresh modal
@@ -869,7 +901,7 @@ const { locale = 'en' } = Astro.props;
         const prefix = prefixInput?.value?.trim();
         const domain = select?.value;
         const selectedOpt = select?.options[select.selectedIndex];
-        const providerHint = selectedOpt?.dataset?.provider as ('mailtm' | 'secmail' | undefined);
+        const providerHint = selectedOpt?.dataset?.provider as ('mailtm' | 'inboxes' | 'guerrilla' | undefined);
 
         if (!prefix || !domain) return;
 
@@ -903,12 +935,11 @@ const { locale = 'en' } = Astro.props;
 
       // Quick Provider Toggle on Badge Click
       document.getElementById('provider-badge')?.addEventListener('click', () => {
-        const provs: ('mailtm' | 'inboxes' | 'tempmaillol' | 'guerrilla' | 'secmail')[] = [
+        const provs: ('mailtm' | 'inboxes' | 'tempmaillol' | 'guerrilla')[] = [
           'mailtm',
           'inboxes',
           'tempmaillol',
           'guerrilla',
-          'secmail',
         ];
         const curIdx = provs.indexOf(this.account?.provider as any);
         const nextProvider = provs[(curIdx + 1) % provs.length] || 'mailtm';

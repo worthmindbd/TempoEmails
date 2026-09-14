@@ -9,8 +9,15 @@ class SoundNotifier {
 
   constructor() {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('tempomail_sound_enabled');
-      this.soundEnabled = stored !== 'false';
+      // Guarded: localStorage access can throw when storage is blocked (e.g.
+      // strict privacy settings). This constructor runs at module import time —
+      // an unguarded throw would break the entire mailbox app.
+      try {
+        const stored = localStorage.getItem('tempomail_sound_enabled');
+        this.soundEnabled = stored !== 'false';
+      } catch {
+        this.soundEnabled = true;
+      }
 
       // Auto-unlock AudioContext on first user gesture anywhere
       const unlockAudio = () => {
@@ -47,7 +54,9 @@ class SoundNotifier {
   public toggle(): boolean {
     this.soundEnabled = !this.soundEnabled;
     if (typeof window !== 'undefined') {
-      localStorage.setItem('tempomail_sound_enabled', String(this.soundEnabled));
+      try {
+        localStorage.setItem('tempomail_sound_enabled', String(this.soundEnabled));
+      } catch {}
     }
     if (this.soundEnabled) {
       // Play a gentle preview so the user knows sound is on and working
