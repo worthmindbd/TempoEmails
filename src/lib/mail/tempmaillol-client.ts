@@ -1,22 +1,28 @@
 import type { MailAccount, MailDomain, MailMessage, DetailedMailMessage } from './types';
 import { extractOtpCode, extractVerificationLink } from '../utils/otp-extractor';
 import { StorageManager } from '../utils/storage';
+import { fetchWithTimeout } from '../utils/fetch-with-timeout';
 
 const API_BASE = '/api/mail/tempmaillol/v2';
+const FETCH_TIMEOUT_MS = 10000;
 
 /**
  * Builds a stable message ID from the email's own content.
- * SECURITY/UX: the API has no message IDs, and positional indexes shift every
- * time a new email arrives, which duplicated cached messages and triggered
- * false "new email" chimes. A content hash is stable across polls.
+ * Full-body hash (not just the first 120 chars) so two mails from the same
+ * sender in the same second with the same subject can't collide and lose mail.
  */
-function buildStableMessageId(token: string, email: any): string {
-  const basis = `${email?.from || ''}|${email?.date || ''}|${email?.subject || ''}|${(email?.body || email?.html || '').slice(0, 120)}`;
+function buildStableMessageId(token: string, email: any, index: number = 0): string {
+  const basis = `${email?.from || ''}|${email?.date || ''}|${email?.subject || ''}|${email?.body || email?.html || ''}|${index}`;
   let hash = 5381;
   for (let i = 0; i < basis.length; i++) {
     hash = ((hash << 5) + hash + basis.charCodeAt(i)) | 0;
   }
-  return `tml_${Math.abs(hash).toString(36)}_${token.slice(0, 8)}`;
+  let tokenFrag = '00000000';
+  for (let i = 0; i < token.length; i++) {
+    tokenFrag += token.charCodeAt(i).toString(36);
+  }
+  tokenFrag = tokenFrag.slice(-8);
+  return `tml_${Math.abs(hash).toString(36)}_${tokenFrag}`;
 }
 
 export class TempMailLolClient {
@@ -37,10 +43,14 @@ export class TempMailLolClient {
   }
 
   static async createAccount(): Promise<MailAccount> {
-    const res = await fetch(`${API_BASE}/inbox/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const res = await fetchWithTimeout(
+      `${API_BASE}/inbox/create`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      },
+      FETCH_TIMEOUT_MS
+    );
 
     if (!res.ok) {
       throw new Error(`Failed to create TempMail.lol inbox: ${res.statusText}`);
@@ -59,7 +69,11 @@ export class TempMailLolClient {
   static async getMessages(token: string, address: string): Promise<MailMessage[]> {
     let data;
     try {
-      const res = await fetch(`${API_BASE}/inbox?token=${encodeURIComponent(token)}`);
+      const res = await fetchWithTimeout(
+        `${API_BASE}/inbox?token=${encodeURIComponent(token)}`,
+        {},
+        FETCH_TIMEOUT_MS
+      );
       if (!res.ok) throw new Error('Failed to fetch messages from tempmail.lol');
       data = await res.json();
     } catch (err) {
@@ -70,8 +84,8 @@ export class TempMailLolClient {
 
     const emails: any[] = data.emails || [];
 
-    const summaries: MailMessage[] = emails.map((e: any) => {
-      const id = buildStableMessageId(token, e);
+    const summaries: MailMessage[] = emails.map((e: any, index: number) => {
+      const id = buildStableMessageId(token, e, index);
       const subject = e.subject || '(No Subject)';
       const text = e.body || '';
       const html = e.html || (text ? `<pre>${text}</pre>` : '');
@@ -79,6 +93,10 @@ export class TempMailLolClient {
 
       const extractedOtp = extractOtpCode(subject, `${text} ${html}`);
       const verificationLink = extractVerificationLink(html, text);
+
+      // Preserve an already-read `seen` state: this runs on every poll and
+      // used to clobber seen:true details back to false (unread dot flicker).
+      const existingCached = StorageManager.getCachedMessageDetail(address, id);
 
       const detailed: DetailedMailMessage = {
         id,
@@ -90,7 +108,7 @@ export class TempMailLolClient {
         to: [{ address, name: address }],
         subject,
         intro: text.slice(0, 100),
-        seen: false,
+        seen: existingCached?.seen ?? false,
         createdAt: e.date ? new Date(e.date).toISOString() : new Date().toISOString(),
         text,
         html: html ? [html] : [],
@@ -110,7 +128,7 @@ export class TempMailLolClient {
         to: detailed.to,
         subject,
         intro: detailed.intro,
-        seen: false,
+        seen: detailed.seen,
         createdAt: detailed.createdAt,
         extractedOtp: detailed.extractedOtp,
         provider: 'tempmaillol' as const,

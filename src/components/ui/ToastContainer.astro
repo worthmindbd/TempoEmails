@@ -9,16 +9,24 @@
 </div>
 
 <script>
+  const MAX_TOASTS = 4;
+
   function setupToaster() {
     const container = document.getElementById('toast-container');
-    if (!container) return;
+    if (!container || (container as any).dataset.toasterBound === 'true') return;
+    (container as any).dataset.toasterBound = 'true';
 
     window.addEventListener('tempomail:toast', ((event: CustomEvent) => {
       const { message, type = 'success', duration = 3000 } = event.detail || {};
       if (!message) return;
 
+      while (container.children.length >= MAX_TOASTS) {
+        container.firstElementChild?.remove();
+      }
+
       const toast = document.createElement('div');
-      toast.className = `pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0 flex items-center gap-2.5 sm:gap-3 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl sm:rounded-full text-xs sm:text-sm font-medium shadow-xl backdrop-blur-xl border ${
+      toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+      toast.className = `pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0 flex items-center gap-2.5 sm:gap-3 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-medium shadow-xl backdrop-blur-xl border ${
         type === 'error'
           ? 'bg-rose-500/90 text-white border-rose-400'
           : 'bg-[#202020]/90 dark:bg-zinc-800/90 text-white border-white/20'
@@ -35,12 +43,32 @@
       iconWrapper.innerHTML = icon;
 
       const messageSpan = document.createElement('span');
-      messageSpan.className = 'flex-1';
+      messageSpan.className = 'flex-1 break-all';
       // SECURITY: messages may embed user-influenced data (email addresses, OTP codes).
       // Use textContent — never interpolate into innerHTML.
       messageSpan.textContent = message;
 
-      toast.append(iconWrapper, messageSpan);
+      const dismissBtn = document.createElement('button');
+      dismissBtn.type = 'button';
+      dismissBtn.className = 'shrink-0 rounded-full p-1 opacity-70 hover:opacity-100 transition-opacity';
+      dismissBtn.setAttribute('aria-label', 'Dismiss notification');
+      const dismissIcon = document.createElement('span');
+      dismissIcon.className = 'inline-flex';
+      dismissIcon.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+      let dismissed = false;
+      const dismissToast = () => {
+        if (dismissed) return;
+        dismissed = true;
+        clearTimeout(dismissTimer);
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      };
+      dismissBtn.appendChild(dismissIcon);
+      dismissBtn.addEventListener('click', dismissToast);
+
+      toast.append(iconWrapper, messageSpan, dismissBtn);
       container.appendChild(toast);
 
       // Trigger enter animation
@@ -50,11 +78,7 @@
       });
 
       // Dismiss after duration
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-2', 'opacity-0');
-        setTimeout(() => toast.remove(), 300);
-      }, duration);
+      const dismissTimer = setTimeout(dismissToast, duration);
     }) as EventListener);
   }
 

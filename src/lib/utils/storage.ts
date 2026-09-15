@@ -14,6 +14,24 @@ const STORAGE_KEYS = {
 const MAX_CACHED_SUMMARIES = 100;
 const MAX_CACHED_DETAILS = 60;
 
+function isValidAccount(value: any): value is MailAccount {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    typeof value.address === 'string' &&
+    value.address.includes('@') &&
+    typeof value.provider === 'string'
+  );
+}
+
+function isValidMessage(value: any): value is MailMessage {
+  return value !== null && typeof value === 'object' && typeof value.id === 'string' && typeof value.subject === 'string';
+}
+
+function isValidDetailMap(value: any): value is Record<string, DetailedMailMessage> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
 export class StorageManager {
   private static normalizeAddress(address: string): string {
     return (address || '').trim().toLowerCase();
@@ -24,7 +42,9 @@ export class StorageManager {
     if (typeof window === 'undefined') return null;
     try {
       const data = localStorage.getItem(STORAGE_KEYS.CURRENT_ACCOUNT);
-      return data ? JSON.parse(data) : null;
+      if (!data) return null;
+      const parsed = JSON.parse(data);
+      return isValidAccount(parsed) ? parsed : null;
     } catch {
       return null;
     }
@@ -49,7 +69,10 @@ export class StorageManager {
     if (typeof window === 'undefined') return [];
     try {
       const data = localStorage.getItem(STORAGE_KEYS.SAVED_ACCOUNTS);
-      return data ? JSON.parse(data) : [];
+      if (!data) return [];
+      const parsed = JSON.parse(data);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter(isValidAccount);
     } catch {
       return [];
     }
@@ -121,7 +144,10 @@ export class StorageManager {
     try {
       const normalized = this.normalizeAddress(address);
       const data = localStorage.getItem(`${STORAGE_KEYS.MESSAGES_CACHE_PREFIX}${normalized}`);
-      return data ? JSON.parse(data) : [];
+      if (!data) return [];
+      const parsed = JSON.parse(data);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter(isValidMessage);
     } catch {
       return [];
     }
@@ -221,7 +247,9 @@ export class StorageManager {
     try {
       const normalized = this.normalizeAddress(address);
       const data = localStorage.getItem(`${STORAGE_KEYS.MESSAGES_DETAIL_CACHE_PREFIX}${normalized}`);
-      return data ? JSON.parse(data) : {};
+      if (!data) return {};
+      const parsed = JSON.parse(data);
+      return isValidDetailMap(parsed) ? parsed : {};
     } catch {
       return {};
     }
@@ -312,7 +340,11 @@ export class StorageManager {
       const map = this.getCachedMessageDetailsMap(normalized);
       if (map[messageId] && !map[messageId].seen) {
         map[messageId].seen = true;
-        localStorage.setItem(`${STORAGE_KEYS.MESSAGES_DETAIL_CACHE_PREFIX}${normalized}`, JSON.stringify(map));
+        this.writeWithQuotaEviction(
+          normalized,
+          `${STORAGE_KEYS.MESSAGES_DETAIL_CACHE_PREFIX}${normalized}`,
+          JSON.stringify(map)
+        );
       }
     } catch (e) {
       console.warn('LocalStorage error marking message seen:', e);
@@ -333,7 +365,11 @@ export class StorageManager {
       const map = this.getCachedMessageDetailsMap(normalized);
       if (map[messageId]) {
         delete map[messageId];
-        localStorage.setItem(`${STORAGE_KEYS.MESSAGES_DETAIL_CACHE_PREFIX}${normalized}`, JSON.stringify(map));
+        this.writeWithQuotaEviction(
+          normalized,
+          `${STORAGE_KEYS.MESSAGES_DETAIL_CACHE_PREFIX}${normalized}`,
+          JSON.stringify(map)
+        );
       }
     } catch (e) {
       console.warn('LocalStorage error removing cached message:', e);

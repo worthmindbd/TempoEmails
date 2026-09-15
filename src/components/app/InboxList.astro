@@ -20,14 +20,14 @@ const t = useTranslation(locale);
       <h2 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc]">
         {t.inboxList.title}
       </h2>
-      <span id="inbox-count-badge" class="text-xs px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 font-mono text-[#575757] dark:text-zinc-300 font-semibold">
+      <span id="inbox-count-badge" role="status" aria-live="polite" class="text-xs px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 font-mono text-[#575757] dark:text-zinc-300 font-semibold">
         0
       </span>
     </div>
   </div>
 
   <!-- Messages List Container -->
-  <div id="messages-container" class="flex-1 overflow-y-auto divide-y divide-black/5 dark:divide-white/5 relative min-h-[360px]">
+  <div id="messages-container" class="flex-1 overflow-y-auto relative min-h-[360px]">
     <!-- Empty State -->
     <div id="inbox-empty-state" class="flex flex-col items-center justify-center p-8 text-center h-full min-h-[320px]">
       <div class="relative flex items-center justify-center mb-5">

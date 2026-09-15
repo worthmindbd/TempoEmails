@@ -1,7 +1,9 @@
 import type { MailAccount, MailDomain, MailMessage, DetailedMailMessage } from './types';
 import { extractOtpCode, extractVerificationLink } from '../utils/otp-extractor';
+import { fetchWithTimeout } from '../utils/fetch-with-timeout';
 
 const GUERRILLA_API = '/api/mail/guerrilla/ajax.php';
+const FETCH_TIMEOUT_MS = 10000;
 
 export const GUERRILLA_DOMAINS = [
   'sharklasers.com',
@@ -22,8 +24,6 @@ export const GUERRILLA_DOMAINS = [
 export const GUERRILLA_DEFAULT_DOMAIN = 'guerrillamailblock.com';
 
 export class GuerrillaMailClient {
-  private static sidToken: string | null = null;
-
   static async getDomains(): Promise<MailDomain[]> {
     return [
       {
@@ -37,46 +37,61 @@ export class GuerrillaMailClient {
 
   static async createAccount(usernamePrefix?: string, _requestedDomain?: string): Promise<MailAccount> {
     // 1. Get initial session / address
-    const initRes = await fetch(`${GUERRILLA_API}?f=get_email_address`);
+    const initRes = await fetchWithTimeout(`${GUERRILLA_API}?f=get_email_address`, {}, FETCH_TIMEOUT_MS);
     if (!initRes.ok) {
       throw new Error('Failed to initialize Guerrilla Mail session');
     }
     const initData = await initRes.json();
-    this.sidToken = initData.sid_token;
+    let sidToken: string | null = initData.sid_token || null;
 
     // The API-assigned address is the single source of truth — never fabricate
     // a different domain client-side, or the address will not receive mail.
     let address = initData.email_addr;
+    if (!address) {
+      throw new Error('Guerrilla Mail did not assign an email address');
+    }
 
     // 2. If user specified a prefix, set custom username (domain stays API-assigned)
-    if (usernamePrefix && this.sidToken) {
+    if (usernamePrefix && sidToken) {
       const cleanUser = usernamePrefix.toLowerCase().replace(/[^a-z0-9._-]/g, '');
-      const setRes = await fetch(
-        `${GUERRILLA_API}?f=set_email_user&email_user=${encodeURIComponent(cleanUser)}&lang=en&sid_token=${this.sidToken}`
+      if (!cleanUser) {
+        throw new Error('Username must contain at least one letter, number, dot, underscore, or dash.');
+      }
+      const setRes = await fetchWithTimeout(
+        `${GUERRILLA_API}?f=set_email_user&email_user=${encodeURIComponent(cleanUser)}&lang=en&sid_token=${sidToken}`,
+        {},
+        FETCH_TIMEOUT_MS
       );
       if (setRes.ok) {
         const setData = await setRes.json();
         if (setData.email_addr) {
           address = setData.email_addr;
+          if (setData.sid_token) sidToken = setData.sid_token;
         }
       }
     }
 
     return {
-      id: this.sidToken || `gm_${Date.now()}`,
+      id: sidToken || `gm_${Date.now()}`,
       address,
-      token: this.sidToken || undefined,
+      token: sidToken || undefined,
       provider: 'guerrilla',
       createdAt: new Date().toISOString(),
     };
   }
 
   static async getMessages(token?: string, address?: string): Promise<MailMessage[]> {
-    const sid = token || this.sidToken;
-    if (!sid) return [];
+    const sid = token;
+    if (!sid) {
+      throw new Error('Guerrilla Mail session expired — please create a new inbox.');
+    }
 
     try {
-      const res = await fetch(`${GUERRILLA_API}?f=check_email&seq=0&sid_token=${encodeURIComponent(sid)}`);
+      const res = await fetchWithTimeout(
+        `${GUERRILLA_API}?f=check_email&seq=0&sid_token=${encodeURIComponent(sid)}`,
+        {},
+        FETCH_TIMEOUT_MS
+      );
       if (!res.ok) throw new Error('Failed to fetch Guerrilla Mail messages');
       const data = await res.json();
       const list = data.list || [];
@@ -110,8 +125,15 @@ export class GuerrillaMailClient {
   }
 
   static async getMessageDetail(token: string, messageId: string): Promise<DetailedMailMessage> {
-    const sid = token || this.sidToken || '';
-    const res = await fetch(`${GUERRILLA_API}?f=fetch_email&email_id=${encodeURIComponent(messageId)}&sid_token=${encodeURIComponent(sid)}`);
+    const sid = token || '';
+    if (!sid) {
+      throw new Error('Guerrilla Mail session expired — please create a new inbox.');
+    }
+    const res = await fetchWithTimeout(
+      `${GUERRILLA_API}?f=fetch_email&email_id=${encodeURIComponent(messageId)}&sid_token=${encodeURIComponent(sid)}`,
+      {},
+      FETCH_TIMEOUT_MS
+    );
     if (!res.ok) throw new Error('Failed to fetch email detail from Guerrilla Mail');
 
     const m = await res.json();
@@ -147,9 +169,14 @@ export class GuerrillaMailClient {
   }
 
   static async deleteMessage(token: string, messageId: string): Promise<boolean> {
-    const sid = token || this.sidToken || '';
+    const sid = token || '';
+    if (!sid) return false;
     try {
-      const res = await fetch(`${GUERRILLA_API}?f=del_email&email_ids[]=${encodeURIComponent(messageId)}&sid_token=${encodeURIComponent(sid)}`);
+      const res = await fetchWithTimeout(
+        `${GUERRILLA_API}?f=del_email&email_ids[]=${encodeURIComponent(messageId)}&sid_token=${encodeURIComponent(sid)}`,
+        {},
+        FETCH_TIMEOUT_MS
+      );
       return res.ok;
     } catch {
       return false;

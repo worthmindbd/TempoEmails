@@ -104,7 +104,8 @@ async function handleServerRequest(req, res) {
       hostHeader.startsWith('www.') || (hostHeader && hostHeader !== canonicalHostname);
 
     if (isHttp || isWwwOrNonCanonical) {
-      const targetUrl = `https://${canonicalHostname}${req.url}`;
+      const safeUrl = typeof req.url === 'string' && req.url.startsWith('/') ? req.url : '/';
+      const targetUrl = `https://${canonicalHostname}${safeUrl}`;
       res.writeHead(301, {
         Location: targetUrl,
         'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
@@ -119,6 +120,18 @@ async function handleServerRequest(req, res) {
   let pathname = decodeURIComponent(parsedUrl.pathname);
   let safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
   let filePath = path.join(DIST_DIR, safePath);
+
+  // Belt-and-braces path traversal guard: the resolved file must stay in dist/.
+  if (path.relative(DIST_DIR, filePath).startsWith('..') || path.isAbsolute(path.relative(DIST_DIR, filePath))) {
+    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('Bad Request');
+    return;
+  }
+  if (path.basename(filePath).startsWith('.')) {
+    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('Forbidden');
+    return;
+  }
 
   // Directory handling with trailing slash redirection
   if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
@@ -166,11 +179,19 @@ async function handleServerRequest(req, res) {
       res.writeHead(404, {
         'Content-Type': 'text/html; charset=utf-8',
         'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'SAMEORIGIN',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
       });
       if (req.method === 'HEAD') {
         res.end();
       } else {
-        fs.createReadStream(notFoundPath).pipe(res);
+        const stream = fs.createReadStream(notFoundPath);
+        stream.on('error', () => {
+          if (!res.headersSent) res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+          res.end('404 Not Found');
+        });
+        stream.pipe(res);
       }
       return;
     }
@@ -188,6 +209,19 @@ async function handleServerRequest(req, res) {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+    'Content-Security-Policy': [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "img-src 'self' data: https:",
+      "connect-src 'self' https://mercure.mail.tm",
+      "frame-src 'none'",
+      "object-src 'none'",
+      "base-uri 'self'",
+      'form-action \'none\'',
+    ].join('; '),
   };
 
   // Cache headers
@@ -212,13 +246,26 @@ async function handleServerRequest(req, res) {
     headers['Content-Encoding'] = 'gzip';
     res.writeHead(200, headers);
     const rawStream = fs.createReadStream(filePath);
+    rawStream.on('error', () => {
+      if (!res.headersSent) res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('404 Not Found');
+    });
     const gzip = zlib.createGzip({ level: 6 });
+    gzip.on('error', () => {
+      if (!res.headersSent) res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('Internal Server Error');
+    });
     rawStream.pipe(gzip).pipe(res);
   } else {
     const stat = fs.statSync(filePath);
     headers['Content-Length'] = stat.size;
     res.writeHead(200, headers);
-    fs.createReadStream(filePath).pipe(res);
+    const stream = fs.createReadStream(filePath);
+    stream.on('error', () => {
+      if (!res.headersSent) res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('404 Not Found');
+    });
+    stream.pipe(res);
   }
 }
 

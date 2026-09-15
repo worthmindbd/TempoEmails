@@ -12,13 +12,37 @@
  * SECURITY: Only allowlisted upstreams are reachable — this is not an open proxy.
  */
 
+const MAX_REQUEST_BODY_BYTES = 1_000_000;
+const MAX_RESPONSE_BODY_BYTES = 5_000_000;
+
+// Minimal per-IP rate limit so the same-origin relay can't be abused for mass
+// disposable-account creation from a single client.
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 60;
+const rateLimitHits = new Map();
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const entry = rateLimitHits.get(ip);
+  if (!entry || now - entry.start > RATE_LIMIT_WINDOW_MS) {
+    rateLimitHits.set(ip, { start: now, count: 1 });
+    return false;
+  }
+  entry.count += 1;
+  if (rateLimitHits.size > 5000) {
+    for (const [key, value] of rateLimitHits) {
+      if (now - value.start > RATE_LIMIT_WINDOW_MS) rateLimitHits.delete(key);
+    }
+  }
+  return entry.count > RATE_LIMIT_MAX_REQUESTS;
+}
+
 const MAIL_UPSTREAMS = {
   mailtm: 'https://api.mail.tm',
   mailgw: 'https://api.mail.gw',
   inboxes: 'https://inboxes.com',
   tempmaillol: 'https://api.tempmail.lol',
   guerrilla: 'https://api.guerrillamail.com',
-  secmail: 'https://www.1secmail.com',
 };
 
 // Some upstreams gate responses on Origin/Referer or block non-browser UAs.
@@ -28,7 +52,6 @@ const PROVIDER_HEADERS = {
   inboxes: { Origin: 'https://inboxes.com', Referer: 'https://inboxes.com/' },
   tempmaillol: { Origin: 'https://tempmail.lol', Referer: 'https://tempmail.lol/' },
   guerrilla: { Origin: 'https://www.guerrillamail.com', Referer: 'https://www.guerrillamail.com/' },
-  secmail: { Origin: 'https://www.1secmail.com', Referer: 'https://www.1secmail.com/' },
 };
 
 const BROWSER_UA =
@@ -81,6 +104,19 @@ export async function handleMailProxy(req, res, pathWithQuery) {
     return;
   }
 
+  const clientIp =
+    (req.headers['x-forwarded-for'] || '').toString().split(',')[0].trim() ||
+    req.socket?.remoteAddress ||
+    'unknown';
+  if (isRateLimited(clientIp)) {
+    res.writeHead(429, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Retry-After': '60',
+    });
+    res.end(JSON.stringify({ error: 'Too many requests — please slow down' }));
+    return;
+  }
+
   let resolved;
   try {
     resolved = resolveMailProxy(pathWithQuery);
@@ -100,17 +136,27 @@ export async function handleMailProxy(req, res, pathWithQuery) {
     body = await new Promise((resolve) => {
       const chunks = [];
       let size = 0;
+      let rejected = false;
       req.on('data', (c) => {
+        if (rejected) return;
         size += c.length;
-        if (size > 1_000_000) {
+        if (size > MAX_REQUEST_BODY_BYTES) {
+          rejected = true;
           resolve(undefined); // cap at 1 MB
-          req.destroy();
+          req.pause();
+          req.removeAllListeners('data');
+          req.removeAllListeners('end');
+          req.resume();
           return;
         }
         chunks.push(c);
       });
-      req.on('end', () => resolve(Buffer.concat(chunks)));
-      req.on('error', () => resolve(undefined));
+      req.on('end', () => {
+        if (!rejected) resolve(Buffer.concat(chunks));
+      });
+      req.on('error', () => {
+        if (!rejected) resolve(undefined);
+      });
     });
     if (body === undefined) {
       res.writeHead(413, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -140,8 +186,31 @@ export async function handleMailProxy(req, res, pathWithQuery) {
       redirect: 'follow',
     });
 
+    const upstreamType = (upstreamRes.headers.get('content-type') || 'application/json; charset=utf-8').toLowerCase();
+    const contentLength = parseInt(upstreamRes.headers.get('content-length') || '', 10);
+    if (Number.isFinite(contentLength) && contentLength > MAX_RESPONSE_BODY_BYTES) {
+      res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: 'Upstream response too large' }));
+      return;
+    }
+
+    const buf = Buffer.from(await upstreamRes.arrayBuffer());
+    if (buf.length > MAX_RESPONSE_BODY_BYTES) {
+      res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: 'Upstream response too large' }));
+      return;
+    }
+
+    const isAttachmentPath = /\/messages\/[^/]+\/attachment|\/download\b|\battachment\b/i.test(target);
     const outHeaders = {
-      'Content-Type': upstreamRes.headers.get('content-type') || 'application/json; charset=utf-8',
+      // Never execute upstream content in our origin: API payloads stay JSON,
+      // downloads are forced to `attachment` so evil.svg can't run scripts.
+      'Content-Type': isAttachmentPath
+        ? 'application/octet-stream'
+        : upstreamType.includes('json')
+          ? 'application/json; charset=utf-8'
+          : 'application/octet-stream',
+      'Content-Disposition': isAttachmentPath ? 'attachment' : 'inline',
       'Cache-Control': 'no-store',
       'X-Content-Type-Options': 'nosniff',
     };
@@ -152,7 +221,6 @@ export async function handleMailProxy(req, res, pathWithQuery) {
       return;
     }
 
-    const buf = Buffer.from(await upstreamRes.arrayBuffer());
     res.end(buf);
   } catch (err) {
     const timedOut = err?.name === 'AbortError';

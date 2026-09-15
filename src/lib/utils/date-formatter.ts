@@ -10,34 +10,39 @@ export function formatRelativeTime(dateInput: string | Date | number): string {
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
   const i18n = typeof window !== 'undefined' ? (window as any).__TEMPO_I18N__?.relativeTime : null;
+  const replaceCount = (template: unknown, fallback: string, n: number): string => {
+    if (typeof template !== 'string' || !template.includes('{n}')) return fallback.replace('{n}', String(n));
+    return template.replace('{n}', String(n));
+  };
   const locale = typeof window !== 'undefined' ? (window as any).__TEMPO_I18N__?.locale : undefined;
 
   if (diffInSeconds < 10) {
-    return i18n?.justNow || 'Just now';
+    return typeof i18n?.justNow === 'string' ? i18n.justNow : 'Just now';
   }
   if (diffInSeconds < 60) {
-    return i18n ? i18n.secondsAgo.replace('{n}', String(diffInSeconds)) : `${diffInSeconds}s ago`;
+    return replaceCount(i18n?.secondsAgo, '{n}s ago', diffInSeconds);
   }
 
   const diffInMinutes = Math.floor(diffInSeconds / 60);
   if (diffInMinutes < 60) {
-    return i18n ? i18n.minutesAgo.replace('{n}', String(diffInMinutes)) : `${diffInMinutes}m ago`;
+    return replaceCount(i18n?.minutesAgo, '{n}m ago', diffInMinutes);
   }
 
   const diffInHours = Math.floor(diffInMinutes / 60);
   if (diffInHours < 24) {
-    return i18n ? i18n.hoursAgo.replace('{n}', String(diffInHours)) : `${diffInHours}h ago`;
+    return replaceCount(i18n?.hoursAgo, '{n}h ago', diffInHours);
   }
 
   const diffInDays = Math.floor(diffInHours / 24);
   if (diffInDays === 1) {
-    return i18n?.yesterday || 'Yesterday';
+    return typeof i18n?.yesterday === 'string' ? i18n.yesterday : 'Yesterday';
   }
   if (diffInDays < 7) {
-    return i18n ? i18n.daysAgo.replace('{n}', String(diffInDays)) : `${diffInDays}d ago`;
+    return replaceCount(i18n?.daysAgo, '{n}d ago', diffInDays);
   }
 
   return date.toLocaleDateString(locale, {
+    year: date.getFullYear() === now.getFullYear() ? undefined : 'numeric',
     month: 'short',
     day: 'numeric',
   });

@@ -26,6 +26,12 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/server.mjs ./
 COPY --from=builder /app/server ./server
 
+RUN addgroup -S app && adduser -S app -G app && chown -R app:app /app
+USER app
+
 EXPOSE 4321
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://127.0.0.1:4321/ > /dev/null 2>&1 || exit 1
 
 CMD ["node", "server.mjs"]

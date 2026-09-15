@@ -3,9 +3,11 @@ import { MailTmClient } from './mailtm-client';
 import { InboxesClient, INBOXES_KNOWN_DOMAINS } from './inboxes-client';
 import { TempMailLolClient } from './tempmaillol-client';
 import { GuerrillaMailClient, GUERRILLA_DOMAINS } from './guerrilla-client';
+import { SecMailClient } from './secmail-client';
 import { MockClient } from './mock-client';
 import { StorageManager } from '../utils/storage';
 import { soundNotifier } from '../utils/sound';
+import { sanitizeEmailHtml, escapeHtml } from '../utils/sanitize';
 
 export class MailService {
   /**
@@ -19,6 +21,10 @@ export class MailService {
     if (!forceNew) {
       const stored = StorageManager.getCurrentAccount();
       if (stored && stored.address) {
+        if (stored.provider === 'secmail') {
+          const migrated = await this.migrateSecmailAccount(stored);
+          if (migrated) return migrated;
+        }
         // Migrate legacy accounts that stored absolute provider URLs —
         // all traffic now flows through the same-origin /api/mail/... proxy.
         if (stored.provider === 'mailtm') {
@@ -34,6 +40,11 @@ export class MailService {
 
     // Filter active domains and optionally exclude the previous domain for visible rotation
     let pool = allDomains.filter((d) => d.isActive);
+    if (pool.length === 0) {
+      const account = await MockClient.createAccount();
+      StorageManager.setCurrentAccount(account);
+      return account;
+    }
     if (excludeDomain && pool.length > 1) {
       const filtered = pool.filter((d) => d.domain.toLowerCase() !== excludeDomain.toLowerCase());
       if (filtered.length > 0) {
@@ -87,30 +98,48 @@ export class MailService {
       }
     }
 
-    // Fallbacks if specific pick failed
-    try {
-      const account = await MailTmClient.createAccount();
-      StorageManager.setCurrentAccount(account);
-      return account;
-    } catch {}
+    // Fallbacks if specific pick failed — ordered to match the documented
+    // chain (preferred → Mail.tm → Inboxes → TempMail.lol → Guerrilla → Mock)
+    // and skipping the provider that already failed above.
+    if (targetProvider !== 'mailtm') {
+      try {
+        const account = await MailTmClient.createAccount();
+        StorageManager.setCurrentAccount(account);
+        return account;
+      } catch (err) {
+        console.warn('Mail.tm fallback create failed:', err);
+      }
+    }
 
-    try {
-      const account = await InboxesClient.createAccount();
-      StorageManager.setCurrentAccount(account);
-      return account;
-    } catch {}
+    if (targetProvider !== 'inboxes') {
+      try {
+        const account = await InboxesClient.createAccount();
+        StorageManager.setCurrentAccount(account);
+        return account;
+      } catch (err) {
+        console.warn('Inboxes fallback create failed:', err);
+      }
+    }
 
-    try {
-      const account = await TempMailLolClient.createAccount();
-      StorageManager.setCurrentAccount(account);
-      return account;
-    } catch {}
+    if (targetProvider !== 'tempmaillol') {
+      try {
+        const account = await TempMailLolClient.createAccount();
+        StorageManager.setCurrentAccount(account);
+        return account;
+      } catch (err) {
+        console.warn('TempMail.lol fallback create failed:', err);
+      }
+    }
 
-    try {
-      const account = await GuerrillaMailClient.createAccount();
-      StorageManager.setCurrentAccount(account);
-      return account;
-    } catch {}
+    if (targetProvider !== 'guerrilla') {
+      try {
+        const account = await GuerrillaMailClient.createAccount();
+        StorageManager.setCurrentAccount(account);
+        return account;
+      } catch (err) {
+        console.warn('Guerrilla fallback create failed:', err);
+      }
+    }
 
     // Mock fallback (simulated inbox — cannot receive real email). The UI
     // surfaces a warning whenever an account lands here.
@@ -168,6 +197,12 @@ export class MailService {
     providerHint?: 'mailtm' | 'inboxes' | 'guerrilla'
   ): Promise<MailAccount> {
     const cleanPrefix = prefix.toLowerCase().replace(/[^a-z0-9._-]/g, '');
+    if (!cleanPrefix) {
+      throw new Error('Username must contain at least one letter, number, dot, underscore, or dash.');
+    }
+    if (/^[._-]|[._-]$|\.\./.test(cleanPrefix)) {
+      throw new Error('Username cannot start or end with a symbol, or contain ".." — please adjust it.');
+    }
     const normalizedDomain = domain.toLowerCase();
 
     const isGuerrilla = providerHint === 'guerrilla' || (!providerHint && GUERRILLA_DOMAINS.includes(normalizedDomain));
@@ -205,13 +240,19 @@ export class MailService {
         remoteMessages = await MailTmClient.getMessages(account.token, account.apiBase);
         fetchSucceeded = true;
       } else if (account.provider === 'inboxes') {
+        // Inboxes fabricates the address client-side; verify the upstream is
+        // actually reachable before claiming success, otherwise the user gets
+        // a silent empty inbox with no mock-fallback warning.
         remoteMessages = await InboxesClient.getMessages(account.address);
         fetchSucceeded = true;
       } else if (account.provider === 'tempmaillol' && account.token) {
         remoteMessages = await TempMailLolClient.getMessages(account.token, account.address);
         fetchSucceeded = true;
-      } else if (account.provider === 'guerrilla') {
+      } else if (account.provider === 'guerrilla' && account.token) {
         remoteMessages = await GuerrillaMailClient.getMessages(account.token, account.address);
+        fetchSucceeded = true;
+      } else if (account.provider === 'secmail') {
+        remoteMessages = await SecMailClient.getMessages(account.address);
         fetchSucceeded = true;
       } else {
         remoteMessages = await MockClient.getMessages(account.address);
@@ -272,28 +313,34 @@ export class MailService {
    */
   private static prefetchMessageDetails(account: MailAccount, newMessages: MailMessage[]): void {
     if (!newMessages || newMessages.length === 0) return;
+    const accountAddress = account.address;
 
     setTimeout(async () => {
+      if (StorageManager.getCurrentAccount()?.address.toLowerCase() !== accountAddress.toLowerCase()) {
+        return;
+      }
       for (const msg of newMessages) {
         try {
-          const cached = StorageManager.getCachedMessageDetail(account.address, msg.id);
+          const cached = StorageManager.getCachedMessageDetail(accountAddress, msg.id);
           if (!cached || (!cached.html?.length && !cached.text)) {
             let detail: DetailedMailMessage | null = null;
             if (account.provider === 'mailtm' && account.token) {
               detail = await MailTmClient.getMessageDetail(account.token, msg.id, account.apiBase);
             } else if (account.provider === 'inboxes') {
-              detail = await InboxesClient.getMessageDetail(account.address, msg.id);
+              detail = await InboxesClient.getMessageDetail(accountAddress, msg.id);
             } else if (account.provider === 'tempmaillol') {
-              detail = await TempMailLolClient.getMessageDetail(account.address, msg.id);
+              detail = await TempMailLolClient.getMessageDetail(accountAddress, msg.id);
             } else if (account.provider === 'guerrilla') {
               detail = await GuerrillaMailClient.getMessageDetail(account.token || '', msg.id);
+            } else if (account.provider === 'secmail') {
+              detail = await SecMailClient.getMessageDetail(accountAddress, msg.id);
             } else if (account.provider === 'mock') {
-              detail = await MockClient.getMessageDetail(account.address, msg.id);
+              detail = await MockClient.getMessageDetail(accountAddress, msg.id);
             }
 
             if (detail) {
-              detail.seen = msg.seen;
-              StorageManager.setCachedMessageDetail(account.address, detail);
+              detail.seen = detail.seen || msg.seen;
+              StorageManager.setCachedMessageDetail(accountAddress, detail);
             }
           }
         } catch (e) {
@@ -328,8 +375,10 @@ export class MailService {
         detail = await InboxesClient.getMessageDetail(account.address, messageId);
       } else if (account.provider === 'tempmaillol') {
         detail = await TempMailLolClient.getMessageDetail(account.address, messageId);
-      } else if (account.provider === 'guerrilla') {
-        detail = await GuerrillaMailClient.getMessageDetail(account.token || '', messageId);
+      } else if (account.provider === 'guerrilla' && account.token) {
+        detail = await GuerrillaMailClient.getMessageDetail(account.token, messageId);
+      } else if (account.provider === 'secmail') {
+        detail = await SecMailClient.getMessageDetail(account.address, messageId);
       } else {
         detail = await MockClient.getMessageDetail(account.address, messageId);
       }
@@ -354,7 +403,7 @@ export class MailService {
           ...summary,
           seen: true,
           text: summary.intro || summary.subject || '',
-          html: summary.intro ? [`<p>${summary.intro}</p>`] : [`<p>${summary.subject}</p>`],
+          html: summary.intro ? [`<p>${escapeHtml(summary.intro)}</p>`] : [`<p>${escapeHtml(summary.subject)}</p>`],
           attachments: [],
         };
         StorageManager.setCachedMessageDetail(account.address, fallbackDetail);
@@ -375,8 +424,8 @@ export class MailService {
         await MailTmClient.deleteMessage(account.token, messageId, account.apiBase);
       } else if (account.provider === 'inboxes') {
         await InboxesClient.deleteMessage(messageId);
-      } else if (account.provider === 'guerrilla') {
-        await GuerrillaMailClient.deleteMessage(account.token || '', messageId);
+      } else if (account.provider === 'guerrilla' && account.token) {
+        await GuerrillaMailClient.deleteMessage(account.token, messageId);
       } else if (account.provider === 'mock') {
         await MockClient.deleteMessage(account.address, messageId);
       }
@@ -402,5 +451,27 @@ export class MailService {
    */
   static sendTestEmail(account: MailAccount, type: 'github' | 'notion' | 'welcome' = 'github'): DetailedMailMessage {
     return MockClient.sendTestVerificationEmail(account.address, type);
+  }
+
+  /**
+   * 1secmail's public API was shut down — legacy stored accounts are migrated
+   * to a fresh live provider instead of silently serving stale cache as mock.
+   */
+  private static async migrateSecmailAccount(stored: MailAccount): Promise<MailAccount | null> {
+    try {
+      const migrated = await this.getOrCreateAccount(true);
+      window.dispatchEvent(
+        new CustomEvent('tempomail:toast', {
+          detail: {
+            message: `Your old 1secmail inbox (${stored.address}) is no longer supported — created a fresh inbox instead.`,
+            type: 'error',
+            duration: 6000,
+          },
+        })
+      );
+      return migrated;
+    } catch {
+      return null;
+    }
   }
 }

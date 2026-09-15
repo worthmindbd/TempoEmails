@@ -33,8 +33,8 @@
   --color-ring-focus: rgba(234, 40, 4, 0.4);
 
   /* Fonts */
-  --font-display: "Bricolage Grotesque", "Syne", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-sans: "Inter", "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Custom Radii */
@@ -48,14 +48,24 @@
 
 /* Custom Base & Typography Rules */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 html {
   scroll-behavior: smooth;
   font-family: var(--font-sans);
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100vw;
+}
+
+@supports not (overflow: clip) {
+  html {
+    overflow-x: hidden;
+  }
 }
 
 body {
@@ -64,14 +74,26 @@ body {
   color: var(--color-ink);
   transition: background-color 0.3s ease, color 0.3s ease;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100vw;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+@supports not (overflow: clip) {
+  body {
+    overflow-x: hidden;
+  }
+}
+
 button, a, input, select {
   touch-action: manipulation;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 html.dark body {
@@ -83,6 +105,16 @@ html.dark body {
 .font-display {
   font-family: var(--font-display);
   letter-spacing: -0.03em;
+}
+
+h1.font-display,
+h2.font-display,
+.font-display.text-2xl,
+.font-display.text-3xl,
+.font-display.text-4xl,
+.font-display.text-5xl,
+.font-display.text-6xl,
+.font-display.text-7xl {
   line-height: 1.05;
 }
 
@@ -90,51 +122,78 @@ html.dark body {
   font-family: var(--font-mono);
 }
 
-/* Glassmorphic Component Utilities */
+/* Glassmorphic Component Utilities — opaque fallbacks first for browsers
+   without backdrop-filter support, blur enhancement layered on top. */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 8px 32px 0 rgba(32, 32, 32, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
 }
 
 html.dark .glass-panel {
-  background: rgba(22, 22, 26, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: #16161a;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.6);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.7);
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
 }
 
 html.dark .glass-card {
-  background: rgba(28, 28, 34, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: #1c1c22;
   border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.35);
 }
 
 .glass-pill {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 html.dark .glass-pill {
-  background: rgba(36, 36, 44, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: #24242c;
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  html.dark .glass-panel {
+    background: rgba(22, 22, 26, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  html.dark .glass-card {
+    background: rgba(28, 28, 34, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .glass-pill {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  html.dark .glass-pill {
+    background: rgba(36, 36, 44, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
 }
 
 /* Background atmospheric gradient mesh */
@@ -167,6 +226,11 @@ html.dark .hero-glow-mesh {
 }
 
 /* Scrollbar refinement */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 120, 120, 0.35) transparent;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -187,6 +251,10 @@ html.dark .hero-glow-mesh {
 
 /* Respect users who prefer reduced motion (pulses, rings, spinners) */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {

@@ -14,8 +14,8 @@ const privacyUrl = getLocalizedPath('/privacy-policy/', currentLocale);
 
 <div
   id="cookie-consent-banner"
-  class="fixed bottom-0 left-0 right-0 z-50 p-4 hidden"
-  role="dialog"
+  class="fixed bottom-0 left-0 right-0 z-40 p-4 hidden"
+  role="region"
   aria-label={t.cookieConsent.title}
 >
   <div class="max-w-4xl mx-auto glass-card rounded-2xl border border-black/10 dark:border-white/10 p-5 sm:p-6 shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-zinc-900/95">
@@ -51,6 +51,8 @@ const privacyUrl = getLocalizedPath('/privacy-policy/', currentLocale);
 
 <script>
   function setupCookieConsent() {
+    if ((window as any).__tempoCookieBound) return;
+    (window as any).__tempoCookieBound = true;
     const banner = document.getElementById('cookie-consent-banner');
     const acceptBtn = document.getElementById('cookie-accept-btn');
     const rejectBtn = document.getElementById('cookie-reject-btn');

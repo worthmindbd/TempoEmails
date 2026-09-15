@@ -5,7 +5,8 @@
 class SoundNotifier {
   private audioCtx: AudioContext | null = null;
   private soundEnabled: boolean = true;
-  private isUnlocked: boolean = false;
+  private lastChimeAt: number = 0;
+  private static readonly CHIME_THROTTLE_MS = 1500;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -33,7 +34,6 @@ class SoundNotifier {
           if (this.audioCtx && this.audioCtx.state === 'suspended') {
             this.audioCtx.resume();
           }
-          this.isUnlocked = true;
         } catch {}
 
         ['click', 'keydown', 'touchstart'].forEach((event) =>
@@ -67,6 +67,11 @@ class SoundNotifier {
 
   public playNotificationChime(): void {
     if (!this.soundEnabled || typeof window === 'undefined') return;
+
+    // Throttle: a burst of arriving mails must not stack overlapping chimes.
+    const nowMs = Date.now();
+    if (nowMs - this.lastChimeAt < SoundNotifier.CHIME_THROTTLE_MS) return;
+    this.lastChimeAt = nowMs;
 
     try {
       const AudioContextClass =

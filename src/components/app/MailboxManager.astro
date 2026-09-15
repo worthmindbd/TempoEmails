@@ -48,32 +48,56 @@ const { locale = 'en' } = Astro.props;
   import { copyToClipboard } from '../../lib/utils/clipboard';
   import { formatRelativeTime, formatFullDateTime } from '../../lib/utils/date-formatter';
   import { generateQrCodeSvg } from '../../lib/utils/qrcode';
+  import { sanitizeEmailHtml, escapeHtml } from '../../lib/utils/sanitize';
+  import { SITE_CONFIG } from '../../lib/config';
   import type { MailAccount, MailMessage, DetailedMailMessage, MailDomain } from '../../lib/mail/types';
+
+  const POLL_SECONDS = 10;
 
   class MailboxController {
     private account: MailAccount | null = null;
     private messages: MailMessage[] = [];
     private selectedMessage: DetailedMailMessage | null = null;
-    private pollInterval: any = null;
     private timerInterval: any = null;
-    private pollCountdown: number = 10;
+    private pollCountdown: number = POLL_SECONDS;
     private isPolling: boolean = false;
+    private pendingFetch: boolean = false;
+    private fetchGen: number = 0;
+    private destroyed: boolean = false;
     private availableDomains: MailDomain[] = [];
     private sseSource: EventSource | null = null;
     private addressDisplayBackup: string | null = null;
 
     async init() {
       this.bindEvents();
+      document.addEventListener('visibilitychange', this.handleVisibility);
+      window.addEventListener('beforeunload', this.handleUnload);
       await this.loadInitialMailbox();
       this.startAutoRefresh();
       this.loadDomains();
     }
+
+    private handleVisibility = () => {
+      if (!document.hidden && !this.destroyed) {
+        this.fetchMessages();
+      }
+    };
+
+    private handleUnload = () => {
+      this.destroyed = true;
+      if (this.timerInterval) clearInterval(this.timerInterval);
+      if (this.sseSource) {
+        this.sseSource.close();
+        this.sseSource = null;
+      }
+    };
 
     async loadInitialMailbox(
       forceNew: boolean = false,
       preferredProvider?: 'mailtm' | 'inboxes' | 'tempmaillol' | 'guerrilla',
       excludeDomain?: string
     ) {
+      this.fetchGen++;
       this.showAddressLoading(true);
       if (this.sseSource) {
         this.sseSource.close();
@@ -125,6 +149,13 @@ const { locale = 'en' } = Astro.props;
         if (this.sseSource) {
           this.sseSource.close();
         }
+        // mail.gw accounts never get events from the mail.tm hub — skip SSE
+        // and rely on polling instead of opening a dead, IP-leaking connection.
+        const apiBase = this.account.apiBase || '/api/mail/mailtm';
+        if (!apiBase.endsWith('/mailtm')) {
+          this.sseSource = null;
+          return;
+        }
         const sseUrl = `https://mercure.mail.tm/.well-known/mercure?topic=/accounts/${this.account.id}`;
         this.sseSource = new EventSource(sseUrl);
 
@@ -156,6 +187,17 @@ const { locale = 'en' } = Astro.props;
       if (!select) return;
 
       select.innerHTML = '';
+
+      if (this.availableDomains.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.disabled = true;
+        opt.selected = true;
+        opt.textContent = 'Could not load domains — please try again';
+        select.appendChild(opt);
+        this.updateCustomPreview();
+        return;
+      }
 
       // Only providers that genuinely support user-chosen usernames + domains
       // are offered here. TempMail.lol assigns its own random address, and the
@@ -243,59 +285,68 @@ const { locale = 'en' } = Astro.props;
       if (loading) {
         // Remember the current content so a failed load can restore it —
         // previously a failed mailbox creation left a skeleton forever.
-        if (!this.addressDisplayBackup) {
-          this.addressDisplayBackup = display.innerHTML;
+        if (this.addressDisplayBackup === null) {
+          this.addressDisplayBackup = display.textContent || '';
         }
         display.innerHTML = '<span class="inline-block w-48 h-5 bg-black/10 dark:bg-white/10 animate-pulse rounded"></span>';
       } else {
         // If the address was NOT re-rendered yet (failure path) the skeleton is
         // still showing — restore the previous content. On success paths
         // updateAddressDisplay() already replaced the skeleton.
-        if (this.addressDisplayBackup && display.querySelector('.animate-pulse')) {
-          display.innerHTML = this.addressDisplayBackup;
+        if (this.addressDisplayBackup !== null && display.querySelector('.animate-pulse')) {
+          display.textContent = this.addressDisplayBackup;
         }
         this.addressDisplayBackup = null;
       }
     }
 
     async fetchMessages(isInitial: boolean = false) {
-      if (!this.account || this.isPolling) return;
+      if (!this.account || this.destroyed) return;
+      if (this.isPolling) {
+        this.pendingFetch = true;
+        return;
+      }
       this.isPolling = true;
+      const gen = ++this.fetchGen;
+      const accountAddress = this.account.address;
 
       const refreshIcon = document.getElementById('refresh-icon');
       if (refreshIcon) refreshIcon.classList.add('animate-spin');
 
       try {
-        this.messages = await MailService.getMessages(this.account, isInitial);
+        const fetched = await MailService.getMessages(this.account, isInitial);
+        // Stale fetch guard: a slower earlier request must not overwrite the
+        // mailbox the user already switched to.
+        if (gen !== this.fetchGen || this.account.address !== accountAddress) return;
+        this.messages = fetched;
         this.renderMessageList();
       } catch (err) {
         console.warn('Message fetch error', err);
-        if (this.account) {
-          this.messages = StorageManager.getCachedMessages(this.account.address);
-          this.renderMessageList();
-        }
+        if (gen !== this.fetchGen || !this.account || this.account.address !== accountAddress) return;
+        this.messages = StorageManager.getCachedMessages(accountAddress);
+        this.renderMessageList();
       } finally {
         this.isPolling = false;
         if (refreshIcon) refreshIcon.classList.remove('animate-spin');
         this.resetRefreshTimer();
+        if (this.pendingFetch && !this.destroyed) {
+          this.pendingFetch = false;
+          this.fetchMessages();
+        }
       }
     }
 
     startAutoRefresh() {
-      if (this.pollInterval) clearInterval(this.pollInterval);
       if (this.timerInterval) clearInterval(this.timerInterval);
 
-      this.pollCountdown = 10;
+      this.pollCountdown = POLL_SECONDS;
       this.timerInterval = setInterval(() => {
-        this.pollCountdown--;
-        const timerCount = document.getElementById('refresh-timer-count');
+        if (document.hidden || this.destroyed) return;
+        this.pollCountdown = Math.max(0, this.pollCountdown - 1);
         const progressBar = document.getElementById('refresh-progress-bar');
-        
-        if (timerCount) {
-          timerCount.textContent = `${this.pollCountdown}s`;
-        }
+
         if (progressBar) {
-          const pct = ((10 - this.pollCountdown) / 10) * 100;
+          const pct = Math.min(100, ((POLL_SECONDS - this.pollCountdown) / POLL_SECONDS) * 100);
           progressBar.style.width = `${pct}%`;
         }
 
@@ -306,7 +357,7 @@ const { locale = 'en' } = Astro.props;
     }
 
     resetRefreshTimer() {
-      this.pollCountdown = 10;
+      this.pollCountdown = POLL_SECONDS;
       const progressBar = document.getElementById('refresh-progress-bar');
       if (progressBar) progressBar.style.width = '0%';
     }
@@ -340,6 +391,8 @@ const { locale = 'en' } = Astro.props;
 
       emptyState.classList.add('hidden');
       listContainer.classList.remove('hidden');
+      const scroller = document.getElementById('messages-container');
+      const savedScrollTop = scroller ? scroller.scrollTop : 0;
       listContainer.innerHTML = '';
 
       this.messages.forEach((msg) => {
@@ -413,17 +466,21 @@ const { locale = 'en' } = Astro.props;
 
         listContainer.appendChild(item);
       });
+
+      if (scroller) scroller.scrollTop = savedScrollTop;
     }
 
     async selectMessage(messageId: string) {
       if (!this.account) return;
+      const selectGen = this.fetchGen;
 
       const empty = document.getElementById('email-detail-empty');
       const loading = document.getElementById('email-detail-loading');
       const content = document.getElementById('email-detail-content');
 
       if (empty) empty.classList.add('hidden');
-      if (loading) loading.classList.remove('hidden');
+      if (loading) loading.classList.remove('hidden', 'flex-col');
+      if (loading) loading.classList.add('flex');
       if (content) content.classList.add('hidden');
 
       // Mobile pane switch
@@ -436,16 +493,19 @@ const { locale = 'en' } = Astro.props;
           emailDetailPane.classList.add('block');
         }
         // Smoothly scroll to the mailbox island on mobile
+        const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const mailboxManager = document.getElementById('mailbox-manager');
         if (mailboxManager) {
           const yOffset = -70; // Header height compensation
           const y = mailboxManager.getBoundingClientRect().top + window.pageYOffset + yOffset;
-          window.scrollTo({ top: y, behavior: 'smooth' });
+          window.scrollTo({ top: y, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
         }
       }
 
       try {
-        this.selectedMessage = await MailService.getMessageDetail(this.account, messageId);
+        const loaded = await MailService.getMessageDetail(this.account, messageId);
+        if (selectGen !== this.fetchGen) return;
+        this.selectedMessage = loaded;
         this.renderMessageDetail();
         // Update messages list to reflect seen state
         this.messages = StorageManager.getCachedMessages(this.account.address);
@@ -459,7 +519,10 @@ const { locale = 'en' } = Astro.props;
           })
         );
       } finally {
-        if (loading) loading.classList.add('hidden');
+        if (loading) {
+          loading.classList.add('hidden', 'flex-col');
+          loading.classList.remove('flex');
+        }
       }
     }
 
@@ -508,9 +571,14 @@ const { locale = 'en' } = Astro.props;
         linkBanner.classList.add('hidden');
       }
 
-      // Render HTML in sandboxed iframe
+      // Render HTML in sandboxed iframe — sanitize first (strip scripts,
+      // forms, tracking pixels) and escape plain-text bodies.
       if (htmlFrame) {
-        const rawHtml = msg.html && msg.html.length > 0 ? msg.html.join('') : `<pre style="font-family: monospace; white-space: pre-wrap; padding: 20px;">${msg.text}</pre>`;
+        const rawHtml =
+          msg.html && msg.html.length > 0
+            ? sanitizeEmailHtml(msg.html.join(''))
+            : `<pre style="font-family: monospace; white-space: pre-wrap; padding: 20px;">${escapeHtml(msg.text)}</pre>`;
+        const isDark = document.documentElement.classList.contains('dark');
         const styledDoc = `
           <!DOCTYPE html>
           <html>
@@ -520,7 +588,8 @@ const { locale = 'en' } = Astro.props;
               <style>
                 body {
                   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                  color: #202020;
+                  color: ${isDark ? '#f4f4f5' : '#202020'};
+                  background: ${isDark ? '#18181b' : '#ffffff'};
                   line-height: 1.6;
                   padding: 16px;
                   margin: 0;
@@ -607,59 +676,80 @@ const { locale = 'en' } = Astro.props;
       const a = document.createElement('a');
       a.href = url;
       a.download = `${msg.subject.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'email'}.txt`;
+      document.body.appendChild(a);
       a.click();
+      a.remove();
       URL.revokeObjectURL(url);
+    }
+
+    private lastModalFocus: HTMLElement | null = null;
+
+    private setModalOpen(modalId: string, contentId: string, open: boolean, focusSelector?: string) {
+      const modal = document.getElementById(modalId);
+      const content = document.getElementById(contentId);
+      if (!modal || !content) return;
+      if (open) {
+        if (this.lastModalFocus === null) {
+          this.lastModalFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        }
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+        try {
+          document.body.style.overflow = 'hidden';
+        } catch {}
+        const target = (focusSelector ? document.querySelector(focusSelector) : null) as HTMLElement | null;
+        const fallback = content.querySelector('button, input, select, a[href]') as HTMLElement | null;
+        setTimeout(() => (target || fallback)?.focus(), 50);
+      } else {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+        const anyOpen = ['qr-modal', 'custom-modal', 'history-modal'].some((id) => {
+          const m = document.getElementById(id);
+          return m && !m.classList.contains('pointer-events-none');
+        });
+        if (!anyOpen) {
+          try {
+            document.body.style.overflow = '';
+          } catch {}
+          this.lastModalFocus?.focus?.();
+          this.lastModalFocus = null;
+        }
+      }
     }
 
     openQrModal() {
       if (!this.account) return;
-      const modal = document.getElementById('qr-modal');
-      const content = document.getElementById('qr-modal-content');
       const addressText = document.getElementById('qr-modal-address');
       const qrPlaceholder = document.getElementById('qr-code-placeholder');
 
       if (addressText) addressText.textContent = this.account.address;
       if (qrPlaceholder) {
         qrPlaceholder.innerHTML = generateQrCodeSvg(this.account.address, 200);
+        const img = qrPlaceholder.querySelector('img');
+        img?.addEventListener(
+          'error',
+          () => {
+            qrPlaceholder.textContent = 'QR code unavailable — check your connection and try again.';
+          },
+          { once: true }
+        );
       }
 
-      if (modal && content) {
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-      }
+      this.setModalOpen('qr-modal', 'qr-modal-content', true, '#qr-copy-btn');
     }
 
     closeQrModal() {
-      const modal = document.getElementById('qr-modal');
-      const content = document.getElementById('qr-modal-content');
-      if (modal && content) {
-        modal.classList.add('opacity-0', 'pointer-events-none');
-        content.classList.remove('scale-100');
-        content.classList.add('scale-95');
-      }
+      this.setModalOpen('qr-modal', 'qr-modal-content', false);
     }
 
     openCustomModal() {
-      const modal = document.getElementById('custom-modal');
-      const content = document.getElementById('custom-modal-content');
-      if (modal && content) {
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-      }
-      const input = document.getElementById('custom-prefix-input') as HTMLInputElement;
-      if (input) input.focus();
+      this.setModalOpen('custom-modal', 'custom-modal-content', true, '#custom-prefix-input');
     }
 
     closeCustomModal() {
-      const modal = document.getElementById('custom-modal');
-      const content = document.getElementById('custom-modal-content');
-      if (modal && content) {
-        modal.classList.add('opacity-0', 'pointer-events-none');
-        content.classList.remove('scale-100');
-        content.classList.add('scale-95');
-      }
+      this.setModalOpen('custom-modal', 'custom-modal-content', false);
     }
 
     updateCustomPreview() {
@@ -669,19 +759,19 @@ const { locale = 'en' } = Astro.props;
       if (!preview) return;
 
       const prefix = input?.value?.trim() || 'yourname';
-      const domain = select?.value || this.availableDomains[0]?.domain || (typeof window !== 'undefined' ? window.location.hostname : 'tempomail');
+      const domain = select?.value || this.availableDomains[0]?.domain || SITE_CONFIG.domain;
       preview.textContent = `${prefix}@${domain}`;
     }
 
     openHistoryModal() {
       const i18n = (window as any).__TEMPO_I18N__;
-      const modal = document.getElementById('history-modal');
-      const content = document.getElementById('history-modal-content');
+      const saved = StorageManager.getSavedAccounts();
+      const clearBtn = document.getElementById('clear-all-history-btn') as HTMLButtonElement | null;
+      if (clearBtn) clearBtn.disabled = saved.length === 0;
       const list = document.getElementById('history-inboxes-list');
 
       if (!list) return;
 
-      const saved = StorageManager.getSavedAccounts();
       if (saved.length === 0) {
         const emptyMsg = document.createElement('div');
         emptyMsg.className = 'text-center py-6 text-xs text-[#8d8d8d]';
@@ -747,24 +837,15 @@ const { locale = 'en' } = Astro.props;
         });
       }
 
-      if (modal && content) {
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-      }
+      this.setModalOpen('history-modal', 'history-modal-content', true, '#history-modal-done');
     }
 
     closeHistoryModal() {
-      const modal = document.getElementById('history-modal');
-      const content = document.getElementById('history-modal-content');
-      if (modal && content) {
-        modal.classList.add('opacity-0', 'pointer-events-none');
-        content.classList.remove('scale-100');
-        content.classList.add('scale-95');
-      }
+      this.setModalOpen('history-modal', 'history-modal-content', false);
     }
 
     switchInbox(targetAccount: MailAccount) {
+      this.fetchGen++;
       this.account = targetAccount;
       StorageManager.setCurrentAccount(targetAccount);
       this.selectedMessage = null;
@@ -934,7 +1015,7 @@ const { locale = 'en' } = Astro.props;
       });
 
       // Quick Provider Toggle on Badge Click
-      document.getElementById('provider-badge')?.addEventListener('click', () => {
+      document.getElementById('provider-badge')?.addEventListener('click', async () => {
         const provs: ('mailtm' | 'inboxes' | 'tempmaillol' | 'guerrilla')[] = [
           'mailtm',
           'inboxes',
@@ -943,12 +1024,13 @@ const { locale = 'en' } = Astro.props;
         ];
         const curIdx = provs.indexOf(this.account?.provider as any);
         const nextProvider = provs[(curIdx + 1) % provs.length] || 'mailtm';
-        this.loadInitialMailbox(true, nextProvider);
         const i18n = (window as any).__TEMPO_I18N__;
+        await this.loadInitialMailbox(true, nextProvider);
+        const actual = (this.account?.provider || nextProvider).toUpperCase();
         const provSwitchedTpl = i18n?.toasts?.providerSwitched || 'Switched active provider to {provider}';
         window.dispatchEvent(
           new CustomEvent('tempomail:toast', {
-            detail: { message: provSwitchedTpl.replace('{provider}', nextProvider.toUpperCase()), type: 'success' },
+            detail: { message: provSwitchedTpl.replace('{provider}', actual), type: 'success' },
           })
         );
       });
@@ -1006,6 +1088,23 @@ const { locale = 'en' } = Astro.props;
           emailDetailPane.classList.add('hidden');
           emailDetailPane.classList.remove('block');
         }
+      });
+
+      // Global Escape closes any open app modal (QR / custom / history).
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const openId = ['qr-modal', 'custom-modal', 'history-modal'].find((id) => {
+          const m = document.getElementById(id);
+          return m && !m.classList.contains('pointer-events-none');
+        });
+        if (openId === 'qr-modal') this.closeQrModal();
+        else if (openId === 'custom-modal') this.closeCustomModal();
+        else if (openId === 'history-modal') this.closeHistoryModal();
+      });
+
+      // Re-theme the email reader when the app theme changes.
+      window.addEventListener('tempomail:themechange', () => {
+        if (this.selectedMessage) this.renderMessageDetail();
       });
     }
   }

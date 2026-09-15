@@ -72,6 +72,7 @@ const contactUrl = getLocalizedPath('/contact/', currentLocale);
         class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white transition-colors cursor-pointer"
         title="Toggle email notification sound"
         aria-label="Toggle notification sound"
+        aria-pressed="true"
       >
         <svg id="sound-on-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -209,6 +210,9 @@ const contactUrl = getLocalizedPath('/contact/', currentLocale);
   import { soundNotifier } from '../../lib/utils/sound';
 
   function setupHeader() {
+    if ((window as any).__tempoHeaderBound) return;
+    (window as any).__tempoHeaderBound = true;
+
     const soundBtn = document.getElementById('sound-toggle-btn');
     const soundOn = document.getElementById('sound-on-icon');
     const soundOff = document.getElementById('sound-off-icon');
@@ -222,6 +226,7 @@ const contactUrl = getLocalizedPath('/contact/', currentLocale);
         soundOn?.classList.add('hidden');
         soundOff?.classList.remove('hidden');
       }
+      soundBtn?.setAttribute('aria-pressed', String(enabled));
     };
 
     updateSoundUI();

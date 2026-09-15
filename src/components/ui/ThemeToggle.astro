@@ -47,6 +47,8 @@
 
 <script>
   function setupThemeToggle() {
+    if ((window as any).__tempoThemeBound) return;
+    (window as any).__tempoThemeBound = true;
     const btn = document.getElementById('theme-toggle-btn');
     if (!btn) return;
 

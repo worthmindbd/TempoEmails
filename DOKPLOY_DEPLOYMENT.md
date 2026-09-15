@@ -8,12 +8,17 @@ Dokploy and its built-in **Traefik** reverse proxy handle build packaging, stati
 
 ## ⚙️ Environment Variables (`prod.env`)
 
-Refer to [`prod.env`](file:///home/worthmind/Coding/TempoEmails/prod.env):
+Refer to [`prod.env`](./prod.env):
 
-| Variable | Description | Example |
-| :--- | :--- | :--- |
-| `PUBLIC_GOOGLE_ANALYTICS_ID` | Google Analytics 4 Measurement ID | `G-XXXXXXXXXX` |
-| `PUBLIC_GOOGLE_ADSENSE_ID` | Google AdSense Publisher ID | `ca-pub-XXXXXXXXXXXXXXXX` |
+| Variable | Description | Example | When needed |
+| :--- | :--- | :--- | :--- |
+| `SITE_URL` | Canonical public URL (drives redirects, `Astro.site`, canonical/hreflang tags) | `https://tempoemails.com` | **Build time** (baked into static HTML) |
+| `PORT` | Port the Node server listens on | `4321` | Runtime |
+| `HOST` | Bind address | `0.0.0.0` | Runtime |
+| `PUBLIC_GOOGLE_ANALYTICS_ID` | Google Analytics 4 Measurement ID | `G-XXXXXXXXXX` | **Build time** (baked into HTML) |
+| `PUBLIC_GOOGLE_ADSENSE_ID` | Google AdSense Publisher ID | `ca-pub-XXXXXXXXXXXXXXXX` | **Build time** (baked into HTML) |
+
+> `PUBLIC_*` variables are baked in at `npm run build` — set them in Dokploy **before** the build runs, not just at runtime.
 
 ---
 
@@ -30,7 +35,8 @@ Refer to [`prod.env`](file:///home/worthmind/Coding/TempoEmails/prod.env):
 5. In the **Build** tab:
    - **Build Type**: Select **`Nixpacks`**.
 6. In the **Environment Variables** tab:
-   - Paste the contents of your [`prod.env`](file:///home/worthmind/Coding/TempoEmails/prod.env) file.
+   - Paste the contents of your [`prod.env`](./prod.env) file.
+   - Make sure `SITE_URL` matches your public domain (it controls canonical redirects and SEO tags) and that all `PUBLIC_*` values are set **before** the build step.
 7. In the **Domains** tab:
    - Click **Add Domain**.
    - **Domain**: `tempoemails.com` (and optionally `www.tempoemails.com`).
@@ -40,7 +46,7 @@ Refer to [`prod.env`](file:///home/worthmind/Coding/TempoEmails/prod.env):
    - **HTTPS**: Enabled.
 8. Click **Deploy**.
 
-Dokploy will automatically build the Astro static site using [`nixpacks.toml`](file:///home/worthmind/Coding/TempoEmails/nixpacks.toml) and route your domain via Traefik.
+Dokploy will automatically build the Astro static site using [`nixpacks.toml`](./nixpacks.toml) and route your domain via Traefik.
 
 ---
 

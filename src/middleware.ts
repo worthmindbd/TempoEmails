@@ -24,11 +24,29 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   const request = context.request;
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: { Allow: 'GET, POST, DELETE, OPTIONS' },
+    });
+  }
   if (!['GET', 'POST', 'DELETE'].includes(request.method)) {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
     });
+  }
+
+  let body: string | undefined;
+  if (request.method !== 'GET' && request.method !== 'DELETE') {
+    const text = await request.text();
+    if (new TextEncoder().encode(text).length > 1_000_000) {
+      return new Response(JSON.stringify({ error: 'Payload too large' }), {
+        status: 413,
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      });
+    }
+    body = text;
   }
 
   const headers = buildUpstreamHeaders(resolved.provider, Object.fromEntries(request.headers.entries()));
@@ -39,14 +57,22 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const upstreamRes = await fetch(resolved.upstreamUrl, {
       method: request.method,
       headers,
-      body: request.method === 'GET' || request.method === 'DELETE' ? undefined : await request.text(),
+      body,
       signal: controller.signal,
     });
+    const upstreamType = (upstreamRes.headers.get('content-type') || 'application/json; charset=utf-8').toLowerCase();
+    const isAttachmentPath = /\/messages\/[^/]+\/attachment|\/download\b|\battachment\b/i.test(resolved.upstreamUrl);
     return new Response(upstreamRes.body, {
       status: upstreamRes.status,
       headers: {
-        'Content-Type': upstreamRes.headers.get('content-type') || 'application/json; charset=utf-8',
+        'Content-Type': isAttachmentPath
+          ? 'application/octet-stream'
+          : upstreamType.includes('json')
+            ? 'application/json; charset=utf-8'
+            : 'application/octet-stream',
+        'Content-Disposition': isAttachmentPath ? 'attachment' : 'inline',
         'Cache-Control': 'no-store',
+        'X-Content-Type-Options': 'nosniff',
       },
     });
   } catch (err) {

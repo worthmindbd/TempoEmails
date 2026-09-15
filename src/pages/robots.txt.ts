@@ -8,9 +8,11 @@ const getRobotsTxt = (baseUrl: string) => `
 User-agent: *
 Allow: /
 
+# Keep crawlers out of the same-origin mail relay
+Disallow: /api/
+
 # Sitemap locations
 Sitemap: ${baseUrl}/sitemap-index.xml
-Sitemap: ${baseUrl}/sitemap.xml
 `.trim();
 
 export const GET: APIRoute = ({ site }) => {

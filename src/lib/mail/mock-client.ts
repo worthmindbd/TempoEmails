@@ -1,5 +1,6 @@
 import type { MailAccount, MailDomain, MailMessage, DetailedMailMessage } from './types';
 import { extractOtpCode, extractVerificationLink } from '../utils/otp-extractor';
+import { escapeHtml } from '../utils/sanitize';
 import { StorageManager } from '../utils/storage';
 import { SITE_CONFIG } from '../config';
 
@@ -15,7 +16,8 @@ export class MockClient {
 
   static async createAccount(usernamePrefix?: string, domainName?: string): Promise<MailAccount> {
     const domain = domainName || SITE_CONFIG.domain;
-    const prefix = usernamePrefix || `user.${Math.floor(100000 + Math.random() * 900000)}`;
+    const cleanedPrefix = (usernamePrefix || '').toLowerCase().replace(/[^a-z0-9._-]/g, '');
+    const prefix = cleanedPrefix || `user.${Math.floor(100000 + Math.random() * 900000)}`;
     const address = `${prefix}@${domain}`;
 
     // Initialize with a welcoming verification message and save it in localStorage
@@ -50,7 +52,7 @@ export class MockClient {
         ...summary,
         seen: true,
         text: summary.intro || summary.subject,
-        html: [`<p>${summary.intro || summary.subject}</p>`],
+        html: [`<p>${escapeHtml(summary.intro || summary.subject)}</p>`],
         attachments: [],
       };
       StorageManager.setCachedMessageDetail(address, fallback);

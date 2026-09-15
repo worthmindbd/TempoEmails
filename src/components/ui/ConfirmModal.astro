@@ -78,6 +78,13 @@ const t = useTranslation(locale);
 <script>
   // Global Confirm Modal Dialog helper
   let confirmResolve: ((value: boolean) => void) | null = null;
+  let lastFocused: HTMLElement | null = null;
+
+  function lockBodyScroll(lock: boolean) {
+    try {
+      document.body.style.overflow = lock ? 'hidden' : '';
+    } catch {}
+  }
 
   (window as any).showConfirmDialog = function ({
     title,
@@ -101,10 +108,28 @@ const t = useTranslation(locale);
     const resolvedCancelText = cancelText || i18n?.cancel || 'Cancel';
 
     return new Promise((resolve) => {
-      confirmResolve = resolve;
+      // Re-entry guard: settle any orphaned earlier dialog instead of hanging it.
+      if (confirmResolve) {
+        confirmResolve(false);
+        confirmResolve = null;
+      }
 
       const modal = document.getElementById('confirm-modal');
       const content = document.getElementById('confirm-modal-content');
+      if (!modal || !content) {
+        // Modal not rendered on this page (e.g. blog/legal) — fall back to
+        // native confirm instead of hanging the awaiting caller forever.
+        try {
+          resolve(window.confirm(`${resolvedTitle}\n\n${resolvedDescription}`));
+        } catch {
+          resolve(false);
+        }
+        return;
+      }
+
+      confirmResolve = resolve;
+      lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
       const titleEl = document.getElementById('confirm-modal-title');
       const descEl = document.getElementById('confirm-modal-description');
       const cancelBtn = document.getElementById('confirm-modal-cancel');
@@ -152,6 +177,9 @@ const t = useTranslation(locale);
         modal.classList.remove('opacity-0', 'pointer-events-none');
         content.classList.remove('scale-95');
         content.classList.add('scale-100');
+        lockBodyScroll(true);
+        const focusTarget = actionBtn || (document.getElementById('confirm-modal-cancel') as HTMLElement | null);
+        setTimeout(() => focusTarget?.focus(), 50);
       }
     });
   };
@@ -164,17 +192,48 @@ const t = useTranslation(locale);
       content.classList.remove('scale-100');
       content.classList.add('scale-95');
     }
+    lockBodyScroll(false);
     if (confirmResolve) {
       confirmResolve(result);
       confirmResolve = null;
     }
+    lastFocused?.focus?.();
+    lastFocused = null;
   }
+
+  // Focus trap: keep Tab cycling inside the open dialog.
+  document.getElementById('confirm-modal-content')?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    const modal = document.getElementById('confirm-modal');
+    if (modal?.classList.contains('pointer-events-none')) return;
+    const focusable = Array.from(
+      document.querySelectorAll('#confirm-modal-content button')
+    ).filter((el) => !(el as HTMLElement).hasAttribute('disabled')) as HTMLElement[];
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
 
   document.getElementById('confirm-modal-cancel')?.addEventListener('click', () => closeConfirm(false));
   document.getElementById('confirm-modal-action')?.addEventListener('click', () => closeConfirm(true));
   document.getElementById('confirm-modal')?.addEventListener('click', (e) => {
     if (e.target === document.getElementById('confirm-modal')) {
       closeConfirm(false);
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('confirm-modal');
+      if (modal && !modal.classList.contains('pointer-events-none')) {
+        closeConfirm(false);
+      }
     }
   });
 </script>

@@ -1,10 +1,12 @@
 import type { MailAccount, MailDomain, MailMessage, DetailedMailMessage } from './types';
 import { extractOtpCode, extractVerificationLink } from '../utils/otp-extractor';
+import { fetchWithTimeout } from '../utils/fetch-with-timeout';
 
 // NOTE: The 1secmail public API has been shut down (returns 403). This client
 // is no longer offered for new accounts — it only serves previously stored
 // accounts through the same-origin proxy.
 const API_BASE = '/api/mail/secmail/api/v1/';
+const FETCH_TIMEOUT_MS = 10000;
 
 export class SecMailClient {
   private static generateRandomString(length: number = 8): string {
@@ -18,11 +20,11 @@ export class SecMailClient {
 
   static async getDomains(): Promise<MailDomain[]> {
     try {
-      const res = await fetch(`${API_BASE}?action=getDomainList`);
+      const res = await fetchWithTimeout(`${API_BASE}?action=getDomainList`, {}, FETCH_TIMEOUT_MS);
       if (!res.ok) throw new Error('Failed to fetch 1secmail domains');
       const domains: string[] = await res.json();
-      return domains.map((domain, index) => ({
-        id: `sec_${index}`,
+      return domains.map((domain) => ({
+        id: `sec_${domain}`,
         domain,
         isActive: true,
         provider: 'secmail' as const,
@@ -55,13 +57,17 @@ export class SecMailClient {
     if (!login || !domain) return [];
 
     try {
-      const res = await fetch(`${API_BASE}?action=getMessages&login=${encodeURIComponent(login)}&domain=${encodeURIComponent(domain)}`);
+      const res = await fetchWithTimeout(
+        `${API_BASE}?action=getMessages&login=${encodeURIComponent(login)}&domain=${encodeURIComponent(domain)}`,
+        {},
+        FETCH_TIMEOUT_MS
+      );
       if (!res.ok) throw new Error('Failed to fetch 1secmail messages');
       const items = await res.json();
 
       return items.map((m: any) => {
         const subject = m.subject || '(No Subject)';
-        const otp = extractOtpCode(subject, '');
+        const otp = extractOtpCode(subject, m.textBody || m.body || '');
 
         return {
           id: String(m.id),
@@ -74,7 +80,7 @@ export class SecMailClient {
           subject,
           intro: '',
           seen: false,
-          createdAt: m.date || new Date().toISOString(),
+          createdAt: m.date && !isNaN(new Date(m.date).getTime()) ? new Date(m.date).toISOString() : new Date().toISOString(),
           extractedOtp: otp || undefined,
           provider: 'secmail' as const,
         };
@@ -88,7 +94,11 @@ export class SecMailClient {
 
   static async getMessageDetail(address: string, messageId: string): Promise<DetailedMailMessage> {
     const [login, domain] = address.split('@');
-    const res = await fetch(`${API_BASE}?action=readMessage&login=${encodeURIComponent(login)}&domain=${encodeURIComponent(domain)}&id=${encodeURIComponent(messageId)}`);
+    const res = await fetchWithTimeout(
+      `${API_BASE}?action=readMessage&login=${encodeURIComponent(login)}&domain=${encodeURIComponent(domain)}&id=${encodeURIComponent(messageId)}`,
+      {},
+      FETCH_TIMEOUT_MS
+    );
     if (!res.ok) throw new Error('Failed to fetch 1secmail message detail');
 
     const m = await res.json();
@@ -110,7 +120,7 @@ export class SecMailClient {
       subject,
       intro: text.slice(0, 100),
       seen: true,
-      createdAt: m.date || new Date().toISOString(),
+      createdAt: m.date && !isNaN(new Date(m.date).getTime()) ? new Date(m.date).toISOString() : new Date().toISOString(),
       text,
       html: html ? [html] : [],
       attachments: (m.attachments || []).map((a: any, i: number) => ({

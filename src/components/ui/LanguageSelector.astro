@@ -24,7 +24,7 @@ const pathname = Astro.url.pathname;
           ? 'w-full justify-between px-3.5 py-2.5 text-xs font-semibold bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#202020] dark:text-zinc-200 hover:bg-black/10 dark:hover:bg-white/10 rounded-xl'
           : 'h-9 sm:h-10 px-2.5 sm:px-3 text-xs bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#575757] dark:text-zinc-200 hover:text-[#202020] dark:hover:text-white hover:border-[#ea2804]/30 shadow-xs'
     }`}
-    aria-haspopup="true"
+    aria-haspopup="menu"
     aria-expanded="false"
     aria-label={`Change language, current is ${currentLanguage.nativeName}`}
   >
@@ -95,7 +95,11 @@ const pathname = Astro.url.pathname;
 
 <script>
   function setupLanguageSelectors() {
+    if ((window as any).__tempoLangBound) return;
+    (window as any).__tempoLangBound = true;
     document.querySelectorAll('.language-selector-root').forEach((container) => {
+      if ((container as HTMLElement).dataset.bound === 'true') return;
+      (container as HTMLElement).dataset.bound = 'true';
       const trigger = container.querySelector('.lang-trigger-btn');
       const menu = container.querySelector('.lang-dropdown-menu');
       const chevron = container.querySelector('.lang-chevron');
