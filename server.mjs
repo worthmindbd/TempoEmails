@@ -96,29 +96,22 @@ async function handleServerRequest(req, res) {
     hostHeader.startsWith('10.') ||
     hostHeader.endsWith('.local');
 
-  // Automatic 301 Canonical & HTTPS Enforcement
-  // Redirects http://, www.*, or any non-canonical domain to https://tempoemails.com/*
-  if (!isLocal) {
-    const isHttp = protoHeader === 'http';
-    const isWwwOrNonCanonical =
-      hostHeader.startsWith('www.') || (hostHeader && hostHeader !== canonicalHostname);
-
-    if (isHttp || isWwwOrNonCanonical) {
-      const safeUrl = typeof req.url === 'string' && req.url.startsWith('/') ? req.url : '/';
-      const targetUrl = `https://${canonicalHostname}${safeUrl}`;
-      res.writeHead(301, {
-        Location: targetUrl,
-        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-        'X-Content-Type-Options': 'nosniff',
-        'Content-Type': 'text/plain; charset=utf-8',
-      });
-      res.end(`301 Moved Permanently: Redirecting to ${targetUrl}`);
-      return;
-    }
+  let pathname = decodeURIComponent(parsedUrl.pathname);
+  // Collapse duplicate slashes (e.g. //contact/ -> /contact/)
+  const cleanPathname = pathname.replace(/\/+/g, '/');
+  if (cleanPathname !== pathname) {
+    const redirectUrl = `https://${canonicalHostname}${cleanPathname}${parsedUrl.search || ''}`;
+    res.writeHead(301, {
+      Location: redirectUrl,
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Type': 'text/plain; charset=utf-8',
+    });
+    res.end(`301 Moved Permanently: Redirecting to ${redirectUrl}`);
+    return;
   }
 
-  let pathname = decodeURIComponent(parsedUrl.pathname);
-  let safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
+  let safePath = path.normalize(cleanPathname).replace(/^(\.\.[\/\\])+/, '');
   let filePath = path.join(DIST_DIR, safePath);
 
   // Belt-and-braces path traversal guard: the resolved file must stay in dist/.
@@ -133,33 +126,61 @@ async function handleServerRequest(req, res) {
     return;
   }
 
-  // Directory handling with trailing slash redirection
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-    if (!pathname.endsWith('/')) {
-      const redirectUrl = `${pathname}/${parsedUrl.search}`;
+  // Check if this path represents a directory or has an index.html that needs a trailing slash
+  let isDirectoryPath = false;
+  if (!cleanPathname.endsWith('/')) {
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+      isDirectoryPath = true;
+    } else {
+      const asDir = path.join(DIST_DIR, safePath, 'index.html');
+      if (fs.existsSync(asDir) && fs.statSync(asDir).isFile()) {
+        isDirectoryPath = true;
+      }
+    }
+  }
+
+  // Automatic 301 Canonical & HTTPS Enforcement
+  // Redirects http://, www.*, or any non-canonical domain to https://tempoemails.com/*
+  // Resolves canonical host, HTTPS, and trailing slash in a single 301 hop to eliminate redirect chains.
+  if (!isLocal) {
+    const isHttp = protoHeader === 'http';
+    const isWwwOrNonCanonical =
+      hostHeader.startsWith('www.') || (hostHeader && hostHeader !== canonicalHostname);
+
+    if (isHttp || isWwwOrNonCanonical) {
+      const targetPath = isDirectoryPath ? `${cleanPathname}/` : cleanPathname;
+      const targetUrl = `https://${canonicalHostname}${targetPath}${parsedUrl.search || ''}`;
       res.writeHead(301, {
-        Location: redirectUrl,
+        Location: targetUrl,
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+        'X-Content-Type-Options': 'nosniff',
         'Content-Type': 'text/plain; charset=utf-8',
       });
-      res.end(`301 Moved Permanently: Redirecting to ${redirectUrl}`);
+      res.end(`301 Moved Permanently: Redirecting to ${targetUrl}`);
       return;
     }
+  }
+
+  // Trailing slash enforcement for directory routes on canonical domain (using absolute canonical URL)
+  if (isDirectoryPath) {
+    const redirectUrl = `https://${canonicalHostname}${cleanPathname}/${parsedUrl.search || ''}`;
+    res.writeHead(301, {
+      Location: redirectUrl,
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+      'X-Content-Type-Options': 'nosniff',
+      'Content-Type': 'text/plain; charset=utf-8',
+    });
+    res.end(`301 Moved Permanently: Redirecting to ${redirectUrl}`);
+    return;
+  }
+
+  // Directory handling: serve index.html
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
     filePath = path.join(filePath, 'index.html');
   }
 
-  // Check if file exists or check if directory index exists
+  // Check if file exists; if not, render 404
   if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-    const asDir = path.join(DIST_DIR, safePath, 'index.html');
-    if (fs.existsSync(asDir) && fs.statSync(asDir).isFile()) {
-      const redirectUrl = `${pathname}/${parsedUrl.search}`;
-      res.writeHead(301, {
-        Location: redirectUrl,
-        'Content-Type': 'text/plain; charset=utf-8',
-      });
-      res.end(`301 Moved Permanently: Redirecting to ${redirectUrl}`);
-      return;
-    }
-
     // 404 fallback: prefer a localized 404 page when the path starts with a
     // supported locale prefix, otherwise use the root 404 page. Astro emits
     // both layouts (404.html and 404/index.html) depending on config.
