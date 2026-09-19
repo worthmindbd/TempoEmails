@@ -7,7 +7,8 @@ import Features from '../../components/sections/Features.astro';
 import HowItWorks from '../../components/sections/HowItWorks.astro';
 import Faq from '../../components/sections/Faq.astro';
 import { NON_DEFAULT_LOCALES, type Locale } from '../../i18n/languages';
-import { useTranslation } from '../../i18n/utils';
+import { useTranslation, getLocalizedPath } from '../../i18n/utils';
+import { getBlogArticles } from '../../i18n/blog-data';
 
 export function getStaticPaths() {
   return NON_DEFAULT_LOCALES.map((lang) => ({
@@ -18,6 +19,18 @@ export function getStaticPaths() {
 const { lang } = Astro.params;
 const currentLocale = lang as Locale;
 const t = useTranslation(currentLocale);
+
+// Same featured-guides deep-link block as the English homepage so every
+// locale homepage passes authority directly to its localized guide URLs.
+const featuredSlugs = [
+  'online-account-security-guide',
+  'what-is-email-tracking',
+  'how-to-avoid-spam',
+];
+const allLocaleArticles = getBlogArticles(currentLocale);
+const featuredArticles = featuredSlugs
+  .map((s) => allLocaleArticles.find((a) => a.slug.includes(s)))
+  .filter((a): a is NonNullable<typeof a> => Boolean(a));
 
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -122,6 +135,45 @@ const faqSchema = {
 
   <!-- 4-Step Process Guide -->
   <HowItWorks locale={currentLocale} />
+
+  <!-- Featured Guides: direct deep links so key articles are 1 click from home -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12" aria-label="Featured privacy guides">
+    <div class="text-center mb-8 space-y-3">
+      <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight">
+        {t.pages.blog.heading}
+      </h2>
+      <p class="text-sm sm:text-base text-[#575757] dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+        {t.pages.blog.subheading}
+      </p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {featuredArticles.map((article) => (
+        <a
+          href={getLocalizedPath(article.slug, currentLocale)}
+          class="group block rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-900/60 p-6 hover:border-[#ea2804]/40 hover:shadow-lg transition-all"
+        >
+          <div class="text-[10px] font-mono uppercase tracking-wider text-[#8d8d8d] dark:text-zinc-500 mb-2">
+            {article.category} • {new Date(article.date).toLocaleDateString(currentLocale, { year: 'numeric', month: 'short', day: 'numeric' })}
+          </div>
+          <div class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc] leading-snug group-hover:text-[#ea2804] transition-colors mb-2">
+            {article.title}
+          </div>
+          <p class="text-xs text-[#575757] dark:text-zinc-400 leading-relaxed line-clamp-3 mb-3">
+            {article.description}
+          </p>
+          <span class="text-xs font-semibold text-[#ea2804] dark:text-[#ff6a3d]">{t.common.readArticle} →</span>
+        </a>
+      ))}
+    </div>
+    <div class="text-center mt-8">
+      <a
+        href={getLocalizedPath('/blog/', currentLocale)}
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors"
+      >
+        {t.common.allArticles}
+      </a>
+    </div>
+  </section>
 
   <!-- FAQ Accordion -->
   <Faq locale={currentLocale} />

@@ -17,6 +17,7 @@ interface Props {
   noindex?: boolean;
   isApp?: boolean;
   publishDate?: string;
+  modifiedDate?: string;
   category?: string;
   locale?: Locale;
 }
@@ -30,6 +31,7 @@ const {
   noindex = false,
   isApp = false,
   publishDate,
+  modifiedDate,
   category,
   locale,
 } = Astro.props;
@@ -166,7 +168,7 @@ const organizationSchema = {
     {ogType === 'article' && publishDate && (
       <>
         <meta property="article:published_time" content={publishDate} />
-        <meta property="article:modified_time" content={publishDate} />
+        <meta property="article:modified_time" content={modifiedDate || publishDate} />
         {category && <meta property="article:section" content={category} />}
         <meta property="article:author" content="TempoEmails Editorial Team" />
       </>

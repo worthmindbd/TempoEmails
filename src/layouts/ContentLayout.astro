@@ -2,19 +2,26 @@
 import Layout from './Layout.astro';
 import { SITE_CONFIG } from '../lib/config';
 import { useTranslation, getLocaleFromUrl, getLocalizedPath } from '../i18n/utils';
-import { getBlogArticleBySlug } from '../i18n/blog-data';
+import { getBlogArticleBySlug, getBlogArticles } from '../i18n/blog-data';
 import type { Locale } from '../i18n/languages';
+
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
 
 interface Props {
   title: string;
   description: string;
   publishDate?: string;
+  updatedDate?: string;
   category?: string;
   keywords?: string;
   locale?: Locale;
+  faqItems?: FaqItem[];
 }
 
-const { title, description, publishDate, category, keywords, locale } = Astro.props;
+const { title, description, publishDate, updatedDate, category, keywords, locale, faqItems } = Astro.props;
 const currentLocale = locale || getLocaleFromUrl(Astro.url);
 const t = useTranslation(currentLocale);
 
@@ -44,16 +51,36 @@ function getCategoryLabel(cat?: string) {
 const displayCategory = getCategoryLabel(category);
 
 const siteUrl = Astro.site?.origin || SITE_CONFIG.siteUrl;
-const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+// Canonical must always carry a trailing slash so the <link rel="canonical">,
+// JSON-LD `mainEntityOfPage`, breadcrumbs and the sitemap agree on one URL.
+// (Layout.astro already normalizes; this keeps structured data consistent.)
+const canonicalPath = Astro.url.pathname.endsWith('/')
+  ? Astro.url.pathname
+  : `${Astro.url.pathname}/`;
+const canonicalURL = new URL(canonicalPath, siteUrl);
 const homeUrl = currentLocale === 'en' ? '/' : `/${currentLocale}/`;
 const blogUrl = getLocalizedPath('/blog/', currentLocale);
 
+// Freshness signals: dateModified must be >= datePublished and reflect the
+// last editorial review. Falls back to publishDate when no review happened.
+const datePublishedISO = publishDate ? new Date(publishDate).toISOString() : undefined;
+const effectiveUpdated = updatedDate || publishDate;
+const dateModifiedISO = effectiveUpdated ? new Date(effectiveUpdated).toISOString() : undefined;
+const hasFreshUpdate = Boolean(publishDate && updatedDate && updatedDate !== publishDate);
+
+function formatDate(dateStr: string, loc: string) {
+  return new Date(dateStr).toLocaleDateString(loc, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
 const formattedDate = publishDate
-  ? new Date(publishDate).toLocaleDateString(currentLocale, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
+  ? formatDate(publishDate, currentLocale)
+  : null;
+const formattedUpdated = hasFreshUpdate && effectiveUpdated
+  ? formatDate(effectiveUpdated, currentLocale)
   : null;
 
 // JSON-LD Schema: BreadcrumbList
@@ -93,16 +120,19 @@ const breadcrumbSchema = {
   ],
 };
 
-// JSON-LD Schema: Article (for blog posts)
+// JSON-LD Schema: BlogPosting (richer than generic Article — carries the
+// E-E-A-T signals Google needs for YMYL-adjacent security/privacy guides:
+// explicit author + publisher, distinct datePublished/dateModified, section,
+// and stable mainEntityOfPage matching the canonical URL).
 const articleSchema = publishDate
   ? {
       '@context': 'https://schema.org',
-      '@type': 'Article',
+      '@type': 'BlogPosting',
       headline: cleanTitle,
       description: displayDescription,
       inLanguage: currentLocale,
-      datePublished: new Date(publishDate).toISOString(),
-      dateModified: new Date(publishDate).toISOString(),
+      datePublished: datePublishedISO,
+      dateModified: dateModifiedISO,
       mainEntityOfPage: {
         '@type': 'WebPage',
         '@id': canonicalURL.href,
@@ -110,11 +140,17 @@ const articleSchema = publishDate
       author: {
         '@type': 'Organization',
         name: 'TempoEmails Editorial Team',
-        url: `${canonicalURL.origin}/`,
+        url: `${canonicalURL.origin}/about/`,
+      },
+      editor: {
+        '@type': 'Organization',
+        name: 'TempoEmails Editorial Team',
+        url: `${canonicalURL.origin}/about/`,
       },
       publisher: {
         '@type': 'Organization',
         name: 'TempoEmails',
+        url: `${canonicalURL.origin}/`,
         logo: {
           '@type': 'ImageObject',
           url: `${canonicalURL.origin}/android-chrome-512x512.png`,
@@ -124,6 +160,39 @@ const articleSchema = publishDate
       articleSection: displayCategory || 'Privacy',
     }
   : null;
+
+// JSON-LD Schema: FAQPage (only when the page supplies faqItems)
+const faqSchema = faqItems && faqItems.length > 0
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      inLanguage: currentLocale,
+      mainEntity: faqItems.map((f) => ({
+        '@type': 'Question',
+        name: f.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: f.answer,
+        },
+      })),
+    }
+  : null;
+
+// Related guides: same-category first, then newest others, excluding self.
+// This internal-link mesh is deliberate: every article now links out to three
+// siblings (and receives inbound links from them), lifting crawl depth and
+// PageRank flow for pages Google previously crawled but declined to index.
+const allArticles = category ? getBlogArticles(currentLocale) : [];
+const normalizedSlug = currentSlug.toLowerCase();
+const sameCategory = allArticles.filter(
+  (a) => a.slug.toLowerCase().replace(/\/+$/g, '').split('/').pop() !== normalizedSlug &&
+    a.category === category
+);
+const otherCategory = allArticles.filter(
+  (a) => a.slug.toLowerCase().replace(/\/+$/g, '').split('/').pop() !== normalizedSlug &&
+    a.category !== category
+);
+const relatedArticles = [...sameCategory, ...otherCategory].slice(0, 3);
 ---
 
 <Layout
@@ -131,13 +200,15 @@ const articleSchema = publishDate
   description={displayDescription}
   keywords={keywords}
   ogType={publishDate ? 'article' : 'website'}
-  publishDate={publishDate ? new Date(publishDate).toISOString() : undefined}
+  publishDate={datePublishedISO}
+  modifiedDate={dateModifiedISO}
   category={displayCategory}
   locale={currentLocale}
   isApp={false}
 >
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   {articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
+  {faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
   <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
     <!-- Breadcrumb Navigation -->
     <nav class="mb-8 flex flex-wrap items-center gap-2 text-xs font-mono text-[#8d8d8d] dark:text-zinc-500">
@@ -164,14 +235,23 @@ const articleSchema = publishDate
         {cleanTitle}
       </h1>
 
+      <!-- E-E-A-T byline: visible author + published/reviewed dates. Security &
+           privacy guides are YMYL-adjacent, so showing editorial ownership and
+           review freshness is a direct indexing-quality signal. -->
       {(formattedDate || displayCategory) && (
-        <div class="flex items-center gap-3 text-xs font-mono text-[#8d8d8d] dark:text-zinc-500 pt-1">
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs font-mono text-[#8d8d8d] dark:text-zinc-500 pt-1">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-6 h-6 rounded-full bg-gradient-to-tr from-[#ea2804] to-[#ff6a3d] text-white flex items-center justify-center text-[10px] font-bold select-none" aria-hidden="true">T</span>
+            <span class="font-semibold text-[#575757] dark:text-zinc-300">TempoEmails Editorial Team</span>
+          </span>
           {formattedDate && (
-            <time datetime={publishDate}>
-              {formattedDate}
-            </time>
+            <span>Published: <time datetime={datePublishedISO}>{formattedDate}</time></span>
           )}
-          {formattedDate && displayCategory && <span>•</span>}
+          {formattedUpdated && (
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-semibold">
+              Updated: <time datetime={dateModifiedISO}>{formattedUpdated}</time>
+            </span>
+          )}
           {displayCategory && <span>{displayCategory}</span>}
         </div>
       )}
@@ -228,6 +308,63 @@ const articleSchema = publishDate
         localizeContentLinks();
         document.addEventListener('astro:page-load', localizeContentLinks);
       </script>
+    )}
+
+    <!-- FAQ section (visible) — rendered when the page supplies faqItems -->
+    {faqItems && faqItems.length > 0 && (
+      <section class="mt-14 space-y-4" aria-label="Frequently asked questions">
+        <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc]">
+          Frequently Asked Questions
+        </h2>
+        <div class="space-y-3">
+          {faqItems.map((f) => (
+            <details class="group rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-900/60 px-5 py-4 open:shadow-md transition-shadow">
+              <summary class="cursor-pointer font-semibold text-sm sm:text-base text-[#202020] dark:text-[#fcfcfc] list-none flex items-center justify-between gap-3">
+                <span>{f.question}</span>
+                <span class="text-[#ea2804] transition-transform group-open:rotate-45 text-xl leading-none select-none">+</span>
+              </summary>
+              <p class="mt-2 text-sm text-[#575757] dark:text-zinc-300 leading-relaxed">{f.answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Related guides — internal link mesh so no article is a dead end -->
+    {relatedArticles.length > 0 && (
+      <section class="mt-14" aria-label="Related guides">
+        <div class="flex items-center justify-between gap-3 mb-5">
+          <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc]">
+            Related Guides
+          </h2>
+          {category && (
+            <a href={blogUrl} class="text-xs font-semibold text-[#ea2804] hover:underline shrink-0">
+              {t.common.allArticles}
+            </a>
+          )}
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {relatedArticles.map((a) => (
+            <a
+              href={getLocalizedPath(a.slug, currentLocale)}
+              class="group block rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-900/60 p-5 hover:border-[#ea2804]/40 dark:hover:border-[#ea2804]/40 hover:shadow-md transition-all"
+            >
+              <div class="text-[10px] font-mono uppercase tracking-wider text-[#8d8d8d] dark:text-zinc-500 mb-2">
+                {getCategoryLabel(a.category)} • {formatDate(a.date, currentLocale)}
+              </div>
+              <div class="font-display text-sm font-bold text-[#202020] dark:text-[#fcfcfc] leading-snug group-hover:text-[#ea2804] dark:group-hover:text-[#ff6a3d] transition-colors mb-1.5">
+                {a.title}
+              </div>
+              <div class="text-xs text-[#575757] dark:text-zinc-400 leading-relaxed line-clamp-3">
+                {a.description}
+              </div>
+              <div class="mt-3 text-xs font-semibold text-[#ea2804] dark:text-[#ff6a3d]">
+                {t.common.readArticle} →
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
     )}
 
     <!-- Back to Home / Blog -->

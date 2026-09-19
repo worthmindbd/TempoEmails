@@ -84,7 +84,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'Complete Guide to Online Account Security',
       description: 'Protect your online accounts with this comprehensive security guide covering passwords, 2FA, email safety, and privacy practices.',
       category: 'Security',
-      date: '2026-07-25',
+      date: '2026-09-16',
       slug: '/blog/online-account-security-guide/',
     },
     {
@@ -98,7 +98,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'What Is Email Tracking and How to Stop It',
       description: 'Understand how companies track your email activity with invisible pixels and links, and learn practical steps to protect yourself.',
       category: 'Security',
-      date: '2026-07-18',
+      date: '2026-09-15',
       slug: '/blog/what-is-email-tracking/',
     },
     {
@@ -191,7 +191,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'Guía definitiva de seguridad para cuentas online',
       description: 'Proteja sus cuentas en Internet con esta guía completa sobre contraseñas fuertes, 2FA, seguridad de correo y privacidad digital.',
       category: 'Security',
-      date: '2026-07-25',
+      date: '2026-09-16',
       slug: '/blog/online-account-security-guide/',
     },
     {
@@ -205,7 +205,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'Qué es el rastreo por correo electrónico y cómo detenerlo',
       description: 'Descubra cómo las empresas rastrean su actividad con píxeles espía invisibles y qué pasos tomar para bloquearlos.',
       category: 'Security',
-      date: '2026-07-18',
+      date: '2026-09-15',
       slug: '/blog/what-is-email-tracking/',
     },
     {
@@ -298,7 +298,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'Guia completo de segurança para contas digitais',
       description: 'Blinde suas contas na internet com passos práticos cobrindo senhas seguras, autenticação 2FA e privacidade no email.',
       category: 'Security',
-      date: '2026-07-25',
+      date: '2026-09-16',
       slug: '/blog/online-account-security-guide/',
     },
     {
@@ -312,7 +312,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'O que é rastreamento de email e como bloqueá-lo',
       description: 'Veja como empresas espionam a abertura de emails com pixels ocultos e aprenda medidas eficazes para se proteger.',
       category: 'Security',
-      date: '2026-07-18',
+      date: '2026-09-15',
       slug: '/blog/what-is-email-tracking/',
     },
     {
@@ -405,7 +405,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'Guide complet de sécurité pour vos comptes en ligne',
       description: 'Protégez vos comptes numériques avec ce guide méthodique couvrant les mots de passe, la double authentification et les emails.',
       category: 'Security',
-      date: '2026-07-25',
+      date: '2026-09-16',
       slug: '/blog/online-account-security-guide/',
     },
     {
@@ -419,7 +419,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: "Qu'est-ce que le pistage par email et comment le bloquer",
       description: 'Comprenez comment les traqueurs invisibles surveillent vos ouvertures de courriels et apprenez à neutraliser ces mouchards.',
       category: 'Security',
-      date: '2026-07-18',
+      date: '2026-09-15',
       slug: '/blog/what-is-email-tracking/',
     },
     {
@@ -512,7 +512,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'Kompletter Sicherheitsleitfaden für Ihre Online-Konten',
       description: 'Sichern Sie Ihre Konten im Netz mit fundierten Empfehlungen zu Passwörtern, Zwei-Faktor-Authentifizierung und E-Mail-Schutz.',
       category: 'Security',
-      date: '2026-07-25',
+      date: '2026-09-16',
       slug: '/blog/online-account-security-guide/',
     },
     {
@@ -526,7 +526,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'Was ist E-Mail-Tracking und wie stoppt man es?',
       description: 'Erfahren Sie, wie Spionagepixel das Öffnen Ihrer E-Mails aufzeichnen und mit welchen Methoden Sie sich wirksam wehren.',
       category: 'Security',
-      date: '2026-07-18',
+      date: '2026-09-15',
       slug: '/blog/what-is-email-tracking/',
     },
     {
@@ -619,7 +619,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'Полное руководство по безопасности онлайн-аккаунтов',
       description: 'Защитите свои учетные записи с помощью надежных паролей, двухфакторной аутентификации (2FA) и безопасного email.',
       category: 'Security',
-      date: '2026-07-25',
+      date: '2026-09-16',
       slug: '/blog/online-account-security-guide/',
     },
     {
@@ -633,7 +633,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'Что такое трекинг в письмах и как его заблокировать',
       description: 'Как невидимые пиксели отслеживают прочтение ваших писем и какие простые шаги помогут защитить конфиденциальность.',
       category: 'Security',
-      date: '2026-07-18',
+      date: '2026-09-15',
       slug: '/blog/what-is-email-tracking/',
     },
     {
@@ -726,7 +726,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: '个人在线账户与密码安全完整防护指南',
       description: '涵盖强密码策略、两步验证（2FA）及邮箱隔离技巧，全面提升您的数字账户安全防线。',
       category: 'Security',
-      date: '2026-07-25',
+      date: '2026-09-16',
       slug: '/blog/online-account-security-guide/',
     },
     {
@@ -740,7 +740,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: '什么是邮件跟踪像素以及如何有效拦截',
       description: '了解隐形追踪像素如何监视您的邮件打开与行为，掌握简单有效的隐私拦截技巧。',
       category: 'Security',
-      date: '2026-07-18',
+      date: '2026-09-15',
       slug: '/blog/what-is-email-tracking/',
     },
     {
@@ -833,7 +833,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'オンラインアカウントセキュリティ完全ガイド',
       description: 'パスワード管理、二要素認証（2FA）、メールの安全性向上など、アカウントを守る包括的なセキュリティガイド。',
       category: 'Security',
-      date: '2026-07-25',
+      date: '2026-09-16',
       slug: '/blog/online-account-security-guide/',
     },
     {
@@ -847,7 +847,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'メールトラッキングの仕組みとそれを阻止する方法',
       description: '企業が目に見えないトラッキングピクセルで開封状況を監視する手法と、それを防ぐ対策を解説します。',
       category: 'Security',
-      date: '2026-07-18',
+      date: '2026-09-15',
       slug: '/blog/what-is-email-tracking/',
     },
     {
@@ -940,7 +940,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'الدليل المتكامل لأمان الحسابات الرقمية على الإنترنت',
       description: 'احمِ حساباتك على الإنترنت عبر نصائح شاملة تغطي كلمات المرور، والتحقق بخطوتين (2FA)، وأمان البريد.',
       category: 'Security',
-      date: '2026-07-25',
+      date: '2026-09-16',
       slug: '/blog/online-account-security-guide/',
     },
     {
@@ -954,7 +954,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'ما هو تتبع البريد الإلكتروني وكيف توقفه تماماً؟',
       description: 'تعرف على بكسلات التتبع الخفية التي تراقب قراءتك للرسائل وكيفية حظرها بخطوات بسيطة.',
       category: 'Security',
-      date: '2026-07-18',
+      date: '2026-09-15',
       slug: '/blog/what-is-email-tracking/',
     },
     {
@@ -1047,7 +1047,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'Panduan Lengkap Keamanan Akun Digital dan Sandi',
       description: 'Amankan seluruh akun online Anda dengan panduan keamanan yang mencakup kata sandi kuat, 2FA, dan isolasi email.',
       category: 'Security',
-      date: '2026-07-25',
+      date: '2026-09-16',
       slug: '/blog/online-account-security-guide/',
     },
     {
@@ -1061,7 +1061,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       title: 'Apa Itu Pelacakan Email dan Cara Efektif Menghentikannya',
       description: 'Pahami cara piksel tersembunyi memantau pembacaan email Anda dan langkah mudah untuk memblokir mata-mata tersebut.',
       category: 'Security',
-      date: '2026-07-18',
+      date: '2026-09-15',
       slug: '/blog/what-is-email-tracking/',
     },
     {

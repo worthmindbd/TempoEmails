@@ -6,8 +6,31 @@ import ContentLayout from '../../layouts/ContentLayout.astro';
   title="Complete Guide to Online Account Security"
   description="Comprehensive security guide for online accounts: strong passphrase hygiene, hardware 2FA keys, breach monitoring, and disposable email strategies."
   publishDate="2026-07-25"
+  updatedDate="2026-09-16"
   category="Security"
   keywords="online account security, 2fa authentication, password managers, cyber security best practices"
+  faqItems={[
+    {
+      question: "Is SMS-based 2FA still safe in 2026?",
+      answer: "SMS 2FA is much better than no second factor, but it is the weakest MFA option because SIM-swapping and SS7 interception can redirect codes. Use TOTP authenticator apps or FIDO2 hardware keys for email, banking, and cloud accounts, and keep SMS only as a last-resort fallback."
+    },
+    {
+      question: "How often should I change my passwords?",
+      answer: "You do not need to rotate strong, unique passwords on a schedule. NIST SP 800-63B recommends changing a password only when you suspect compromise or a breach. The priority is uniqueness: every account gets its own 16+ character random password stored in a password manager."
+    },
+    {
+      question: "Should I use a disposable email for important accounts?",
+      answer: "No. Use your hardened primary email with hardware-key or TOTP 2FA for banking, government, and primary cloud accounts. Reserve TempoEmails disposable addresses for low-trust signups, trials, coupons, and forums so breaches there cannot reach your real identity."
+    },
+    {
+      question: "What should I do if my email appears in Have I Been Pwned?",
+      answer: "Change the password on every affected service immediately, enable TOTP or hardware-key 2FA, revoke unknown OAuth sessions and active devices, and check for forwarding rules an attacker may have added. Then compartmentalize future low-trust signups with disposable email."
+    },
+    {
+      question: "Are password managers safe to trust with every password?",
+      answer: "Yes, reputable audited managers such as Bitwarden, 1Password, and KeePassXC are far safer than human memory or reuse. Protect the vault with a long unique master passphrase plus 2FA, keep encrypted backups of recovery codes offline, and you eliminate the top cause of account takeover: password reuse."
+    }
+  ]}
 >
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
     The average person manages between 70 and 150 online accounts. From banks and tax portals to streaming subscriptions, shopping sites, and forums, our personal and financial lives are spread across dozens of servers.
@@ -192,5 +215,17 @@ import ContentLayout from '../../layouts/ContentLayout.astro';
 
   <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
     Building robust online security doesn't mean disconnecting from modern digital convenience. By combining strong cryptography, multi-factor authentication, and smart identity tools like TempoEmails, you can explore the web with total confidence and uncompromised privacy. For more information about our strict data handling standards, visit our <a href="/privacy-policy/" class="text-[#ea2804] hover:underline">Privacy Policy</a>.
+  </p>
+
+  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+    Sources & Further Reading
+  </h2>
+
+  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+    This guide follows current industry baselines, not forum folklore. For the underlying standards, see the <a href="https://pages.nist.gov/800-63-3/sp800-63b.html" target="_blank" rel="noopener noreferrer" class="text-[#ea2804] hover:underline">NIST SP 800-63B authentication guidelines</a>, the <a href="https://www.cisa.gov/secure-our-world/turn-mfa" target="_blank" rel="noopener noreferrer" class="text-[#ea2804] hover:underline">CISA multi-factor authentication guidance</a>, and Troy Hunt's <a href="https://haveibeenpwned.com" target="_blank" rel="noopener noreferrer" class="text-[#ea2804] hover:underline">Have I Been Pwned</a> breach repository. Reviewed and updated by the TempoEmails Editorial Team in September 2026.
+  </p>
+
+  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+    Keep going: learn how invisible beacons profile your inbox in our <a href="/blog/what-is-email-tracking/" class="text-[#ea2804] hover:underline">email tracking explainer</a>, how to keep junk out permanently in <a href="/blog/how-to-avoid-spam/" class="text-[#ea2804] hover:underline">how to avoid spam emails</a>, and how attackers weaponize urgency in <a href="/blog/understanding-phishing-emails/" class="text-[#ea2804] hover:underline">recognizing phishing emails</a>.
   </p>
 </ContentLayout>
