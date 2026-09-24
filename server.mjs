@@ -46,6 +46,19 @@ const MIME_TYPES = {
   '.ogg': 'audio/ogg',
 };
 
+// Security headers applied to EVERY response (200, 301, 404, 405, 400).
+// HSTS in particular must also ride on ordinary 200 responses: browsers only
+// learn the policy from responses they actually load, so sending it solely on
+// redirect responses leaves user agents (and their logs/crawls) hitting the
+// http:// and www variants that show up in Search Console redirect reports.
+const SECURITY_HEADERS = {
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+};
+
 const COMPRESSIBLE_TYPES = new Set([
   'text/html; charset=utf-8',
   'text/css; charset=utf-8',
@@ -65,22 +78,28 @@ async function handleServerRequest(req, res) {
   // Same-origin mail API proxy (provider allowlist lives in server/mail-proxy.mjs).
   // Runs before the static-file handling and before the GET/HEAD-only gate,
   // so POST/DELETE (mail.tm auth, deletes) can be forwarded too.
-  let parsedUrl;
-  try {
-    parsedUrl = new URL(req.url, 'http://localhost');
-  } catch {
-    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+  // Parse the raw request target manually. `new URL('//foo', base)` would treat
+  // a leading double slash as a protocol-relative URL (host="foo"), silently
+  // dropping path segments: that served duplicate 200s on the canonical host
+  // and built broken Location headers (lost segment -> 404) on www/http hosts.
+  const requestTarget = req.url || '/';
+  const queryIndex = requestTarget.indexOf('?');
+  const rawPathname = queryIndex >= 0 ? requestTarget.slice(0, queryIndex) : requestTarget;
+  const search = queryIndex >= 0 ? requestTarget.slice(queryIndex) : '';
+
+  if (!rawPathname.startsWith('/')) {
+    res.writeHead(400, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Bad Request');
     return;
   }
 
-  if (parsedUrl.pathname === '/api/mail' || parsedUrl.pathname.startsWith('/api/mail/')) {
-    await handleMailProxy(req, res, parsedUrl.pathname.slice('/api/mail'.length) + parsedUrl.search);
+  if (rawPathname === '/api/mail' || rawPathname.startsWith('/api/mail/')) {
+    await handleMailProxy(req, res, rawPathname.slice('/api/mail'.length) + search);
     return;
   }
 
   if (req.method !== 'GET' && req.method !== 'HEAD') {
-    res.writeHead(405, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.writeHead(405, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Method Not Allowed');
     return;
   }
@@ -96,32 +115,30 @@ async function handleServerRequest(req, res) {
     hostHeader.startsWith('10.') ||
     hostHeader.endsWith('.local');
 
-  let pathname = decodeURIComponent(parsedUrl.pathname);
-  // Collapse duplicate slashes (e.g. //contact/ -> /contact/)
-  const cleanPathname = pathname.replace(/\/+/g, '/');
-  if (cleanPathname !== pathname) {
-    const redirectUrl = `https://${canonicalHostname}${cleanPathname}${parsedUrl.search || ''}`;
-    res.writeHead(301, {
-      Location: redirectUrl,
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-      'X-Content-Type-Options': 'nosniff',
-      'Content-Type': 'text/plain; charset=utf-8',
-    });
-    res.end(`301 Moved Permanently: Redirecting to ${redirectUrl}`);
+  // Percent-decode defensively: a malformed escape (e.g. "%") must produce a
+  // 400, not an unhandled throw that takes down the request handler.
+  let pathname;
+  try {
+    pathname = decodeURIComponent(rawPathname);
+  } catch {
+    res.writeHead(400, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('Bad Request');
     return;
   }
+  // Collapse duplicate slashes (e.g. //contact/ -> /contact/)
+  const cleanPathname = pathname.replace(/\/+/g, '/');
 
   let safePath = path.normalize(cleanPathname).replace(/^(\.\.[\/\\])+/, '');
   let filePath = path.join(DIST_DIR, safePath);
 
   // Belt-and-braces path traversal guard: the resolved file must stay in dist/.
   if (path.relative(DIST_DIR, filePath).startsWith('..') || path.isAbsolute(path.relative(DIST_DIR, filePath))) {
-    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.writeHead(400, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Bad Request');
     return;
   }
   if (path.basename(filePath).startsWith('.')) {
-    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.writeHead(403, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('Forbidden');
     return;
   }
@@ -139,6 +156,24 @@ async function handleServerRequest(req, res) {
     }
   }
 
+  if (cleanPathname !== pathname) {
+    // Resolve the trailing slash during the collapse as well, so even malformed
+    // inputs (//blog/slug) reach their canonical URL in a single hop.
+    // In local dev keep the collapse same-origin; in production jump straight
+    // to the absolute canonical URL so chains never form.
+    const targetPath = isDirectoryPath ? `${cleanPathname}/` : cleanPathname;
+    const redirectUrl = isLocal
+      ? `${targetPath}${search}`
+      : `https://${canonicalHostname}${targetPath}${search}`;
+    res.writeHead(301, {
+      Location: redirectUrl,
+      ...SECURITY_HEADERS,
+      'Content-Type': 'text/plain; charset=utf-8',
+    });
+    res.end(`301 Moved Permanently: Redirecting to ${redirectUrl}`);
+    return;
+  }
+
   // Automatic 301 Canonical & HTTPS Enforcement
   // Redirects http://, www.*, or any non-canonical domain to https://tempoemails.com/*
   // Resolves canonical host, HTTPS, and trailing slash in a single 301 hop to eliminate redirect chains.
@@ -149,11 +184,10 @@ async function handleServerRequest(req, res) {
 
     if (isHttp || isWwwOrNonCanonical) {
       const targetPath = isDirectoryPath ? `${cleanPathname}/` : cleanPathname;
-      const targetUrl = `https://${canonicalHostname}${targetPath}${parsedUrl.search || ''}`;
+      const targetUrl = `https://${canonicalHostname}${targetPath}${search}`;
       res.writeHead(301, {
         Location: targetUrl,
-        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-        'X-Content-Type-Options': 'nosniff',
+        ...SECURITY_HEADERS,
         'Content-Type': 'text/plain; charset=utf-8',
       });
       res.end(`301 Moved Permanently: Redirecting to ${targetUrl}`);
@@ -163,11 +197,10 @@ async function handleServerRequest(req, res) {
 
   // Trailing slash enforcement for directory routes on canonical domain (using absolute canonical URL)
   if (isDirectoryPath) {
-    const redirectUrl = `https://${canonicalHostname}${cleanPathname}/${parsedUrl.search || ''}`;
+    const redirectUrl = `https://${canonicalHostname}${cleanPathname}/${search}`;
     res.writeHead(301, {
       Location: redirectUrl,
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-      'X-Content-Type-Options': 'nosniff',
+      ...SECURITY_HEADERS,
       'Content-Type': 'text/plain; charset=utf-8',
     });
     res.end(`301 Moved Permanently: Redirecting to ${redirectUrl}`);
@@ -198,18 +231,15 @@ async function handleServerRequest(req, res) {
     );
     if (notFoundPath) {
       res.writeHead(404, {
+        ...SECURITY_HEADERS,
         'Content-Type': 'text/html; charset=utf-8',
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'SAMEORIGIN',
-        'Referrer-Policy': 'strict-origin-when-cross-origin',
-        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
       });
       if (req.method === 'HEAD') {
         res.end();
       } else {
         const stream = fs.createReadStream(notFoundPath);
         stream.on('error', () => {
-          if (!res.headersSent) res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+          if (!res.headersSent) res.writeHead(404, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
           res.end('404 Not Found');
         });
         stream.pipe(res);
@@ -217,7 +247,7 @@ async function handleServerRequest(req, res) {
       return;
     }
 
-    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.writeHead(404, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('404 Not Found');
     return;
   }
@@ -227,10 +257,7 @@ async function handleServerRequest(req, res) {
 
   const headers = {
     'Content-Type': contentType,
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'SAMEORIGIN',
-    'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+    ...SECURITY_HEADERS,
     'Content-Security-Policy': [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com",
@@ -268,12 +295,12 @@ async function handleServerRequest(req, res) {
     res.writeHead(200, headers);
     const rawStream = fs.createReadStream(filePath);
     rawStream.on('error', () => {
-      if (!res.headersSent) res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      if (!res.headersSent) res.writeHead(404, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('404 Not Found');
     });
     const gzip = zlib.createGzip({ level: 6 });
     gzip.on('error', () => {
-      if (!res.headersSent) res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+      if (!res.headersSent) res.writeHead(500, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('Internal Server Error');
     });
     rawStream.pipe(gzip).pipe(res);
@@ -283,7 +310,7 @@ async function handleServerRequest(req, res) {
     res.writeHead(200, headers);
     const stream = fs.createReadStream(filePath);
     stream.on('error', () => {
-      if (!res.headersSent) res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      if (!res.headersSent) res.writeHead(404, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('404 Not Found');
     });
     stream.pipe(res);
