@@ -6,22 +6,35 @@ import { handleMailProxy } from './server/mail-proxy.mjs';
 import { BLOG_ARTICLES } from './src/i18n/blog-data.ts';
 
 /**
- * Dev/preview middleware mirroring the production proxy in server.mjs so the
- * mail providers (which lack CORS headers for browsers) work with `astro dev`.
+ * Dev-only same-origin mail API proxy: mounts `/api/mail` in front of Astro's
+ * dev server so the mail providers (which lack CORS headers for browsers) work
+ * from the browser.
+ *
+ * There is deliberately NO `configurePreviewServer` hook — Astro 7 strips user
+ * Vite plugins when it creates the preview server (see
+ * astro/dist/core/preview/static-preview-server.js), and a static build never
+ * runs `src/middleware.ts`. `astro preview` therefore cannot serve `/api/mail`;
+ * use `npm start` (server.mjs) to exercise the built output with the proxy.
+ *
+ * Typed with JSDoc rather than `import type` — Astro's config loader imports
+ * this file before TypeScript syntax is stripped.
+ *
+ * @returns {import('vite').Plugin}
  */
 function mailProxyPlugin() {
+  /**
+   * @param {import('node:http').IncomingMessage} req
+   * @param {import('node:http').ServerResponse} res
+   */
+  const forward = (req, res) => {
+    handleMailProxy(req, res, req.url || '/');
+  };
+
   return {
     name: 'tempo-mail-proxy',
     enforce: 'pre',
     configureServer(server) {
-      server.middlewares.use('/api/mail', (req, res) => {
-        handleMailProxy(req, res, req.url || '/');
-      });
-    },
-    configurePreviewServer(server) {
-      server.middlewares.use('/api/mail', (req, res) => {
-        handleMailProxy(req, res, req.url || '/');
-      });
+      server.middlewares.use('/api/mail', forward);
     },
   };
 }
@@ -30,11 +43,25 @@ const blogDates = Object.fromEntries(
   (BLOG_ARTICLES.en || []).map((a) => [a.slug.replace(/\/$/, ''), a.date])
 );
 
+// Astro 7 loads this file with a plain dynamic import (see
+// astro/dist/core/config/vite-load.js): a `defineConfig(callback)` form is NOT
+// invoked, so the running command has to be detected from argv. Note `astro dev`
+// re-execs `node .../astro/bin/astro.mjs dev --json` in the background, hence the
+// `.mjs` in the pattern.
+const isAstroServerCommand = process.argv.some(
+  (arg, i) =>
+    (arg === 'dev' || arg === 'preview') && /[/\\]astro(\.[cm]?js)?$/.test(process.argv[i - 1] ?? '')
+);
+
 // https://astro.build/config
 export default defineConfig({
-  // `always` for production builds; relaxed in dev so the same-origin mail
-  // proxy paths (/api/mail/..., see src/middleware.ts) reach the dev middleware.
-  trailingSlash: process.env.NODE_ENV === 'production' ? 'always' : 'ignore',
+  // `always` for built output (server.mjs and static hosts redirect to it);
+  // relaxed for `astro dev` / `astro preview` so the same-origin proxy paths
+  // (/api/mail/mailtm/domains — no trailing slash) are not rejected by the
+  // dev server's router. Keyed off the CLI command, never NODE_ENV: the
+  // Dockerfile and nixpacks.toml both export NODE_ENV=production, which made
+  // `astro dev` behave like a production build and 404 the whole mail proxy.
+  trailingSlash: isAstroServerCommand ? 'ignore' : 'always',
   // Production domain (can be overridden via SITE_URL env variable in Docker/Dokploy)
   site: process.env.SITE_URL || 'https://tempoemails.com',
   i18n: {
@@ -110,4 +137,3 @@ export default defineConfig({
     },
   },
 });
-

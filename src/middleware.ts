@@ -2,16 +2,17 @@ import { defineMiddleware } from 'astro:middleware';
 import { resolveMailProxy, buildUpstreamHeaders } from '../server/mail-proxy.mjs';
 
 /**
- * Dev-only same-origin mail API proxy.
+ * Same-origin mail API proxy for every Astro-served runtime (`astro dev` and
+ * `astro preview`).
  *
- * In production the Node server (server.mjs) handles `/api/mail/...` directly.
- * In `astro dev`, Astro's router claims those extension-less paths before
- * Vite middleware can, so this middleware intercepts them inside Astro's own
- * pipeline instead. It is fully inert during `astro build` / in production.
+ * In production the Node server (server.mjs) handles `/api/mail/...` before
+ * Astro ever sees the request, and a static build never invokes middleware at
+ * all — so this needs no environment gate. It previously short-circuited on
+ * `import.meta.env.DEV`, which Vite derives from `NODE_ENV`: with
+ * NODE_ENV=production exported (as the Dockerfile and nixpacks.toml do) the
+ * dev proxy silently 404'd and the mailbox could not fetch mail.
  */
 export const onRequest = defineMiddleware(async (context, next) => {
-  if (!import.meta.env.DEV) return next();
-
   const url = new URL(context.request.url);
   if (!url.pathname.startsWith('/api/mail/')) return next();
 
@@ -76,7 +77,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
       },
     });
   } catch (err) {
-    const timedOut = err?.name === 'AbortError';
+    const timedOut = err instanceof Error && err.name === 'AbortError';
     return new Response(JSON.stringify({ error: timedOut ? 'Upstream timeout' : 'Upstream fetch failed' }), {
       status: timedOut ? 504 : 502,
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
