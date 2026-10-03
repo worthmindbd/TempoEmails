@@ -16,6 +16,15 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 
 Dev server runs on `localhost:4321` with `host: true` for network access.
 
+`astro preview` serves the static build but **cannot** serve `/api/mail/*`: Astro 7
+strips user Vite plugins from the preview server and a static build never runs
+`src/middleware.ts`. Use `npm start` (server.mjs) to exercise the built output
+with the mail proxy.
+
+Do not gate dev/prod behaviour on `NODE_ENV` — the Dockerfile and
+`nixpacks.toml` both export `NODE_ENV=production`, which silently turns dev
+behaviour on. `astro.config.mjs` detects `dev`/`preview` from argv instead.
+
 ## Key Architecture
 
 ### App + Content Pages
@@ -24,7 +33,8 @@ Dev server runs on `localhost:4321` with `host: true` for network access.
 - `src/pages/blog/*.astro` (15 articles), `about/contact/privacy-policy/terms-of-service/disclaimer`, `404.astro`, `robots.txt.ts`, `sitemap.xml.ts`
 - `src/layouts/Layout.astro` — shell with SEO, fonts, theme init, background glow, consent-gated analytics
 - `src/layouts/ContentLayout.astro` — article shell (breadcrumbs, Article JSON-LD)
-- `src/middleware.ts` — dev-only `/api/mail/*` proxy; production uses `server.mjs` + shared `server/mail-proxy.mjs`
+- `src/middleware.ts` — `/api/mail/*` proxy for Astro-served runtimes (dev); production uses `server.mjs` + shared `server/mail-proxy.mjs`
+- `astro.config.mjs` — mounts the same proxy as Vite middleware in `astro dev`; no env gates (see Development)
 
 ### Component Organisation
 - `src/components/app/` — core app components (MailboxManager is the central controller)
@@ -34,7 +44,8 @@ Dev server runs on `localhost:4321` with `host: true` for network access.
 ### Mail Service (`src/lib/mail/`)
 - `types.ts` — core interfaces (`MailAccount`, `MailMessage`, `DetailedMailMessage`, provider union type)
 - `service.ts` — orchestrator that routes to provider clients with automatic fallback chain
-- Provider clients: `mailtm-client.ts`, `inboxes-client.ts`, `tempmaillol-client.ts`, `guerrilla-client.ts`, `secmail-client.ts` (legacy only), `mock-client.ts`
+- Provider clients: `mailtm-client.ts`, `inboxes-client.ts`, `tempmaillol-client.ts`, `guerrilla-client.ts`, `mock-client.ts`
+- `secmail-client.ts` was removed: 1secmail is dead and its upstream is not in the proxy allowlist. Legacy stored accounts are still migrated by `service.ts` (`migrateSecmailAccount`) and the `secmail` value stays in the provider union for that reason.
 - Fallback order: preferred → Mail.tm → Inboxes → TempMail.lol → Guerrilla → Mock
 - All client fetches go through `fetchWithTimeout` (`src/lib/utils/fetch-with-timeout.ts`); email HTML goes through `sanitizeEmailHtml`/`escapeHtml` (`src/lib/utils/sanitize.ts`) before iframe render
 

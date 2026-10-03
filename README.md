@@ -86,6 +86,20 @@ For step-by-step instructions, see [DOKPLOY_DEPLOYMENT.md](./DOKPLOY_DEPLOYMENT.
 
 > Set `SITE_URL` and all `PUBLIC_*` env vars **before** `npm run build` — they are baked into the static HTML (canonical URLs, SEO tags, analytics).
 
+### Runtime environment variables
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `PORT` | `4321` | Port for `server.mjs` |
+| `HOST` | `0.0.0.0` | Bind address for `server.mjs` |
+| `SITE_URL` | `https://tempoemails.com` | Canonical domain, used for redirects and build-time URLs |
+| `TRUST_PROXY` | *(unset)* | Set to `1`/`true` **only** when a reverse proxy you control sets/overwrites `X-Forwarded-For`. The `/api/mail/*` per-IP rate limiter uses the socket address by default, because a client-supplied `X-Forwarded-For` would let anyone bypass it. |
+| `PUBLIC_GOOGLE_ANALYTICS_ID` | *(unset)* | GA4 measurement ID (loaded only after cookie consent) |
+| `PUBLIC_GOOGLE_ADSENSE_ID` | *(unset)* | AdSense publisher ID (loaded only after cookie consent) |
+
+> `npm run preview` cannot serve `/api/mail/*` — Astro 7 strips user Vite plugins from its preview
+> server. Run `npm start` instead to exercise the built output with the mail proxy.
+
 ---
 
 ## 📁 Project Structure
@@ -102,7 +116,7 @@ src/
 ├── layouts/
 │   ├── Layout.astro             # Shell: SEO, fonts, theme, background, consent-gated analytics
 │   └── ContentLayout.astro      # Article shell: breadcrumbs, Article JSON-LD, link localizer
-├── middleware.ts                # Dev-only /api/mail/* proxy (prod uses server.mjs)
+├── middleware.ts                # /api/mail/* proxy for Astro-served runtimes (dev; prod uses server.mjs)
 ├── styles/
 │   └── global.css               # Tailwind v4 + glassmorphism + animations
 ├── i18n/
