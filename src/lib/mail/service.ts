@@ -3,11 +3,10 @@ import { MailTmClient } from './mailtm-client';
 import { InboxesClient, INBOXES_KNOWN_DOMAINS } from './inboxes-client';
 import { TempMailLolClient } from './tempmaillol-client';
 import { GuerrillaMailClient, GUERRILLA_DOMAINS } from './guerrilla-client';
-import { SecMailClient } from './secmail-client';
-import { MockClient } from './mock-client';
+import { MockClient, type MockSampleType } from './mock-client';
 import { StorageManager } from '../utils/storage';
 import { soundNotifier } from '../utils/sound';
-import { sanitizeEmailHtml, escapeHtml } from '../utils/sanitize';
+import { escapeHtml } from '../utils/sanitize';
 
 export class MailService {
   /**
@@ -251,9 +250,6 @@ export class MailService {
       } else if (account.provider === 'guerrilla' && account.token) {
         remoteMessages = await GuerrillaMailClient.getMessages(account.token, account.address);
         fetchSucceeded = true;
-      } else if (account.provider === 'secmail') {
-        remoteMessages = await SecMailClient.getMessages(account.address);
-        fetchSucceeded = true;
       } else {
         remoteMessages = await MockClient.getMessages(account.address);
         fetchSucceeded = true;
@@ -332,8 +328,6 @@ export class MailService {
               detail = await TempMailLolClient.getMessageDetail(accountAddress, msg.id);
             } else if (account.provider === 'guerrilla') {
               detail = await GuerrillaMailClient.getMessageDetail(account.token || '', msg.id);
-            } else if (account.provider === 'secmail') {
-              detail = await SecMailClient.getMessageDetail(accountAddress, msg.id);
             } else if (account.provider === 'mock') {
               detail = await MockClient.getMessageDetail(accountAddress, msg.id);
             }
@@ -377,8 +371,6 @@ export class MailService {
         detail = await TempMailLolClient.getMessageDetail(account.address, messageId);
       } else if (account.provider === 'guerrilla' && account.token) {
         detail = await GuerrillaMailClient.getMessageDetail(account.token, messageId);
-      } else if (account.provider === 'secmail') {
-        detail = await SecMailClient.getMessageDetail(account.address, messageId);
       } else {
         detail = await MockClient.getMessageDetail(account.address, messageId);
       }
@@ -449,7 +441,7 @@ export class MailService {
   /**
    * Sends a simulated verification email (useful for instant user testing)
    */
-  static sendTestEmail(account: MailAccount, type: 'github' | 'notion' | 'welcome' = 'github'): DetailedMailMessage {
+  static sendTestEmail(account: MailAccount, type: MockSampleType = 'github'): DetailedMailMessage {
     return MockClient.sendTestVerificationEmail(account.address, type);
   }
 
@@ -460,10 +452,14 @@ export class MailService {
   private static async migrateSecmailAccount(stored: MailAccount): Promise<MailAccount | null> {
     try {
       const migrated = await this.getOrCreateAccount(true);
+      const i18n = typeof window !== 'undefined' ? (window as any).__TEMPO_I18N__ : undefined;
+      const template =
+        i18n?.toasts?.legacyInboxGone ||
+        'Your old 1secmail inbox ({address}) is no longer supported — created a fresh inbox instead.';
       window.dispatchEvent(
         new CustomEvent('tempomail:toast', {
           detail: {
-            message: `Your old 1secmail inbox (${stored.address}) is no longer supported — created a fresh inbox instead.`,
+            message: template.replace('{address}', stored.address),
             type: 'error',
             duration: 6000,
           },

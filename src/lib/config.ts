@@ -5,8 +5,11 @@
  */
 
 function resolveSiteUrl(): string {
+  // `import.meta.env` is injected by Vite/Astro but is undefined in plain Node
+  // ESM (scripts, tests), so it must be accessed optionally — checking
+  // `typeof import.meta` alone does not protect the property read.
   const url =
-    (typeof import.meta !== 'undefined' && import.meta.env.SITE_URL) ||
+    (typeof import.meta !== 'undefined' && import.meta.env?.SITE_URL) ||
     (typeof process !== 'undefined' && process.env.SITE_URL) ||
     'https://tempoemails.com';
 

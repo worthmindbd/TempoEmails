@@ -24,12 +24,70 @@ function isValidAccount(value: any): value is MailAccount {
   );
 }
 
+/**
+ * A cached message is only trusted when every field the renderer dereferences
+ * is present: `MailboxManager` reads `from.name`, `from.address` and `to[].address`
+ * directly, so a partial legacy payload used to throw and blank the inbox.
+ */
 function isValidMessage(value: any): value is MailMessage {
-  return value !== null && typeof value === 'object' && typeof value.id === 'string' && typeof value.subject === 'string';
+  if (value === null || typeof value !== 'object') return false;
+  if (typeof value.id !== 'string' || !value.id) return false;
+  if (typeof value.subject !== 'string') return false;
+  if (typeof value.createdAt !== 'string') return false;
+  if (
+    value.from === null ||
+    typeof value.from !== 'object' ||
+    typeof value.from.address !== 'string' ||
+    typeof value.from.name !== 'string'
+  ) {
+    return false;
+  }
+  return Array.isArray(value.to) && value.to.every((r: any) => r && typeof r.address === 'string');
 }
 
 function isValidDetailMap(value: any): value is Record<string, DetailedMailMessage> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * Coerces a persisted (possibly legacy/partial) message into the shape the UI
+ * renders, so downstream code can rely on `from`, `to` and `createdAt`.
+ */
+function normalizeMessage(value: any, accountAddress: string): MailMessage {
+  const from = value.from ?? {};
+  const to = Array.isArray(value.to) ? value.to : [];
+  return {
+    ...value,
+    accountId: typeof value.accountId === 'string' ? value.accountId : accountAddress,
+    subject: typeof value.subject === 'string' ? value.subject : '(No Subject)',
+    intro: typeof value.intro === 'string' ? value.intro : '',
+    seen: Boolean(value.seen),
+    createdAt:
+      typeof value.createdAt === 'string' && !isNaN(new Date(value.createdAt).getTime())
+        ? value.createdAt
+        : new Date().toISOString(),
+    from: {
+      address: typeof from.address === 'string' ? from.address : 'unknown@domain.com',
+      name: typeof from.name === 'string' ? from.name : '',
+    },
+    to: to
+      .filter((r: any) => r && typeof r === 'object')
+      .map((r: any) => ({
+        address: typeof r.address === 'string' ? r.address : '',
+        name: typeof r.name === 'string' ? r.name : '',
+      })),
+  };
+}
+
+/** Same repair for full message bodies (`html`/`text` are dereferenced directly). */
+function normalizeDetail(value: any, accountAddress: string): DetailedMailMessage {
+  const base = normalizeMessage(value, accountAddress);
+  return {
+    ...base,
+    text: typeof value.text === 'string' ? value.text : '',
+    html: Array.isArray(value.html) ? value.html.filter((h: unknown) => typeof h === 'string') : [],
+    attachments: Array.isArray(value.attachments) ? value.attachments : [],
+  };
 }
 
 export class StorageManager {
@@ -147,7 +205,18 @@ export class StorageManager {
       if (!data) return [];
       const parsed = JSON.parse(data);
       if (!Array.isArray(parsed)) return [];
-      return parsed.filter(isValidMessage);
+      // Repair rather than discard: a legacy entry missing optional fields is
+      // still worth keeping (its id/subject carry the user's mail history).
+      return parsed
+        .filter(
+          (m) =>
+            m !== null &&
+            typeof m === 'object' &&
+            typeof m.id === 'string' &&
+            !!m.id &&
+            typeof m.subject === 'string'
+        )
+        .map((m) => (isValidMessage(m) ? m : normalizeMessage(m, normalized)));
     } catch {
       return [];
     }
@@ -249,7 +318,13 @@ export class StorageManager {
       const data = localStorage.getItem(`${STORAGE_KEYS.MESSAGES_DETAIL_CACHE_PREFIX}${normalized}`);
       if (!data) return {};
       const parsed = JSON.parse(data);
-      return isValidDetailMap(parsed) ? parsed : {};
+      if (!isValidDetailMap(parsed)) return {};
+      const repaired: Record<string, DetailedMailMessage> = {};
+      for (const [id, detail] of Object.entries(parsed)) {
+        if (!detail || typeof detail !== 'object') continue;
+        repaired[id] = normalizeDetail({ ...detail, id }, normalized);
+      }
+      return repaired;
     } catch {
       return {};
     }

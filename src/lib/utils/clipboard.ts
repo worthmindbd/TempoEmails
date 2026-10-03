@@ -28,6 +28,9 @@ export async function copyToClipboard(text: string, label: string = 'Copied to c
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
+    // Deprecated, but it remains the only copy path that works in a
+    // non-secure context (http:// on a LAN host), which is exactly the case
+    // this fallback exists for. Guarded by a try/catch above.
     const ok = document.execCommand('copy');
     textArea.remove();
     if (!ok) throw new Error('execCommand copy returned false');

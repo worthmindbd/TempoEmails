@@ -5,7 +5,13 @@ import { fetchWithTimeout } from '../utils/fetch-with-timeout';
 const API_BASE = '/api/mail/inboxes/api/v2';
 const FETCH_TIMEOUT_MS = 10000;
 
-/** Known Inboxes.com network domains — used for exact-match provider routing. */
+/**
+ * Known Inboxes.com network domains — used for exact-match provider routing.
+ * These are only a *last resort*: when the live domain endpoint is
+ * unreachable we cannot confirm any of them still accept mail, so they are
+ * reported as inactive and MailService filters them out of the random pool
+ * and the custom-inbox picker instead of handing out dead addresses.
+ */
 export const INBOXES_KNOWN_DOMAINS = [
   'getnada.com',
   'getairmail.com',
@@ -54,20 +60,28 @@ export class InboxesClient {
         };
       });
     } catch {
-      // Fallback domain list from Inboxes.com
-      const fallbacks = INBOXES_KNOWN_DOMAINS;
-      return fallbacks.map((domain) => ({
+      // Fallback domain list from Inboxes.com — flagged inactive on purpose:
+      // nothing confirms these still route mail, so they must not be offered to
+      // users as if they were live.
+      return INBOXES_KNOWN_DOMAINS.map((domain) => ({
         id: `inb_${domain}`,
         domain,
-        isActive: true,
+        isActive: false,
         provider: 'inboxes' as const,
       }));
     }
   }
 
   static async createAccount(usernamePrefix?: string, domainName?: string): Promise<MailAccount> {
-    const domains = await this.getDomains();
-    const domain = domainName || domains[Math.floor(Math.random() * domains.length)]?.domain || 'getnada.com';
+    // Always re-read the live list: a stale/inactive domain must never be used
+    // to build an address that silently receives nothing.
+    const domains = (await this.getDomains()).filter((d) => d.isActive);
+    const liveDomain = domainName && domains.some((d) => d.domain === domainName)
+      ? domainName
+      : domains[Math.floor(Math.random() * domains.length)]?.domain;
+    if (!liveDomain) {
+      throw new Error('inboxes.com is unreachable — no verified domain available right now.');
+    }
     if (usernamePrefix !== undefined) {
       const cleaned = usernamePrefix.toLowerCase().replace(/[^a-z0-9._-]/g, '');
       if (!cleaned) {
@@ -77,7 +91,7 @@ export class InboxesClient {
     const prefix = usernamePrefix
       ? usernamePrefix.toLowerCase().replace(/[^a-z0-9._-]/g, '')
       : `tempo.${this.generateRandomString(8)}`;
-    const address = `${prefix}@${domain}`;
+    const address = `${prefix}@${liveDomain}`;
 
     return {
       id: address,

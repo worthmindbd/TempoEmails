@@ -17,6 +17,11 @@ const BLOCKED_ELEMENTS = new Set([
   'noscript', 'template', 'slot', 'applet', 'frame', 'frameset',
 ]);
 
+// Above this many CSS pixels an image is treated as real content rather than a
+// beacon. Open-tracking pixels are typically 1x1, but plenty of senders use
+// 2x2/3x1 "web beacons" precisely to slip past naive 1x1 filters.
+const BEACON_MAX_DIMENSION_PX = 3;
+
 function isSafeUrl(url: string, allowMailto = false): boolean {
   const clean = url.trim().toLowerCase();
   if (clean.startsWith('https://')) return true;
@@ -40,13 +45,36 @@ function sanitizeStyleValue(value: string): string | null {
   return value;
 }
 
+/**
+ * Detects tracking beacons: images that are too small to be real content, or
+ * hidden by the sender so a human never sees them. Stripping these is what
+ * stops "email opened" events from reaching third parties.
+ */
 function isTrackingPixel(img: Element): boolean {
-  const w = img.getAttribute('width');
-  const h = img.getAttribute('height');
-  if ((w === '1' || w === '0') && (h === '1' || h === '0')) return true;
-  const style = (img.getAttribute('style') || '').toLowerCase().replace(/\s/g, '');
-  if (style.includes('width:1px') && style.includes('height:1px')) return true;
-  if (style.includes('display:none') && (img.getAttribute('src') || '').length > 0) return true;
+  const src = img.getAttribute('src') || '';
+  if (!src) return false;
+
+  const rawW = (img.getAttribute('width') || '').trim().toLowerCase();
+  const rawH = (img.getAttribute('height') || '').trim().toLowerCase();
+  const style = (img.getAttribute('style') || '').toLowerCase().replace(/\s+/g, '');
+  const styleW = style.match(/(?:^|;)width:([\d.]+)px/)?.[1];
+  const styleH = style.match(/(?:^|;)height:([\d.]+)px/)?.[1];
+
+  // Any explicitly tiny dimension (<= 3px) in either attribute or style.
+  const dims = [rawW, rawH, styleW, styleH];
+  const explicitTiny = dims.some((d) => d !== undefined && d !== '' && parseFloat(d) <= BEACON_MAX_DIMENSION_PX);
+  if (explicitTiny) return true;
+
+  // Hidden from view: display:none, visibility:hidden, opacity:0, or pushed
+  // off-canvas with a large negative offset.
+  if (/display:none/.test(style)) return true;
+  if (/visibility:hidden/.test(style)) return true;
+  if (/opacity:0(?:\.0+)?(?:;|$)/.test(style)) return true;
+  if (/(?:^|;)(?:margin|top|left):-(\d{3,})px/.test(style)) return true;
+
+  // Zero-area or empty images are never meaningful content.
+  if (rawW === '0' || rawH === '0') return true;
+
   return false;
 }
 

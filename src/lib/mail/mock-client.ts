@@ -4,6 +4,9 @@ import { escapeHtml } from '../utils/sanitize';
 import { StorageManager } from '../utils/storage';
 import { SITE_CONFIG } from '../config';
 
+/** Sample mail templates that actually exist (keys of SAMPLE_EMAILS below). */
+export type MockSampleType = 'github' | 'notion' | 'welcome';
+
 export class MockClient {
   static async getDomains(): Promise<MailDomain[]> {
     const currentDomain = SITE_CONFIG.domain;
@@ -67,18 +70,18 @@ export class MockClient {
     return true;
   }
 
-  static sendTestVerificationEmail(address: string, serviceType: 'github' | 'discord' | 'stripe' | 'notion' | 'openai' = 'github'): DetailedMailMessage {
+  static sendTestVerificationEmail(address: string, serviceType: MockSampleType = 'github'): DetailedMailMessage {
     const newMsg = this.generateSampleEmail(address, serviceType);
     StorageManager.setCachedMessageDetail(address, newMsg);
     StorageManager.mergeAndSaveMessages(address, [newMsg]);
     return newMsg;
   }
 
-  private static generateSampleEmail(address: string, type: string): DetailedMailMessage {
+  private static generateSampleEmail(address: string, type: MockSampleType): DetailedMailMessage {
     const id = `msg_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const now = new Date().toISOString();
 
-    const sampleCodes: Record<string, { fromName: string; fromAddr: string; subject: string; code: string; html: string; text: string }> = {
+    const sampleCodes: Record<MockSampleType, { fromName: string; fromAddr: string; subject: string; code: string; html: string; text: string }> = {
       github: {
         fromName: 'GitHub Security',
         fromAddr: 'noreply@github.com',
@@ -133,7 +136,7 @@ export class MockClient {
       },
     };
 
-    const item = sampleCodes[type] || sampleCodes.welcome;
+    const item = sampleCodes[type];
     const finalCode = item.code.replace('TEMPO', `${Math.floor(100000 + Math.random() * 900000)}`);
     const finalSubject = item.subject.replace(/\d{6}/, finalCode);
     const finalHtml = item.html.replace(/{{CODE}}/g, finalCode);

@@ -189,11 +189,12 @@ const { locale = 'en' } = Astro.props;
       select.innerHTML = '';
 
       if (this.availableDomains.length === 0) {
+        const i18n = (window as any).__TEMPO_I18N__;
         const opt = document.createElement('option');
         opt.value = '';
         opt.disabled = true;
         opt.selected = true;
-        opt.textContent = 'Could not load domains — please try again';
+        opt.textContent = i18n?.customModal?.domainsFailed || 'Could not load domains — please try again';
         select.appendChild(opt);
         this.updateCustomPreview();
         return;
@@ -202,9 +203,12 @@ const { locale = 'en' } = Astro.props;
       // Only providers that genuinely support user-chosen usernames + domains
       // are offered here. TempMail.lol assigns its own random address, and the
       // simulated (mock) domains cannot receive real email at all.
-      const mailtmDomains = this.availableDomains.filter((d) => d.provider === 'mailtm');
-      const inboxesDomains = this.availableDomains.filter((d) => d.provider === 'inboxes');
-      const guerrillaDomains = this.availableDomains.filter((d) => d.provider === 'guerrilla');
+      // `isActive` also filters out the Inboxes.com fallback domains, which are
+      // only placeholders for when their API is down.
+      const liveDomains = this.availableDomains.filter((d) => d.isActive);
+      const mailtmDomains = liveDomains.filter((d) => d.provider === 'mailtm');
+      const inboxesDomains = liveDomains.filter((d) => d.provider === 'inboxes');
+      const guerrillaDomains = liveDomains.filter((d) => d.provider === 'guerrilla');
 
       if (mailtmDomains.length > 0) {
         const group = document.createElement('optgroup');
@@ -398,7 +402,10 @@ const { locale = 'en' } = Astro.props;
       this.messages.forEach((msg) => {
         const item = document.createElement('div');
         const isSelected = this.selectedMessage && this.selectedMessage.id === msg.id;
-        const initial = (msg.from.name || msg.from.address || 'U').charAt(0).toUpperCase();
+        // Cached entries are only shape-checked on id/subject, so never assume
+        // the nested sender/recipient objects survived a legacy payload.
+        const senderName = msg.from?.name || msg.from?.address || '';
+        const initial = (senderName || 'U').charAt(0).toUpperCase();
         const isUnread = !msg.seen;
         const unreadBadgeText = i18n?.inboxList?.unreadBadge || 'Unread';
         const noSubjectText = i18n?.emailDetail?.noSubject || '(No Subject)';
@@ -429,7 +436,7 @@ const { locale = 'en' } = Astro.props;
 
         const senderSpan = document.createElement('span');
         senderSpan.className = `font-bold text-xs ${isUnread ? 'text-[#ea2804] dark:text-[#ff6a3d]' : 'text-[#202020] dark:text-[#fcfcfc]'} truncate`;
-        senderSpan.textContent = msg.from.name || msg.from.address;
+        senderSpan.textContent = senderName || 'Unknown Sender';
 
         const timeSpan = document.createElement('span');
         timeSpan.className = 'text-[10px] text-[#8d8d8d] dark:text-zinc-400 font-mono shrink-0';
@@ -513,6 +520,10 @@ const { locale = 'en' } = Astro.props;
       } catch (err) {
         console.error('Failed to load message detail:', err);
         const i18n = (window as any).__TEMPO_I18N__;
+        // Restore the empty state: without this the pane stayed blank (both the
+        // placeholder and the content pane were hidden before the fetch).
+        if (empty) empty.classList.remove('hidden');
+        if (content) content.classList.add('hidden');
         window.dispatchEvent(
           new CustomEvent('tempomail:toast', {
             detail: { message: i18n?.toasts?.loadMessageFailed || 'Failed to load message content.', type: 'error' },
@@ -526,7 +537,7 @@ const { locale = 'en' } = Astro.props;
       }
     }
 
-    renderMessageDetail() {
+    renderMessageDetail(resetTab: boolean = true) {
       const msg = this.selectedMessage;
       if (!msg) return;
 
@@ -548,11 +559,14 @@ const { locale = 'en' } = Astro.props;
 
       if (content) content.classList.remove('hidden');
       if (subject) subject.textContent = msg.subject || i18n?.emailDetail?.noSubject || '(No Subject)';
-      if (fromName) fromName.textContent = msg.from.name || i18n?.emailDetail?.defaultSender || 'Unknown Sender';
-      if (fromAddr) fromAddr.textContent = msg.from.address;
-      if (toAddr) toAddr.textContent = msg.to.map((t) => t.address).join(', ') || this.account?.address || '';
+      const senderName = msg.from?.name || msg.from?.address || '';
+      const recipients = Array.isArray(msg.to) ? msg.to : [];
+      const recipientText = recipients.map((r) => r?.address).filter(Boolean).join(', ');
+      if (fromName) fromName.textContent = senderName || i18n?.emailDetail?.defaultSender || 'Unknown Sender';
+      if (fromAddr) fromAddr.textContent = msg.from?.address || '';
+      if (toAddr) toAddr.textContent = recipientText || this.account?.address || '';
       if (dateFull) dateFull.textContent = formatFullDateTime(msg.createdAt);
-      if (avatar) avatar.textContent = (msg.from.name || 'S').charAt(0).toUpperCase();
+      if (avatar) avatar.textContent = (senderName || 'S').charAt(0).toUpperCase();
 
       // Handle OTP detection
       if (msg.extractedOtp && otpBanner && otpCodeText) {
@@ -577,7 +591,7 @@ const { locale = 'en' } = Astro.props;
         const rawHtml =
           msg.html && msg.html.length > 0
             ? sanitizeEmailHtml(msg.html.join(''))
-            : `<pre style="font-family: monospace; white-space: pre-wrap; padding: 20px;">${escapeHtml(msg.text)}</pre>`;
+            : `<pre style="font-family: monospace; white-space: pre-wrap; padding: 20px;">${escapeHtml(msg.text || '')}</pre>`;
         const isDark = document.documentElement.classList.contains('dark');
         const styledDoc = `
           <!DOCTYPE html>
@@ -609,11 +623,13 @@ const { locale = 'en' } = Astro.props;
 
       // Plain text content
       if (textContent) {
-        textContent.textContent = msg.text || (msg.html ? msg.html.join('\n').replace(/<[^>]*>?/gm, '') : '');
+        textContent.textContent = msg.text || (Array.isArray(msg.html) ? msg.html.join('\n').replace(/<[^>]*>?/gm, '') : '');
       }
 
-      // Reset to HTML view tab by default
-      this.switchViewTab('html');
+      // Only snap back to the HTML tab when a *different* message is opened.
+      // renderMessageDetail() also runs on theme changes, and unconditionally
+      // resetting here threw away the reader's HTML/Text choice every time.
+      if (resetTab) this.switchViewTab('html');
     }
 
     switchViewTab(tab: 'html' | 'text') {
@@ -670,7 +686,12 @@ const { locale = 'en' } = Astro.props;
     downloadCurrentEmail() {
       if (!this.selectedMessage) return;
       const msg = this.selectedMessage;
-      const rawContent = `From: ${msg.from.name} <${msg.from.address}>\nTo: ${msg.to.map((t) => t.address).join(', ')}\nDate: ${msg.createdAt}\nSubject: ${msg.subject}\n\n${msg.text || msg.html.join('\n')}`;
+      const senderName = msg.from?.name || msg.from?.address || 'unknown';
+      const senderAddress = msg.from?.address || '';
+      const recipients = Array.isArray(msg.to) ? msg.to : [];
+      const recipientText = recipients.map((r) => r?.address).filter(Boolean).join(', ');
+      const body = msg.text || (Array.isArray(msg.html) ? msg.html.join('\n') : '');
+      const rawContent = `From: ${senderName} <${senderAddress}>\nTo: ${recipientText}\nDate: ${msg.createdAt}\nSubject: ${msg.subject}\n\n${body}`;
       const blob = new Blob([rawContent], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -684,6 +705,48 @@ const { locale = 'en' } = Astro.props;
 
     private lastModalFocus: HTMLElement | null = null;
 
+    /**
+     * A closed dialog is only hidden with `opacity`/`pointer-events`, which
+     * leaves its buttons in the tab order and exposed to screen readers.
+     * `inert` + `aria-hidden` take it out of both while it is closed.
+     */
+    private setModalVisibility(modalId: string, visible: boolean) {
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+      if (visible) {
+        modal.removeAttribute('inert');
+        modal.setAttribute('aria-hidden', 'false');
+      } else {
+        modal.setAttribute('inert', '');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    /**
+     * Keeps Tab cycling inside the open dialog — mirrors the confirm modal's
+     * trap, which the QR/custom/history dialogs previously lacked.
+     */
+    private trapModalFocus(e: KeyboardEvent, contentId: string) {
+      if (e.key !== 'Tab') return;
+      const content = document.getElementById(contentId);
+      if (!content) return;
+      const focusable = Array.from(
+        content.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((el) => !el.hasAttribute('disabled') && el.offsetParent !== null);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
     private setModalOpen(modalId: string, contentId: string, open: boolean, focusSelector?: string) {
       const modal = document.getElementById(modalId);
       const content = document.getElementById(contentId);
@@ -693,6 +756,7 @@ const { locale = 'en' } = Astro.props;
           this.lastModalFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
         }
         modal.classList.remove('opacity-0', 'pointer-events-none');
+        this.setModalVisibility(modalId, true);
         content.classList.remove('scale-95');
         content.classList.add('scale-100');
         try {
@@ -703,9 +767,12 @@ const { locale = 'en' } = Astro.props;
         setTimeout(() => (target || fallback)?.focus(), 50);
       } else {
         modal.classList.add('opacity-0', 'pointer-events-none');
+        this.setModalVisibility(modalId, false);
         content.classList.remove('scale-100');
         content.classList.add('scale-95');
-        const anyOpen = ['qr-modal', 'custom-modal', 'history-modal'].some((id) => {
+        // ConfirmModal manages its own lock; include it so closing one dialog
+        // never unlocks page scrolling while another is still open.
+        const anyOpen = ['qr-modal', 'custom-modal', 'history-modal', 'confirm-modal'].some((id) => {
           const m = document.getElementById(id);
           return m && !m.classList.contains('pointer-events-none');
         });
@@ -721,6 +788,7 @@ const { locale = 'en' } = Astro.props;
 
     openQrModal() {
       if (!this.account) return;
+      const i18n = (window as any).__TEMPO_I18N__;
       const addressText = document.getElementById('qr-modal-address');
       const qrPlaceholder = document.getElementById('qr-code-placeholder');
 
@@ -731,7 +799,7 @@ const { locale = 'en' } = Astro.props;
         img?.addEventListener(
           'error',
           () => {
-            qrPlaceholder.textContent = 'QR code unavailable — check your connection and try again.';
+            qrPlaceholder.textContent = i18n?.qrModal?.unavailable || 'QR code unavailable — check your connection and try again.';
           },
           { once: true }
         );
@@ -759,7 +827,8 @@ const { locale = 'en' } = Astro.props;
       if (!preview) return;
 
       const prefix = input?.value?.trim() || 'yourname';
-      const domain = select?.value || this.availableDomains[0]?.domain || SITE_CONFIG.domain;
+      const liveDomain = this.availableDomains.find((d) => d.isActive)?.domain;
+      const domain = select?.value || liveDomain || SITE_CONFIG.domain;
       preview.textContent = `${prefix}@${domain}`;
     }
 
@@ -933,7 +1002,6 @@ const { locale = 'en' } = Astro.props;
         });
         if (ok) {
           if (this.account) {
-            const currentDomain = this.account.address.split('@')[1];
             this.account = await MailService.deleteCurrentAccount(this.account);
             this.updateAddressDisplay();
             this.connectRealtimeStream();
@@ -1014,8 +1082,10 @@ const { locale = 'en' } = Astro.props;
         }
       });
 
-      // Quick Provider Toggle on Badge Click
+      // Quick Provider Toggle on Badge Click. The mock badge is not clickable
+      // (no pointer affordance), so ignore clicks on it.
       document.getElementById('provider-badge')?.addEventListener('click', async () => {
+        if (this.account?.provider === 'mock') return;
         const provs: ('mailtm' | 'inboxes' | 'tempmaillol' | 'guerrilla')[] = [
           'mailtm',
           'inboxes',
@@ -1102,9 +1172,23 @@ const { locale = 'en' } = Astro.props;
         else if (openId === 'history-modal') this.closeHistoryModal();
       });
 
+      // Focus traps for the dialogs ConfirmModal does not own.
+      const trappedModals: Array<[string, string]> = [
+        ['qr-modal-content', 'qr-modal'],
+        ['custom-modal-content', 'custom-modal'],
+        ['history-modal-content', 'history-modal'],
+      ];
+      trappedModals.forEach(([contentId, modalId]) => {
+        document.getElementById(contentId)?.addEventListener('keydown', (e) => {
+          const modal = document.getElementById(modalId);
+          if (modal?.classList.contains('pointer-events-none')) return;
+          this.trapModalFocus(e, contentId);
+        });
+      });
+
       // Re-theme the email reader when the app theme changes.
       window.addEventListener('tempomail:themechange', () => {
-        if (this.selectedMessage) this.renderMessageDetail();
+        if (this.selectedMessage) this.renderMessageDetail(false);
       });
     }
   }
