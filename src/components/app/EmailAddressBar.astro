@@ -1,6 +1,5 @@
 ---
 import Button from '../ui/Button.astro';
-import Badge from '../ui/Badge.astro';
 import { useTranslation } from '../../i18n/utils';
 import type { Locale } from '../../i18n/languages';
 
@@ -40,7 +39,7 @@ const t = useTranslation(locale);
             type="button"
             id="current-email-display"
             class="font-mono text-base md:text-xl font-bold text-[#202020] dark:text-[#fcfcfc] truncate select-all tracking-tight text-left cursor-pointer"
-            title="Click to copy email"
+            title={t.addressBar.copyAddress}
           >
             <span class="inline-block w-48 h-5 bg-black/10 dark:bg-white/10 animate-pulse rounded"></span>
           </button>

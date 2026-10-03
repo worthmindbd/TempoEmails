@@ -15,6 +15,8 @@ const t = useTranslation(locale);
   id="confirm-modal"
   class="fixed inset-0 z-50 flex items-center justify-center p-3.5 sm:p-4 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200"
   role="dialog"
+  aria-hidden="true"
+  inert
   aria-modal="true"
   aria-labelledby="confirm-modal-title"
 >
@@ -175,6 +177,9 @@ const t = useTranslation(locale);
 
       if (modal && content) {
         modal.classList.remove('opacity-0', 'pointer-events-none');
+        // Match MailboxController: a closed dialog is `inert` + aria-hidden.
+        modal.removeAttribute('inert');
+        modal.setAttribute('aria-hidden', 'false');
         content.classList.remove('scale-95');
         content.classList.add('scale-100');
         lockBodyScroll(true);
@@ -189,10 +194,17 @@ const t = useTranslation(locale);
     const content = document.getElementById('confirm-modal-content');
     if (modal && content) {
       modal.classList.add('opacity-0', 'pointer-events-none');
+      modal.setAttribute('inert', '');
+      modal.setAttribute('aria-hidden', 'true');
       content.classList.remove('scale-100');
       content.classList.add('scale-95');
     }
-    lockBodyScroll(false);
+    // Only release the scroll lock when no other app dialog is still open.
+    const anyOtherOpen = ['qr-modal', 'custom-modal', 'history-modal'].some((id) => {
+      const m = document.getElementById(id);
+      return m && !m.classList.contains('pointer-events-none');
+    });
+    if (!anyOtherOpen) lockBodyScroll(false);
     if (confirmResolve) {
       confirmResolve(result);
       confirmResolve = null;

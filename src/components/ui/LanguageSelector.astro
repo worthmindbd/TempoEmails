@@ -26,7 +26,7 @@ const pathname = Astro.url.pathname;
     }`}
     aria-haspopup="menu"
     aria-expanded="false"
-    aria-label={`Change language, current is ${currentLanguage.nativeName}`}
+    aria-label={t.a11y.changeLanguage.replace('{lang}', currentLanguage.nativeName)}
   >
     <div class="flex items-center gap-1.5">
       <!-- Globe Icon -->
@@ -111,17 +111,18 @@ const pathname = Astro.url.pathname;
         const shouldOpen = open !== undefined ? open : isHidden;
 
         if (shouldOpen) {
-          // Close any other open menus first
-          document.querySelectorAll('.lang-dropdown-menu').forEach((otherMenu) => {
-            if (otherMenu !== menu) {
+          // Close any other open menus first — including resetting their
+          // trigger's aria-expanded, which used to stay "true" forever.
+          document.querySelectorAll('.language-selector-root').forEach((otherRoot) => {
+            if (otherRoot === container) return;
+            const otherMenu = otherRoot.querySelector('.lang-dropdown-menu');
+            const otherTrigger = otherRoot.querySelector('.lang-trigger-btn');
+            if (otherMenu) {
               otherMenu.classList.add('hidden', 'opacity-0', 'scale-95');
               otherMenu.classList.remove('opacity-100', 'scale-100');
             }
-          });
-          document.querySelectorAll('.lang-chevron').forEach((otherChevron) => {
-            if (otherChevron !== chevron) {
-              otherChevron.classList.remove('rotate-180');
-            }
+            otherTrigger?.setAttribute('aria-expanded', 'false');
+            otherRoot.querySelector('.lang-chevron')?.classList.remove('rotate-180');
           });
 
           menu.classList.remove('hidden');
@@ -154,10 +155,12 @@ const pathname = Astro.url.pathname;
         }
       });
 
-      // Close menu on Escape key
+      // Close menu on Escape key and return focus to the trigger
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+          const wasOpen = !menu.classList.contains('hidden');
           toggleMenu(false);
+          if (wasOpen) (trigger as HTMLElement).focus();
         }
       });
     });
