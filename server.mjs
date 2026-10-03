@@ -59,6 +59,20 @@ const SECURITY_HEADERS = {
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 };
 
+// Applied to documents only (HTML): images/JSON/XML keep the lighter set above.
+const CSP_VALUE = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' https://fonts.gstatic.com",
+  "img-src 'self' data: https:",
+  "connect-src 'self' https://mercure.mail.tm",
+  "frame-src 'none'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  'form-action \'none\'',
+].join('; ');
+
 const COMPRESSIBLE_TYPES = new Set([
   'text/html; charset=utf-8',
   'text/css; charset=utf-8',
@@ -71,7 +85,16 @@ const COMPRESSIBLE_TYPES = new Set([
 ]);
 
 const server = http.createServer((req, res) => {
-  void handleServerRequest(req, res);
+  // Never let a throw inside the async handler escape: an unhandled rejection
+  // terminates the Node process (default `--unhandled-rejections=throw`) and
+  // takes the whole site down with it.
+  handleServerRequest(req, res).catch((err) => {
+    console.error('Request handler failed:', req.method, req.url, err);
+    if (!res.headersSent) {
+      res.writeHead(500, { ...SECURITY_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' });
+    }
+    res.end('Internal Server Error');
+  });
 });
 
 async function handleServerRequest(req, res) {
@@ -195,9 +218,14 @@ async function handleServerRequest(req, res) {
     }
   }
 
-  // Trailing slash enforcement for directory routes on canonical domain (using absolute canonical URL)
+  // Trailing slash enforcement for directory routes. Local/staging requests
+  // must stay on the origin the operator is actually testing — an absolute
+  // https://canonical/ Location here sent every `npm start` visitor (and every
+  // LAN-IP health check) straight to production.
   if (isDirectoryPath) {
-    const redirectUrl = `https://${canonicalHostname}${cleanPathname}/${search}`;
+    const redirectUrl = isLocal
+      ? `${cleanPathname}/${search}`
+      : `https://${canonicalHostname}${cleanPathname}/${search}`;
     res.writeHead(301, {
       Location: redirectUrl,
       ...SECURITY_HEADERS,
@@ -232,7 +260,10 @@ async function handleServerRequest(req, res) {
     if (notFoundPath) {
       res.writeHead(404, {
         ...SECURITY_HEADERS,
+        // 404 pages are HTML documents and previously shipped without the CSP.
+        'Content-Security-Policy': CSP_VALUE,
         'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=300',
       });
       if (req.method === 'HEAD') {
         res.end();
@@ -258,18 +289,9 @@ async function handleServerRequest(req, res) {
   const headers = {
     'Content-Type': contentType,
     ...SECURITY_HEADERS,
-    'Content-Security-Policy': [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: https:",
-      "connect-src 'self' https://mercure.mail.tm",
-      "frame-src 'none'",
-      "object-src 'none'",
-      "base-uri 'self'",
-      'form-action \'none\'',
-    ].join('; '),
+    // Documents get the full CSP; static assets do not need one and shipping it
+    // on every hashed bundle byte is pure overhead.
+    ...(contentType.startsWith('text/html') ? { 'Content-Security-Policy': CSP_VALUE } : {}),
   };
 
   // Cache headers
@@ -283,6 +305,22 @@ async function handleServerRequest(req, res) {
 
   const acceptEncoding = req.headers['accept-encoding'] || '';
   const canGzip = COMPRESSIBLE_TYPES.has(contentType) && acceptEncoding.includes('gzip');
+  // Without this, a shared cache can hand the gzip variant to a client that
+  // never asked for (or cannot decode) it.
+  if (canGzip) headers['Vary'] = 'Accept-Encoding';
+
+  // Conditional requests: static assets are content-hashed or long-lived, so a
+  // cheap size+mtime validator saves re-sending unchanged files.
+  const stat = fs.statSync(filePath);
+  const etag = `W/"${stat.size.toString(16)}-${Math.floor(stat.mtimeMs).toString(16)}"`;
+  headers['ETag'] = etag;
+  headers['Last-Modified'] = stat.mtime.toUTCString();
+
+  if (req.headers['if-none-match'] === etag) {
+    res.writeHead(304, { ...SECURITY_HEADERS, ETag: etag, 'Cache-Control': headers['Cache-Control'] });
+    res.end();
+    return;
+  }
 
   if (req.method === 'HEAD') {
     res.writeHead(200, headers);
@@ -305,7 +343,6 @@ async function handleServerRequest(req, res) {
     });
     rawStream.pipe(gzip).pipe(res);
   } else {
-    const stat = fs.statSync(filePath);
     headers['Content-Length'] = stat.size;
     res.writeHead(200, headers);
     const stream = fs.createReadStream(filePath);

@@ -21,6 +21,24 @@ const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 60;
 const rateLimitHits = new Map();
 
+/**
+ * `X-Forwarded-For` is client-controllable: honouring it unconditionally let
+ * anyone bypass the limiter by rotating the header on every request (verified:
+ * 70 requests, all 200). Only trust it when an operator explicitly declares
+ * that a proxy in front of this server sets/overwrites it.
+ */
+const TRUST_PROXY = ['1', 'true', 'yes', 'on'].includes(
+  String(process.env.TRUST_PROXY || '').toLowerCase()
+);
+
+function resolveClientIp(req) {
+  if (TRUST_PROXY) {
+    const forwarded = (req.headers['x-forwarded-for'] || '').toString().split(',')[0].trim();
+    if (forwarded) return forwarded;
+  }
+  return req.socket?.remoteAddress || 'unknown';
+}
+
 function isRateLimited(ip) {
   const now = Date.now();
   const entry = rateLimitHits.get(ip);
@@ -59,6 +77,15 @@ const BROWSER_UA =
 
 const PROXY_TIMEOUT_MS = 15000;
 
+// `/api/mail/*` bypasses the static server's SECURITY_HEADERS block, so the
+// relay sets its own on every response (success and error alike).
+const PROXY_SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'Referrer-Policy': 'no-referrer',
+  'Cross-Origin-Resource-Policy': 'same-origin',
+};
+
 /**
  * Resolves a proxy path (`/<provider>/<rest>`) to its upstream URL.
  * Shared between the production server handler and the dev-only Astro
@@ -76,6 +103,12 @@ export function resolveMailProxy(pathWithQuery) {
 
 /**
  * Builds upstream request headers for a provider, given the incoming headers.
+ * Shared by the production server handler, the dev-only Astro middleware
+ * (src/middleware.ts) and `handleMailProxy` so the two proxies cannot drift.
+ *
+ * @param {string} provider
+ * @param {Record<string, string | string[] | undefined>} [incomingHeaders]
+ * @returns {Record<string, string>}
  */
 export function buildUpstreamHeaders(provider, incomingHeaders = {}) {
   const headers = {
@@ -83,8 +116,8 @@ export function buildUpstreamHeaders(provider, incomingHeaders = {}) {
     'User-Agent': BROWSER_UA,
     ...(PROVIDER_HEADERS[provider] || {}),
   };
-  if (incomingHeaders['content-type']) headers['Content-Type'] = incomingHeaders['content-type'];
-  if (incomingHeaders['authorization']) headers['Authorization'] = incomingHeaders['authorization'];
+  if (incomingHeaders['content-type']) headers['Content-Type'] = String(incomingHeaders['content-type']);
+  if (incomingHeaders['authorization']) headers['Authorization'] = String(incomingHeaders['authorization']);
   return headers;
 }
 
@@ -99,19 +132,16 @@ export async function handleMailProxy(req, res, pathWithQuery) {
     return;
   }
   if (req.method !== 'GET' && req.method !== 'POST' && req.method !== 'DELETE') {
-    res.writeHead(405, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.writeHead(405, { 'Content-Type': 'application/json; charset=utf-8', ...PROXY_SECURITY_HEADERS });
     res.end(JSON.stringify({ error: 'Method not allowed' }));
     return;
   }
 
-  const clientIp =
-    (req.headers['x-forwarded-for'] || '').toString().split(',')[0].trim() ||
-    req.socket?.remoteAddress ||
-    'unknown';
-  if (isRateLimited(clientIp)) {
+  if (isRateLimited(resolveClientIp(req))) {
     res.writeHead(429, {
       'Content-Type': 'application/json; charset=utf-8',
       'Retry-After': '60',
+      ...PROXY_SECURITY_HEADERS,
     });
     res.end(JSON.stringify({ error: 'Too many requests — please slow down' }));
     return;
@@ -124,7 +154,7 @@ export async function handleMailProxy(req, res, pathWithQuery) {
     resolved = null;
   }
   if (!resolved) {
-    res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8', ...PROXY_SECURITY_HEADERS });
     res.end(JSON.stringify({ error: 'Unknown mail provider' }));
     return;
   }
@@ -159,20 +189,15 @@ export async function handleMailProxy(req, res, pathWithQuery) {
       });
     });
     if (body === undefined) {
-      res.writeHead(413, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.writeHead(413, { 'Content-Type': 'application/json; charset=utf-8', ...PROXY_SECURITY_HEADERS });
       res.end(JSON.stringify({ error: 'Payload too large' }));
       return;
     }
   }
 
-  // Only forward a minimal, safe set of headers.
-  const headers = {
-    Accept: req.headers['accept'] || 'application/json',
-    'User-Agent': BROWSER_UA,
-    ...(PROVIDER_HEADERS[provider] || {}),
-  };
-  if (req.headers['content-type']) headers['Content-Type'] = req.headers['content-type'];
-  if (req.headers['authorization']) headers['Authorization'] = req.headers['authorization'];
+  // Only forward a minimal, safe set of headers (same builder the dev
+  // middleware uses — do not duplicate the allowlist here).
+  const headers = buildUpstreamHeaders(provider, req.headers);
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), PROXY_TIMEOUT_MS);
@@ -189,14 +214,14 @@ export async function handleMailProxy(req, res, pathWithQuery) {
     const upstreamType = (upstreamRes.headers.get('content-type') || 'application/json; charset=utf-8').toLowerCase();
     const contentLength = parseInt(upstreamRes.headers.get('content-length') || '', 10);
     if (Number.isFinite(contentLength) && contentLength > MAX_RESPONSE_BODY_BYTES) {
-      res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8', ...PROXY_SECURITY_HEADERS });
       res.end(JSON.stringify({ error: 'Upstream response too large' }));
       return;
     }
 
     const buf = Buffer.from(await upstreamRes.arrayBuffer());
     if (buf.length > MAX_RESPONSE_BODY_BYTES) {
-      res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8', ...PROXY_SECURITY_HEADERS });
       res.end(JSON.stringify({ error: 'Upstream response too large' }));
       return;
     }
@@ -212,7 +237,7 @@ export async function handleMailProxy(req, res, pathWithQuery) {
           : 'application/octet-stream',
       'Content-Disposition': isAttachmentPath ? 'attachment' : 'inline',
       'Cache-Control': 'no-store',
-      'X-Content-Type-Options': 'nosniff',
+      ...PROXY_SECURITY_HEADERS,
     };
     res.writeHead(upstreamRes.status, outHeaders);
 
@@ -223,8 +248,11 @@ export async function handleMailProxy(req, res, pathWithQuery) {
 
     res.end(buf);
   } catch (err) {
-    const timedOut = err?.name === 'AbortError';
-    res.writeHead(timedOut ? 504 : 502, { 'Content-Type': 'application/json; charset=utf-8' });
+    const timedOut = err instanceof Error && err.name === 'AbortError';
+    res.writeHead(timedOut ? 504 : 502, {
+      'Content-Type': 'application/json; charset=utf-8',
+      ...PROXY_SECURITY_HEADERS,
+    });
     res.end(JSON.stringify({ error: timedOut ? 'Upstream timeout' : 'Upstream fetch failed' }));
   } finally {
     clearTimeout(timer);
