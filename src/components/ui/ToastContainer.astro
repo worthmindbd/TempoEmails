@@ -14,6 +14,10 @@
   function setupToaster() {
     const container = document.getElementById('toast-container');
     if (!container || (container as any).dataset.toasterBound === 'true') return;
+    // Same runtime i18n payload every other vanilla component reads (Layout
+    // injects it in <head>); a `define:vars` script would have to drop TS.
+    const i18n = (window as any).__TEMPO_I18N__;
+    const dismissLabel = i18n?.a11y?.dismissToast || 'Dismiss notification';
     (container as any).dataset.toasterBound = 'true';
 
     window.addEventListener('tempomail:toast', ((event: CustomEvent) => {
@@ -51,7 +55,7 @@
       const dismissBtn = document.createElement('button');
       dismissBtn.type = 'button';
       dismissBtn.className = 'shrink-0 rounded-full p-1 opacity-70 hover:opacity-100 transition-opacity';
-      dismissBtn.setAttribute('aria-label', 'Dismiss notification');
+      dismissBtn.setAttribute('aria-label', dismissLabel);
       const dismissIcon = document.createElement('span');
       dismissIcon.className = 'inline-flex';
       dismissIcon.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';

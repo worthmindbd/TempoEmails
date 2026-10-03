@@ -78,6 +78,7 @@ export interface TranslationSchema {
     defaultDate: string;
   };
   customModal: {
+    domainsFailed: string;
     title: string;
     desc: string;
     usernameLabel: string;
@@ -89,6 +90,7 @@ export interface TranslationSchema {
     create: string;
   };
   qrModal: {
+    unavailable: string;
     title: string;
     desc: string;
     copyLink: string;
@@ -139,6 +141,8 @@ export interface TranslationSchema {
     copyFailed: string;
     otpCopied: string;
     loadMessageFailed: string;
+    mockFallback: string;
+    legacyInboxGone: string;
   };
   relativeTime: {
     justNow: string;
@@ -216,7 +220,15 @@ export interface TranslationSchema {
     disclaimer: string;
     allRightsReserved: string;
   };
+  a11y: {
+    toggleTheme: string;
+    toggleSound: string;
+    toggleMenu: string;
+    dismissToast: string;
+    changeLanguage: string;
+  };
   common: {
+    close: string;
     home: string;
     blog: string;
     backToHome: string;
@@ -257,6 +269,8 @@ export interface TranslationSchema {
       description: string;
       heading: string;
       subheading: string;
+      faqHeading: string;
+      relatedHeading: string;
     };
     privacy: {
       title: string;
@@ -350,14 +364,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "loadingDomains": "Loading domains...",
       "preview": "Preview:",
       "cancel": "Cancel",
-      "create": "Create Inbox"
+      "create": "Create Inbox",
+      "domainsFailed": "Could not load domains — please try again"
     },
     "qrModal": {
       "title": "Mobile QR Code",
       "desc": "Scan this code with your smartphone camera to access this disposable email instantly on mobile.",
       "copyLink": "Copy Link",
       "copiedLink": "Link Copied!",
-      "close": "Close"
+      "close": "Close",
+      "unavailable": "QR code unavailable — check your connection and try again."
     },
     "historyDrawer": {
       "title": "Recent Inboxes",
@@ -402,7 +418,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copiedToClipboard": "Copied to clipboard!",
       "copyFailed": "Failed to copy to clipboard",
       "otpCopied": "Verification code {code} copied!",
-      "loadMessageFailed": "Failed to load message content."
+      "loadMessageFailed": "Failed to load message content.",
+      "mockFallback": "All mail providers are unreachable right now — this is a simulated inbox and cannot receive real email.",
+      "legacyInboxGone": "Your old 1secmail inbox ({address}) is no longer supported — created a fresh inbox instead."
     },
     "relativeTime": {
       "justNow": "Just now",
@@ -554,7 +572,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "disclaimer": "Disclaimer",
       "allRightsReserved": "All rights reserved."
     },
+    "a11y": {
+      "toggleTheme": "Toggle dark mode",
+      "toggleSound": "Toggle email notification sound",
+      "toggleMenu": "Toggle navigation menu",
+      "dismissToast": "Dismiss notification",
+      "changeLanguage": "Change language, current is {lang}"
+    },
     "common": {
+      "close": "Close",
       "home": "Home",
       "blog": "Blog",
       "backToHome": "Back to Home",
@@ -594,7 +620,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
         "title": "Temp Mail, Privacy & Online Security Blog — TempoEmails",
         "description": "Expert guides on free temp mail, disposable temporary email services, OTP verification codes, 10 minute mail, and digital privacy best practices.",
         "heading": "Privacy & Security Guides",
-        "subheading": "Practical guides on avoiding spam, managing online accounts, and protecting your primary email address."
+        "subheading": "Practical guides on avoiding spam, managing online accounts, and protecting your primary email address.",
+        "faqHeading": "Frequently Asked Questions",
+        "relatedHeading": "Related Guides"
       },
       "privacy": {
         "title": "Privacy Policy — TempoEmails",
@@ -686,14 +714,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "loadingDomains": "Cargando dominios...",
       "preview": "Vista previa:",
       "cancel": "Cancelar",
-      "create": "Crear Buzón"
+      "create": "Crear Buzón",
+      "domainsFailed": "No se pudieron cargar los dominios; inténtalo de nuevo"
     },
     "qrModal": {
       "title": "Código QR Móvil",
       "desc": "Escanea este código con la cámara de tu smartphone para abrir este correo temporal en tu móvil.",
       "copyLink": "Copiar Enlace",
       "copiedLink": "¡Enlace Copiado!",
-      "close": "Cerrar"
+      "close": "Cerrar",
+      "unavailable": "Código QR no disponible: revisa tu conexión e inténtalo de nuevo."
     },
     "historyDrawer": {
       "title": "Buzones Recientes",
@@ -738,7 +768,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copiedToClipboard": "¡Copiado al portapapeles!",
       "copyFailed": "Error al copiar al portapapeles",
       "otpCopied": "¡Código de verificación {code} copiado!",
-      "loadMessageFailed": "Error al cargar el contenido del mensaje."
+      "loadMessageFailed": "Error al cargar el contenido del mensaje.",
+      "mockFallback": "Todos los proveedores de correo son inaccesibles en este momento: este buzón es simulado y no puede recibir correo real.",
+      "legacyInboxGone": "Tu buzón antiguo de 1secmail ({address}) ya no es compatible: se creó un buzón nuevo."
     },
     "relativeTime": {
       "justNow": "Ahora mismo",
@@ -890,7 +922,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "disclaimer": "Descargo de Responsabilidad",
       "allRightsReserved": "Todos los derechos reservados."
     },
+    "a11y": {
+      "toggleTheme": "Alternar modo oscuro",
+      "toggleSound": "Activar o desactivar el sonido de las notificaciones",
+      "toggleMenu": "Mostrar u ocultar el menú de navegación",
+      "dismissToast": "Descartar notificación",
+      "changeLanguage": "Cambiar idioma, el actual es {lang}"
+    },
     "common": {
+      "close": "Cerrar",
       "home": "Inicio",
       "blog": "Blog",
       "backToHome": "Volver al Inicio",
@@ -930,7 +970,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
         "title": "Blog de Privacidad, Seguridad y Correo Temporal — TempoEmails",
         "description": "Guías de expertos sobre correo temporal gratuito, códigos OTP, correo de 10 minutos y privacidad digital.",
         "heading": "Guías de Privacidad y Seguridad",
-        "subheading": "Consejos prácticos para evitar el spam, gestionar cuentas online y proteger su correo principal."
+        "subheading": "Consejos prácticos para evitar el spam, gestionar cuentas online y proteger su correo principal.",
+        "faqHeading": "Preguntas frecuentes",
+        "relatedHeading": "Guías relacionadas"
       },
       "privacy": {
         "title": "Política de Privacidad — TempoEmails",
@@ -1022,14 +1064,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "loadingDomains": "Carregando domínios...",
       "preview": "Prévia:",
       "cancel": "Cancelar",
-      "create": "Criar Caixa"
+      "create": "Criar Caixa",
+      "domainsFailed": "Não foi possível carregar os domínios — tente novamente"
     },
     "qrModal": {
       "title": "QR Code para Celular",
       "desc": "Aponte a câmera do seu smartphone para abrir e usar este email temporário no celular instantaneamente.",
       "copyLink": "Copiar Link",
       "copiedLink": "Link Copiado!",
-      "close": "Fechar"
+      "close": "Fechar",
+      "unavailable": "QR code indisponível — verifique sua conexão e tente novamente."
     },
     "historyDrawer": {
       "title": "Emails Recentes",
@@ -1074,7 +1118,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copiedToClipboard": "Copiado para a área de transferência!",
       "copyFailed": "Falha ao copiar",
       "otpCopied": "Código de verificação {code} copiado!",
-      "loadMessageFailed": "Falha ao carregar o conteúdo da mensagem."
+      "loadMessageFailed": "Falha ao carregar o conteúdo da mensagem.",
+      "mockFallback": "Todos os provedores de e-mail estão indisponíveis no momento — esta caixa é simulada e não recebe e-mails reais.",
+      "legacyInboxGone": "Sua caixa antiga do 1secmail ({address}) não é mais compatível — criamos uma nova caixa."
     },
     "relativeTime": {
       "justNow": "Agora mesmo",
@@ -1226,7 +1272,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "disclaimer": "Aviso Legal",
       "allRightsReserved": "Todos os direitos reservados."
     },
+    "a11y": {
+      "toggleTheme": "Alternar modo escuro",
+      "toggleSound": "Ativar ou desativar o som das notificações",
+      "toggleMenu": "Mostrar ou ocultar o menu de navegação",
+      "dismissToast": "Dispensar notificação",
+      "changeLanguage": "Mudar idioma, o atual é {lang}"
+    },
     "common": {
+      "close": "Fechar",
       "home": "Início",
       "blog": "Blog",
       "backToHome": "Voltar ao Início",
@@ -1266,7 +1320,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
         "title": "Blog de Privacidade, Segurança e E-mail Temporário — TempoEmails",
         "description": "Guias especializados sobre e-mail temporário gratuito, códigos OTP, e-mail de 10 minutos e privacidade digital.",
         "heading": "Guias de Privacidade e Segurança",
-        "subheading": "Dicas práticas para evitar spam, gerenciar contas online e proteger seu e-mail principal."
+        "subheading": "Dicas práticas para evitar spam, gerenciar contas online e proteger seu e-mail principal.",
+        "faqHeading": "Perguntas frequentes",
+        "relatedHeading": "Guias relacionados"
       },
       "privacy": {
         "title": "Política de Privacidade — TempoEmails",
@@ -1358,14 +1414,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "loadingDomains": "Chargement des domaines...",
       "preview": "Aperçu :",
       "cancel": "Annuler",
-      "create": "Créer la boîte"
+      "create": "Créer la boîte",
+      "domainsFailed": "Impossible de charger les domaines — veuillez réessayer"
     },
     "qrModal": {
       "title": "QR Code Mobile",
       "desc": "Scannez ce code avec votre smartphone pour ouvrir cette boîte temporaire directement sur mobile.",
       "copyLink": "Copier le lien",
       "copiedLink": "Lien Copié !",
-      "close": "Fermer"
+      "close": "Fermer",
+      "unavailable": "QR code indisponible — vérifiez votre connexion et réessayez."
     },
     "historyDrawer": {
       "title": "Boîtes Récentes",
@@ -1410,7 +1468,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copiedToClipboard": "Copié dans le presse-papiers !",
       "copyFailed": "Échec de la copie",
       "otpCopied": "Code de vérification {code} copié !",
-      "loadMessageFailed": "Impossible de charger le contenu du message."
+      "loadMessageFailed": "Impossible de charger le contenu du message.",
+      "mockFallback": "Tous les fournisseurs de messagerie sont inaccessibles pour le moment — cette boîte est simulée et ne peut pas recevoir de vrais e-mails.",
+      "legacyInboxGone": "Votre ancienne boîte 1secmail ({address}) n’est plus prise en charge — une nouvelle boîte a été créée."
     },
     "relativeTime": {
       "justNow": "À l’instant",
@@ -1562,7 +1622,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "disclaimer": "Avertissement Légal",
       "allRightsReserved": "Tous droits réservés."
     },
+    "a11y": {
+      "toggleTheme": "Basculer le mode sombre",
+      "toggleSound": "Activer ou désactiver le son des notifications",
+      "toggleMenu": "Afficher ou masquer le menu de navigation",
+      "dismissToast": "Fermer la notification",
+      "changeLanguage": "Changer de langue, langue actuelle : {lang}"
+    },
     "common": {
+      "close": "Fermer",
       "home": "Accueil",
       "blog": "Blog",
       "backToHome": "Retour à l'Accueil",
@@ -1602,7 +1670,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
         "title": "Blog Confidentialité, Sécurité & E-mail Jetable — TempoEmails",
         "description": "Guides d'experts sur l'e-mail temporaire gratuit, les codes OTP, le mail 10 minutes et la protection de la vie privée.",
         "heading": "Guides Confidentialité & Sécurité",
-        "subheading": "Conseils pratiques pour éviter le spam, gérer vos comptes en ligne et protéger votre adresse principale."
+        "subheading": "Conseils pratiques pour éviter le spam, gérer vos comptes en ligne et protéger votre adresse principale.",
+        "faqHeading": "Questions fréquentes",
+        "relatedHeading": "Guides associés"
       },
       "privacy": {
         "title": "Politique de Confidentialité — TempoEmails",
@@ -1694,14 +1764,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "loadingDomains": "Lade Domains...",
       "preview": "Vorschau:",
       "cancel": "Abbrechen",
-      "create": "Postfach Erstellen"
+      "create": "Postfach Erstellen",
+      "domainsFailed": "Domains konnten nicht geladen werden — bitte erneut versuchen"
     },
     "qrModal": {
       "title": "Smartphone QR-Code",
       "desc": "Scanne diesen Code mit der Handykamera, um diese temporäre Email sofort auf dem Smartphone zu nutzen.",
       "copyLink": "Link Kopieren",
       "copiedLink": "Link Kopiert!",
-      "close": "Schließen"
+      "close": "Schließen",
+      "unavailable": "QR-Code nicht verfügbar — bitte Verbindung prüfen und erneut versuchen."
     },
     "historyDrawer": {
       "title": "Letzte Postfächer",
@@ -1746,7 +1818,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copiedToClipboard": "In Zwischenablage kopiert!",
       "copyFailed": "Kopieren fehlgeschlagen",
       "otpCopied": "Bestätigungscode {code} kopiert!",
-      "loadMessageFailed": "Nachrichteninhalt konnte nicht geladen werden."
+      "loadMessageFailed": "Nachrichteninhalt konnte nicht geladen werden.",
+      "mockFallback": "Alle E-Mail-Anbieter sind derzeit nicht erreichbar — dieses Postfach ist simuliert und kann keine echten E-Mails empfangen.",
+      "legacyInboxGone": "Ihr altes 1secmail-Postfach ({address}) wird nicht mehr unterstützt — es wurde ein neues Postfach erstellt."
     },
     "relativeTime": {
       "justNow": "Gerade eben",
@@ -1898,7 +1972,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "disclaimer": "Haftungsausschluss",
       "allRightsReserved": "Alle Rechte vorbehalten."
     },
+    "a11y": {
+      "toggleTheme": "Dunkelmodus umschalten",
+      "toggleSound": "Ton der Benachrichtigungen ein- oder ausschalten",
+      "toggleMenu": "Navigationsmenü ein- oder ausblenden",
+      "dismissToast": "Benachrichtigung schließen",
+      "changeLanguage": "Sprache ändern, aktuell {lang}"
+    },
     "common": {
+      "close": "Schließen",
       "home": "Startseite",
       "blog": "Blog",
       "backToHome": "Zurück zur Startseite",
@@ -1938,7 +2020,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
         "title": "Datenschutz-, Sicherheits- & Wegwerf-E-Mail-Blog — TempoEmails",
         "description": "Expertenratgeber zu temporären E-Mails, OTP-Codes, 10-Minuten-Mail und digitaler Privatsphäre.",
         "heading": "Datenschutz- & Sicherheitsleitfäden",
-        "subheading": "Praktische Anleitungen zur Vermeidung von Spam, Verwaltung von Online-Konten und Schutz Ihrer Hauptadresse."
+        "subheading": "Praktische Anleitungen zur Vermeidung von Spam, Verwaltung von Online-Konten und Schutz Ihrer Hauptadresse.",
+        "faqHeading": "Häufig gestellte Fragen",
+        "relatedHeading": "Weitere Leitfäden"
       },
       "privacy": {
         "title": "Datenschutzerklärung — TempoEmails",
@@ -2030,14 +2114,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "loadingDomains": "Загрузка доменов...",
       "preview": "Предпросмотр:",
       "cancel": "Отмена",
-      "create": "Создать Ящик"
+      "create": "Создать Ящик",
+      "domainsFailed": "Не удалось загрузить домены — попробуйте ещё раз"
     },
     "qrModal": {
       "title": "QR-код для Телефона",
       "desc": "Отсканируйте код камерой смартфона, чтобы моментально открыть эту почту на мобильном устройстве.",
       "copyLink": "Скопировать Ссылку",
       "copiedLink": "Ссылка Скопирована!",
-      "close": "Закрыть"
+      "close": "Закрыть",
+      "unavailable": "QR-код недоступен — проверьте соединение и попробуйте снова."
     },
     "historyDrawer": {
       "title": "Недавние Ящики",
@@ -2082,7 +2168,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copiedToClipboard": "Скопировано в буфер обмена!",
       "copyFailed": "Не удалось скопировать",
       "otpCopied": "Код подтверждения {code} скопирован!",
-      "loadMessageFailed": "Не удалось загрузить содержимое письма."
+      "loadMessageFailed": "Не удалось загрузить содержимое письма.",
+      "mockFallback": "Все почтовые провайдеры сейчас недоступны — это симулированный ящик, он не может получать настоящие письма.",
+      "legacyInboxGone": "Ваш старый ящик 1secmail ({address}) больше не поддерживается — создан новый ящик."
     },
     "relativeTime": {
       "justNow": "Только что",
@@ -2234,7 +2322,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "disclaimer": "Отказ от Ответственности",
       "allRightsReserved": "Все права защищены."
     },
+    "a11y": {
+      "toggleTheme": "Переключить тёмную тему",
+      "toggleSound": "Включить или выключить звук уведомлений",
+      "toggleMenu": "Показать или скрыть меню навигации",
+      "dismissToast": "Закрыть уведомление",
+      "changeLanguage": "Сменить язык, текущий: {lang}"
+    },
     "common": {
+      "close": "Закрыть",
       "home": "Главная",
       "blog": "Блог",
       "backToHome": "На главную",
@@ -2274,7 +2370,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
         "title": "Блог о приватности, безопасности и временной почте — TempoEmails",
         "description": "Экспертные статьи об одноразовой почте, OTP кодах, почте на 10 минут и цифровой безопасности.",
         "heading": "Руководства по приватности и безопасности",
-        "subheading": "Практические советы по защите от спама, управлению аккаунтами и защите основной почты."
+        "subheading": "Практические советы по защите от спама, управлению аккаунтами и защите основной почты.",
+        "faqHeading": "Часто задаваемые вопросы",
+        "relatedHeading": "Похожие руководства"
       },
       "privacy": {
         "title": "Политика конфиденциальности — TempoEmails",
@@ -2366,14 +2464,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "loadingDomains": "正在加载域名列表...",
       "preview": "预览地址：",
       "cancel": "取消",
-      "create": "立即创建"
+      "create": "立即创建",
+      "domainsFailed": "域名加载失败 —— 请重试"
     },
     "qrModal": {
       "title": "手机端二维码",
       "desc": "使用手机相机扫描此二维码，即可在移动端随时查看并使用当前临时邮箱。",
       "copyLink": "复制链接",
       "copiedLink": "链接已复制！",
-      "close": "关闭"
+      "close": "关闭",
+      "unavailable": "二维码暂时无法生成 —— 请检查网络后重试。"
     },
     "historyDrawer": {
       "title": "最近使用的邮箱",
@@ -2418,7 +2518,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copiedToClipboard": "已成功复制到剪贴板！",
       "copyFailed": "复制失败",
       "otpCopied": "验证码 {code} 已复制！",
-      "loadMessageFailed": "加载邮件内容失败。"
+      "loadMessageFailed": "加载邮件内容失败。",
+      "mockFallback": "当前所有邮件服务均不可用 —— 这是一个模拟收件箱，无法接收真实邮件。",
+      "legacyInboxGone": "你原有的 1secmail 收件箱（{address}）已不再受支持 —— 已为你创建新的收件箱。"
     },
     "relativeTime": {
       "justNow": "刚刚",
@@ -2570,7 +2672,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "disclaimer": "免责声明",
       "allRightsReserved": "保留所有权利。"
     },
+    "a11y": {
+      "toggleTheme": "切换深色模式",
+      "toggleSound": "开关邮件通知声音",
+      "toggleMenu": "显示或隐藏导航菜单",
+      "dismissToast": "关闭通知",
+      "changeLanguage": "更改语言，当前为 {lang}"
+    },
     "common": {
+      "close": "关闭",
       "home": "首页",
       "blog": "博客",
       "backToHome": "返回首页",
@@ -2610,7 +2720,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
         "title": "隐私、安全与临时邮箱博客 — TempoEmails",
         "description": "关于免费临时邮箱、OTP 验证码提取、10 分钟邮箱与数字隐私防护的专业指南。",
         "heading": "隐私与安全指南",
-        "subheading": "远离垃圾邮件、管理在线账户和保护主邮箱的实用技巧。"
+        "subheading": "远离垃圾邮件、管理在线账户和保护主邮箱的实用技巧。",
+        "faqHeading": "常见问题",
+        "relatedHeading": "相关指南"
       },
       "privacy": {
         "title": "隐私政策 — TempoEmails",
@@ -2702,14 +2814,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "loadingDomains": "ドメインを読み込み中...",
       "preview": "プレビュー：",
       "cancel": "キャンセル",
-      "create": "メールボックスを作成"
+      "create": "メールボックスを作成",
+      "domainsFailed": "ドメインを読み込めませんでした。再試行してください"
     },
     "qrModal": {
       "title": "スマホ用QRコード",
       "desc": "スマホのカメラでスキャンすれば、スマートフォンでも同じ捨てメアドをすぐに使えます。",
       "copyLink": "リンクをコピー",
       "copiedLink": "コピーしました！",
-      "close": "閉じる"
+      "close": "閉じる",
+      "unavailable": "QRコードを生成できません。接続を確認して再試行してください。"
     },
     "historyDrawer": {
       "title": "最近のアドレス履歴",
@@ -2754,7 +2868,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copiedToClipboard": "クリップボードにコピーしました！",
       "copyFailed": "コピーに失敗しました",
       "otpCopied": "認証コード {code} をコピーしました！",
-      "loadMessageFailed": "メール内容の読み込みに失敗しました。"
+      "loadMessageFailed": "メール内容の読み込みに失敗しました。",
+      "mockFallback": "現在すべてのメールプロバイダーに接続できません。これはシミュレーション受信箱のため、実際のメールは受信できません。",
+      "legacyInboxGone": "以前の 1secmail 受信箱（{address}）はサポート対象外のため、新しい受信箱を作成しました。"
     },
     "relativeTime": {
       "justNow": "たった今",
@@ -2906,7 +3022,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "disclaimer": "免責事項",
       "allRightsReserved": "無断転載を禁じます。"
     },
+    "a11y": {
+      "toggleTheme": "ダークモードを切り替える",
+      "toggleSound": "通知音のオン・オフを切り替える",
+      "toggleMenu": "ナビゲーションメニューの表示を切り替える",
+      "dismissToast": "通知を閉じる",
+      "changeLanguage": "言語を変更（現在の言語: {lang}）"
+    },
     "common": {
+      "close": "閉じる",
       "home": "ホーム",
       "blog": "ブログ",
       "backToHome": "ホームに戻る",
@@ -2946,7 +3070,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
         "title": "プライバシー・セキュリティ & 捨てメアド ブログ — TempoEmails",
         "description": "使い捨てメール、OTP 認証コード、10 分メール、デジタルプライバシー対策に関する専門ガイド。",
         "heading": "プライバシー & セキュリティ ガイド",
-        "subheading": "スパム対策、アカウント管理、メインアドレスの保護に役立つ実践的アドバイス。"
+        "subheading": "スパム対策、アカウント管理、メインアドレスの保護に役立つ実践的アドバイス。",
+        "faqHeading": "よくある質問",
+        "relatedHeading": "関連ガイド"
       },
       "privacy": {
         "title": "プライバシーポリシー — TempoEmails",
@@ -3038,14 +3164,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "loadingDomains": "جاري تحميل النطاقات...",
       "preview": "معاينة:",
       "cancel": "إلغاء",
-      "create": "إنشاء البريد"
+      "create": "إنشاء البريد",
+      "domainsFailed": "تعذّر تحميل النطاقات — يرجى المحاولة مرة أخرى"
     },
     "qrModal": {
       "title": "رمز QR للهاتف",
       "desc": "امسح الرمز بكاميرا هاتفك لفتح واستخدام هذا البريد المؤقت على الجوال فوراً.",
       "copyLink": "نسخ الرابط",
       "copiedLink": "تم نسخ الرابط!",
-      "close": "إغلاق"
+      "close": "إغلاق",
+      "unavailable": "رمز QR غير متاح — تحقق من اتصالك وأعد المحاولة."
     },
     "historyDrawer": {
       "title": "الصناديق السابقة",
@@ -3090,7 +3218,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copiedToClipboard": "تم النسخ إلى الحافظة!",
       "copyFailed": "فشل النسخ",
       "otpCopied": "تم نسخ رمز التحقق {code}!",
-      "loadMessageFailed": "فشل تحميل محتوى الرسالة."
+      "loadMessageFailed": "فشل تحميل محتوى الرسالة.",
+      "mockFallback": "جميع مزوّدي البريد غير متاحين حاليًا — هذا صندوق محاكاة ولا يمكنه استقبال رسائل حقيقية.",
+      "legacyInboxGone": "صندوق 1secmail القديم ({address}) لم يعد مدعومًا — تم إنشاء صندوق جديد."
     },
     "relativeTime": {
       "justNow": "الآن",
@@ -3242,7 +3372,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "disclaimer": "إخلاء المسؤولية",
       "allRightsReserved": "جميع الحقوق محفوظة."
     },
+    "a11y": {
+      "toggleTheme": "تبديل الوضع الداكن",
+      "toggleSound": "تشغيل أو إيقاف صوت الإشعارات",
+      "toggleMenu": "إظهار أو إخفاء قائمة التنقل",
+      "dismissToast": "إغلاق الإشعار",
+      "changeLanguage": "تغيير اللغة، اللغة الحالية {lang}"
+    },
     "common": {
+      "close": "إغلاق",
       "home": "الرئيسية",
       "blog": "المدونة",
       "backToHome": "العودة للرئيسية",
@@ -3282,7 +3420,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
         "title": "مدونة الخصوصية والأمان والبريد المؤقت — TempoEmails",
         "description": "أدلة الخبراء حول البريد المؤقت المجاني، ورموز OTP، وبريد 10 دقائق وحماية الخصوصية الرقمية.",
         "heading": "أدلة الخصوصية والأمان",
-        "subheading": "إرشادات عملية لتجنب البريد العشوائي وإدارة الحسابات وحماية بريدك الشخصي."
+        "subheading": "إرشادات عملية لتجنب البريد العشوائي وإدارة الحسابات وحماية بريدك الشخصي.",
+        "faqHeading": "الأسئلة الشائعة",
+        "relatedHeading": "أدلة ذات صلة"
       },
       "privacy": {
         "title": "سياسة الخصوصية — TempoEmails",
@@ -3374,14 +3514,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "loadingDomains": "Memuat daftar domain...",
       "preview": "Pratinjau:",
       "cancel": "Batal",
-      "create": "Buat Email"
+      "create": "Buat Email",
+      "domainsFailed": "Domain tidak dapat dimuat — silakan coba lagi"
     },
     "qrModal": {
       "title": "QR Code Ponsel",
       "desc": "Pindai kode ini dengan kamera ponsel Anda untuk langsung membuka email sementara ini di HP.",
       "copyLink": "Salin Tautan",
       "copiedLink": "Tautan Tersalin!",
-      "close": "Tutup"
+      "close": "Tutup",
+      "unavailable": "Kode QR tidak tersedia — periksa koneksi Anda lalu coba lagi."
     },
     "historyDrawer": {
       "title": "Riwayat Email",
@@ -3426,7 +3568,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copiedToClipboard": "Disalin ke papan klip!",
       "copyFailed": "Gagal menyalin",
       "otpCopied": "Kode verifikasi {code} berhasil disalin!",
-      "loadMessageFailed": "Gagal memuat konten pesan."
+      "loadMessageFailed": "Gagal memuat konten pesan.",
+      "mockFallback": "Semua penyedia email sedang tidak dapat diakses — kotak masuk ini adalah simulasi dan tidak dapat menerima email asli.",
+      "legacyInboxGone": "Kotak 1secmail lama Anda ({address}) tidak lagi didukung — kotak baru telah dibuat."
     },
     "relativeTime": {
       "justNow": "Baru saja",
@@ -3578,7 +3722,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "disclaimer": "Penafian",
       "allRightsReserved": "Hak cipta dilindungi undang-undang."
     },
+    "a11y": {
+      "toggleTheme": "Alihkan mode gelap",
+      "toggleSound": "Aktifkan atau nonaktifkan suara notifikasi",
+      "toggleMenu": "Tampilkan atau sembunyikan menu navigasi",
+      "dismissToast": "Tutup notifikasi",
+      "changeLanguage": "Ubah bahasa, bahasa saat ini {lang}"
+    },
     "common": {
+      "close": "Tutup",
       "home": "Beranda",
       "blog": "Blog",
       "backToHome": "Kembali ke Beranda",
@@ -3618,7 +3770,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
         "title": "Blog Privasi, Keamanan & Email Sementara — TempoEmails",
         "description": "Panduan ahli tentang email sementara gratis, kode verifikasi OTP, email 10 menit, dan privasi digital.",
         "heading": "Panduan Privasi & Keamanan",
-        "subheading": "Tips praktis menghindari spam, mengelola akun online, dan melindungi email utama Anda."
+        "subheading": "Tips praktis menghindari spam, mengelola akun online, dan melindungi email utama Anda.",
+        "faqHeading": "Pertanyaan yang sering diajukan",
+        "relatedHeading": "Panduan terkait"
       },
       "privacy": {
         "title": "Kebijakan Privasi — TempoEmails",

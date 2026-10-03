@@ -1,12 +1,21 @@
 ---
+import { useTranslation } from '../../i18n/utils';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = useTranslation(locale);
 ---
 
 <button
   id="theme-toggle-btn"
   type="button"
-  aria-label="Toggle dark mode"
+  aria-label={t.a11y.toggleTheme}
   class="relative w-10 h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 shadow-xs hover:bg-white dark:hover:bg-zinc-700 transition-all duration-200 cursor-pointer text-[#202020] dark:text-[#fcfcfc]"
-  title="Toggle Light / Dark theme"
+  title={t.a11y.toggleTheme}
 >
   <!-- Sun Icon (shown in dark mode) -->
   <svg

@@ -104,5 +104,6 @@ export function getClientI18nPayload(locale: Locale) {
     relativeTime: t.relativeTime,
     historyDrawer: t.historyDrawer,
     common: t.common,
+    a11y: t.a11y,
   };
 }

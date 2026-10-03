@@ -60,6 +60,7 @@ const canonicalPath = Astro.url.pathname.endsWith('/')
 const canonicalURL = new URL(canonicalPath, siteUrl);
 const homeUrl = currentLocale === 'en' ? '/' : `/${currentLocale}/`;
 const blogUrl = getLocalizedPath('/blog/', currentLocale);
+const aboutUrl = getLocalizedPath('/about/', currentLocale);
 
 // Freshness signals: dateModified must be >= datePublished and reflect the
 // last editorial review. Falls back to publishDate when no review happened.
@@ -140,12 +141,12 @@ const articleSchema = publishDate
       author: {
         '@type': 'Organization',
         name: 'TempoEmails Editorial Team',
-        url: `${canonicalURL.origin}/about/`,
+        url: `${canonicalURL.origin}${aboutUrl}`,
       },
       editor: {
         '@type': 'Organization',
         name: 'TempoEmails Editorial Team',
-        url: `${canonicalURL.origin}/about/`,
+        url: `${canonicalURL.origin}${aboutUrl}`,
       },
       publisher: {
         '@type': 'Organization',
@@ -312,9 +313,9 @@ const relatedArticles = [...sameCategory, ...otherCategory].slice(0, 3);
 
     <!-- FAQ section (visible) — rendered when the page supplies faqItems -->
     {faqItems && faqItems.length > 0 && (
-      <section class="mt-14 space-y-4" aria-label="Frequently asked questions">
+      <section class="mt-14 space-y-4" aria-label={t.pages.blog.faqHeading}>
         <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc]">
-          Frequently Asked Questions
+          {t.pages.blog.faqHeading}
         </h2>
         <div class="space-y-3">
           {faqItems.map((f) => (
@@ -335,7 +336,7 @@ const relatedArticles = [...sameCategory, ...otherCategory].slice(0, 3);
       <section class="mt-14" aria-label="Related guides">
         <div class="flex items-center justify-between gap-3 mb-5">
           <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc]">
-            Related Guides
+            {t.pages.blog.relatedHeading}
           </h2>
           {category && (
             <a href={blogUrl} class="text-xs font-semibold text-[#ea2804] hover:underline shrink-0">
