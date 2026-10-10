@@ -149,7 +149,22 @@ async function handleServerRequest(req, res) {
     return;
   }
   // Collapse duplicate slashes (e.g. //contact/ -> /contact/)
-  const cleanPathname = pathname.replace(/\/+/g, '/');
+  let cleanPathname = pathname.replace(/\/+/g, '/');
+
+  // `/index.html` is a static-build artefact, not a public URL. Left alone the
+  // server answers 200 for both /about/ and /about/index.html, so every page on
+  // the site gets a duplicate twin — the exact shape Google reports as
+  // "Duplicate without user-selected canonical". Fold the artefact into the
+  // single-hop canonicalisation below rather than serving it.
+  if (/\/index\.html$/.test(cleanPathname)) {
+    const withoutIndex = cleanPathname.slice(0, -'index.html'.length);
+    const dirIndex = path.join(DIST_DIR, path.normalize(withoutIndex), 'index.html');
+    // Only rewrite when the directory it names really exists: /nope/index.html
+    // must 404 on its own path instead of 301ing into a dead end.
+    if (fs.existsSync(dirIndex) && fs.statSync(dirIndex).isFile()) {
+      cleanPathname = withoutIndex;
+    }
+  }
 
   let safePath = path.normalize(cleanPathname).replace(/^(\.\.[\/\\])+/, '');
   let filePath = path.join(DIST_DIR, safePath);
@@ -240,8 +255,13 @@ async function handleServerRequest(req, res) {
     filePath = path.join(filePath, 'index.html');
   }
 
+  // The 404 documents are templates, never pages. Serving them with a 200 turns
+  // /404.html (and /<locale>/404.html) into a soft 404, so fall through to the
+  // not-found branch below, which returns the same body with a real 404 status.
+  const isNotFoundDocument = /(^|[\\/])404\.html$/.test(filePath);
+
   // Check if file exists; if not, render 404
-  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+  if (isNotFoundDocument || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
     // 404 fallback: prefer a localized 404 page when the path starts with a
     // supported locale prefix, otherwise use the root 404 page. Astro emits
     // both layouts (404.html and 404/index.html) depending on config.

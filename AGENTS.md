@@ -25,6 +25,13 @@ Do not gate dev/prod behaviour on `NODE_ENV` — the Dockerfile and
 `nixpacks.toml` both export `NODE_ENV=production`, which silently turns dev
 behaviour on. `astro.config.mjs` detects `dev`/`preview` from argv instead.
 
+Canonical URLs are `https://tempoemails.com/<path>/` and nothing else.
+`server.mjs` must resolve scheme, host, duplicate slashes, `/index.html` and the
+trailing slash into a **single** 301; never add a second redirect hop and never
+serve a non-canonical form with a 200. Search Console's "Page with redirect"
+bucket is expected output, not a bug — read the Canonical URLs section of the
+README before "fixing" it.
+
 ## Key Architecture
 
 ### App + Content Pages

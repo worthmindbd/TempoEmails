@@ -210,6 +210,53 @@ All state lives in `localStorage` via `StorageManager`:
 
 ---
 
+## 🔀 Canonical URLs, Redirects & Index Coverage
+
+There is exactly **one** indexable URL per page: `https://tempoemails.com/<path>/`
+(apex host, HTTPS, always a trailing slash). `server.mjs` folds every other form
+into that URL with a **single 301** — the scheme upgrade, the apex/`www` choice,
+the duplicate-slash collapse, the drop of `/index.html`, and the trailing slash
+are all resolved in the same hop, so Google never has to follow a chain.
+`/404.html` and `/<locale>/404.html` are templates and answer with a real `404`,
+never a `200` (soft 404).
+
+This matters for Search Console. Google's **Page indexing → Page with redirect**
+report lists URLs such as the ones below, and it is **working as intended** —
+each is a permanent redirect to a live, self-canonical, sitemapped page:
+
+| Reported URL | Resolves to (1 hop) |
+|---|---|
+| `http://tempoemails.com/` | `https://tempoemails.com/` |
+| `http://www.tempoemails.com/` / `https://www.tempoemails.com/` | `https://tempoemails.com/` |
+| `https://tempoemails.com/contact` | `https://tempoemails.com/contact/` |
+| `https://tempoemails.com/blog/<slug>` | `https://tempoemails.com/blog/<slug>/` |
+
+The bucket is informational, not an error. It cannot be driven to zero and its
+**Validate fix** button will always fail, because Google re-crawls those URLs and
+correctly sees the same 301 again. Judge health by whether the *canonical* URLs
+are indexed, not by this count. Do not "fix" it by serving the non-canonical form
+with a 200 — that reintroduces duplicate content. See commit `eb3b4ae`
+(2026-08-26), which switched the internal link graph to trailing slashes and
+turned the previously-indexed no-slash URLs into redirects.
+
+Two items live outside this repo and can still shrink the report:
+
+1. **Cloudflare's "Always Use HTTPS"** upgrade runs at the edge and preserves the
+   path verbatim, so `http://tempoemails.com/contact` gains a second hop
+   (`https://tempoemails.com/contact` → `…/contact/`) before the origin ever sees
+   it. Confirm the origin handles the scheme upgrade in one hop
+   (`curl -H 'X-Forwarded-Proto: http' …`), then either disable the edge rule and
+   let `server.mjs` redirect (it returns the absolute Location *and* HSTS), or add
+   a Cloudflare Single Redirect rule that also appends the trailing slash.
+2. **HSTS preload is advertised but not submitted.** The site sends
+   `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`, yet
+   `https://hstspreload.org/api/v2/status?domain=tempoemails.com` reports
+   `"status": "unknown"`. Because both browsers and Googlebot honour the preload
+   list, submitting the domain is what actually stops `http://` variants from
+   being discovered and crawled at all.
+
+---
+
 ## 📄 License
 
 MIT
