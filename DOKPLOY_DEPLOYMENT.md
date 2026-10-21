@@ -15,6 +15,7 @@ Refer to [`prod.env`](./prod.env):
 | `SITE_URL` | Canonical public URL (drives redirects, `Astro.site`, canonical/hreflang tags) | `https://tempoemails.com` | **Build time** (baked into static HTML) |
 | `PORT` | Port the Node server listens on | `4321` | Runtime |
 | `HOST` | Bind address | `0.0.0.0` | Runtime |
+| `TRUST_PROXY` | Number of reverse proxies in front of the Node server. Preset to `1` in `nixpacks.toml`. Without it every visitor shares Traefik's IP and therefore one `/api/mail` rate-limit bucket (60 req/min for the whole site). Use `1` for Traefik alone, `2` if Cloudflare (proxied) sits in front of Traefik. | `1` | Runtime |
 | `PUBLIC_GOOGLE_ANALYTICS_ID` | Google Analytics 4 Measurement ID | `G-XXXXXXXXXX` | **Build time** (baked into HTML) |
 | `PUBLIC_GOOGLE_ADSENSE_ID` | Google AdSense Publisher ID | `ca-pub-XXXXXXXXXXXXXXXX` | **Build time** (baked into HTML) |
 
@@ -37,6 +38,7 @@ Refer to [`prod.env`](./prod.env):
 6. In the **Environment Variables** tab:
    - Paste the contents of your [`prod.env`](./prod.env) file.
    - Make sure `SITE_URL` matches your public domain (it controls canonical redirects and SEO tags) and that all `PUBLIC_*` values are set **before** the build step.
+   - `TRUST_PROXY=1` is preset in `nixpacks.toml`; set `TRUST_PROXY=2` here if Cloudflare (proxied) sits in front of Traefik.
 7. In the **Domains** tab:
    - Click **Add Domain**.
    - **Domain**: `tempoemails.com` (and optionally `www.tempoemails.com`).

@@ -93,7 +93,7 @@ For step-by-step instructions, see [DOKPLOY_DEPLOYMENT.md](./DOKPLOY_DEPLOYMENT.
 | `PORT` | `4321` | Port for `server.mjs` |
 | `HOST` | `0.0.0.0` | Bind address for `server.mjs` |
 | `SITE_URL` | `https://tempoemails.com` | Canonical domain, used for redirects and build-time URLs |
-| `TRUST_PROXY` | *(unset)* | Set to `1`/`true` **only** when a reverse proxy you control sets/overwrites `X-Forwarded-For`. The `/api/mail/*` per-IP rate limiter uses the socket address by default, because a client-supplied `X-Forwarded-For` would let anyone bypass it. |
+| `TRUST_PROXY` | *(unset)* | Number of reverse proxies you control in front of `server.mjs` (`1`/`true` = one, e.g. Traefik; `2` = Cloudflare → Traefik). The `/api/mail/*` rate limiter then reads the client IP that many entries from the **right** of `X-Forwarded-For`, never the client-supplied leftmost entry. Unset, it uses the socket address — behind a proxy that means every visitor shares one bucket, so set it on Dokploy. |
 | `PUBLIC_GOOGLE_ANALYTICS_ID` | *(unset)* | GA4 measurement ID (loaded only after cookie consent) |
 | `PUBLIC_GOOGLE_ADSENSE_ID` | *(unset)* | AdSense publisher ID (loaded only after cookie consent) |
 
@@ -112,11 +112,10 @@ src/
 │   ├── about.astro, contact.astro, privacy-policy.astro, terms-of-service.astro, disclaimer.astro
 │   ├── blog/index.astro + blog/*.astro (15 articles)
 │   ├── 404.astro, [lang]/404.astro
-│   ├── robots.txt.ts, sitemap.xml.ts
+│   ├── robots.txt.ts (sitemap: @astrojs/sitemap → /sitemap-index.xml)
 ├── layouts/
 │   ├── Layout.astro             # Shell: SEO, fonts, theme, background, consent-gated analytics
 │   └── ContentLayout.astro      # Article shell: breadcrumbs, Article JSON-LD, link localizer
-├── middleware.ts                # /api/mail/* proxy for Astro-served runtimes (dev; prod uses server.mjs)
 ├── styles/
 │   └── global.css               # Tailwind v4 tokens, component classes, prose, motion
 ├── i18n/
@@ -168,7 +167,7 @@ src/
 │       ├── fetch-with-timeout.ts # AbortController fetch helper (10s)
 │       └── date-formatter.ts    # Relative time formatting
 └── server/
-    └── mail-proxy.mjs           # Shared /api/mail/* allowlist proxy (used by server.mjs, Vite plugin, middleware)
+    └── mail-proxy.mjs           # Shared /api/mail/* allowlist proxy (used by server.mjs and the astro dev Vite plugin)
 ```
 
 ---
@@ -231,6 +230,7 @@ each is a permanent redirect to a live, self-canonical, sitemapped page:
 | `http://www.tempoemails.com/` / `https://www.tempoemails.com/` | `https://tempoemails.com/` |
 | `https://tempoemails.com/contact` | `https://tempoemails.com/contact/` |
 | `https://tempoemails.com/blog/<slug>` | `https://tempoemails.com/blog/<slug>/` |
+| `https://tempoemails.com/sitemap.xml` | `https://tempoemails.com/sitemap-index.xml` (legacy alias; a nested sitemap index is invalid) |
 
 The bucket is informational, not an error. It cannot be driven to zero and its
 **Validate fix** button will always fail, because Google re-crawls those URLs and

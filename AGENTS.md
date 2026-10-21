@@ -17,8 +17,8 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 Dev server runs on `localhost:4321` with `host: true` for network access.
 
 `astro preview` serves the static build but **cannot** serve `/api/mail/*`: Astro 7
-strips user Vite plugins from the preview server and a static build never runs
-`src/middleware.ts`. Use `npm start` (server.mjs) to exercise the built output
+strips user Vite plugins from the preview server and a static build has no
+server runtime. Use `npm start` (server.mjs) to exercise the built output
 with the mail proxy.
 
 Do not gate dev/prod behaviour on `NODE_ENV` — the Dockerfile and
@@ -37,11 +37,10 @@ README before "fixing" it.
 ### App + Content Pages
 - `src/pages/index.astro` — English app entry, renders hero + MailboxManager + landing sections
 - `src/pages/[lang]/index.astro` — localized homepages (es, pt, fr, de, ru, zh, ja, ar, id)
-- `src/pages/blog/*.astro` (15 articles), `about/contact/privacy-policy/terms-of-service/disclaimer`, `404.astro`, `robots.txt.ts`, `sitemap.xml.ts`
+- `src/pages/blog/*.astro` (15 articles), `about/contact/privacy-policy/terms-of-service/disclaimer`, `404.astro`, `robots.txt.ts` (`/sitemap.xml` is a server.mjs 301 to `/sitemap-index.xml`)
 - `src/layouts/Layout.astro` — shell with SEO, fonts, theme init, background glow, consent-gated analytics
 - `src/layouts/ContentLayout.astro` — article shell (breadcrumbs, Article JSON-LD)
-- `src/middleware.ts` — `/api/mail/*` proxy for Astro-served runtimes (dev); production uses `server.mjs` + shared `server/mail-proxy.mjs`
-- `astro.config.mjs` — mounts the same proxy as Vite middleware in `astro dev`; no env gates (see Development)
+- `server/mail-proxy.mjs` — the one `/api/mail/*` allowlist proxy: `server.mjs` mounts it in production, `astro.config.mjs` mounts it as Vite middleware in `astro dev`; no env gates (see Development). There is no `src/middleware.ts` — it never ran (the Vite plugin answers first in dev, static builds run no middleware)
 
 ### Component Organisation
 - `src/components/app/` — core app components (MailboxManager is the central controller)
