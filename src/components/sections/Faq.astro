@@ -1,6 +1,5 @@
 ---
 import { useTranslation, getLocalizedPath } from '../../i18n/utils';
-import { stripLeadingEmoji } from '../../lib/utils/text';
 import type { Locale } from '../../i18n/languages';
 
 interface Props {
@@ -24,7 +23,7 @@ const faqs = [
 <section id="faq" class="px-5 sm:px-8 py-16 sm:py-24">
   <div class="max-w-6xl mx-auto grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-20">
     <div class="lg:sticky lg:top-28 self-start" data-reveal>
-      <p class="eyebrow mb-4">{stripLeadingEmoji(t.faq.badge)}</p>
+      <p class="eyebrow mb-4">{t.faq.badge}</p>
       <h2 class="section-title">{t.faq.title}</h2>
       <p class="mt-5 text-base text-muted leading-relaxed max-w-sm">{t.faq.subtitle}</p>
       <a href={contactUrl} class="btn btn-secondary mt-8">

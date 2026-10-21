@@ -350,7 +350,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "hero": {
       "chips": ["No sign-up","Auto OTP detection","Zero logs"],
       "worksWith": "Works with",
-      "badge": "⚡ Instant Temp Mail & 10 Minute Burner Inbox",
+      "badge": "Instant Temp Mail & 10 Minute Burner Inbox",
       "titleLine1": "Free Temp Mail.",
       "titleLine2": "Disposable Email in Seconds.",
       "subtitle": "Generate an instant disposable temporary email address. Receive signup verification codes, OTPs, and activation links with zero spam, zero logs, and no registration."
@@ -464,15 +464,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "deleteMessageDesc": "Are you sure you want to permanently delete this message?"
     },
     "cookieConsent": {
-      "title": "🍪 Cookie preferences",
+      "title": "Cookie preferences",
       "desc": "We use cookies to save your settings (such as dark mode and recent inboxes) and measure site traffic. Read our",
       "privacyPolicy": "Privacy Policy",
       "essentialOnly": "Essential Only",
       "acceptAll": "Accept All"
     },
     "toasts": {
-      "soundEnabled": "🔔 Sound notifications enabled",
-      "soundMuted": "🔕 Sound notifications muted",
+      "soundEnabled": "Sound notifications enabled",
+      "soundMuted": "Sound notifications muted",
       "initFailed": "Failed to initialize mailbox. Please try refreshing.",
       "messageDeleted": "Message deleted",
       "switchedTo": "Switched to {address}",
@@ -559,8 +559,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       ]
     },
     "otpShowcase": {
-      "badge": "⚡ Auto-Detected Verification Codes",
-      "title": "Receive OTP verification codes instantly on disposable email.",
+      "badge": "Auto-Detected Verification Codes",
+      "title": "Receive OTP verification codes",
       "subtitle": "TempoEmails automatically scans incoming messages to extract 4-to-8 digit OTP codes and one-time activation links the moment they arrive. Perfect for fast website registrations, app trials, and multi-platform account verification without email clutter.",
       "tag1": "4 to 8-Digit OTPs",
       "tag2": "1-Click Magic Links",
@@ -664,7 +664,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "home": "Home",
       "blog": "Blog",
       "backToHome": "Back to Home",
-      "allArticles": "← All Articles",
+      "allArticles": "All Articles",
       "readArticle": "Read article",
       "all": "All",
       "guide": "Guide",
@@ -740,7 +740,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "hero": {
       "chips": ["Sin registro","Detección automática de OTP","Cero registros"],
       "worksWith": "Funciona con",
-      "badge": "⚡ Correo Temporal Instantáneo y Buzón Desechable",
+      "badge": "Correo Temporal Instantáneo y Buzón Desechable",
       "titleLine1": "Correo Temporal Gratis.",
       "titleLine2": "Email Desechable en Segundos.",
       "subtitle": "Genera una dirección de correo temporal desechable al instante. Recibe códigos de verificación OTP y enlaces de activación sin spam, sin registros y con total privacidad."
@@ -854,15 +854,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "deleteMessageDesc": "¿Seguro que deseas eliminar este mensaje de forma permanente?"
     },
     "cookieConsent": {
-      "title": "🍪 Preferencias de Cookies",
+      "title": "Preferencias de Cookies",
       "desc": "Usamos cookies para guardar tus preferencias (como modo oscuro y buzones recientes) y medir visitas. Consulta nuestra",
       "privacyPolicy": "Política de Privacidad",
       "essentialOnly": "Solo Esenciales",
       "acceptAll": "Aceptar Todas"
     },
     "toasts": {
-      "soundEnabled": "🔔 Notificaciones con sonido activadas",
-      "soundMuted": "🔕 Notificaciones silenciadas",
+      "soundEnabled": "Notificaciones con sonido activadas",
+      "soundMuted": "Notificaciones silenciadas",
       "initFailed": "Error al inicializar el buzón. Por favor, recarga.",
       "messageDeleted": "Mensaje eliminado",
       "switchedTo": "Cambiado a {address}",
@@ -949,7 +949,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       ]
     },
     "otpShowcase": {
-      "badge": "⚡ Detección Automática de Códigos",
+      "badge": "Detección Automática de Códigos",
       "title": "Recibe códigos OTP de verificación al instante en tu email temporal.",
       "subtitle": "TempoEmails analiza automáticamente los mensajes entrantes para extraer códigos de 4 a 8 dígitos y enlaces de activación de un solo uso. Ideal para registros rápidos y pruebas de aplicaciones sin saturar tu correo personal.",
       "tag1": "Códigos OTP de 4 a 8 Dígitos",
@@ -1054,7 +1054,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "home": "Inicio",
       "blog": "Blog",
       "backToHome": "Volver al Inicio",
-      "allArticles": "← Todos los Artículos",
+      "allArticles": "Todos los Artículos",
       "readArticle": "Leer artículo",
       "all": "Todos",
       "guide": "Guía",
@@ -1130,7 +1130,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "hero": {
       "chips": ["Sem cadastro","Detecção automática de OTP","Zero registros"],
       "worksWith": "Funciona com",
-      "badge": "⚡ Email Temporário Instantâneo e Caixa Descartável",
+      "badge": "Email Temporário Instantâneo e Caixa Descartável",
       "titleLine1": "Email Temporário Grátis.",
       "titleLine2": "Email Descartável em Segundos.",
       "subtitle": "Gere um endereço de email temporário e descartável em um clique. Receba códigos OTP e links de ativação com zero spam, sem logs e sem cadastro."
@@ -1244,15 +1244,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "deleteMessageDesc": "Deseja excluir permanentemente esta mensagem?"
     },
     "cookieConsent": {
-      "title": "🍪 Preferências de Cookies",
+      "title": "Preferências de Cookies",
       "desc": "Usamos cookies para salvar suas preferências (como modo escuro e caixas recentes) e monitorar tráfego. Veja nossa",
       "privacyPolicy": "Política de Privacidade",
       "essentialOnly": "Apenas Essenciais",
       "acceptAll": "Aceitar Todos"
     },
     "toasts": {
-      "soundEnabled": "🔔 Notificações sonoras ativadas",
-      "soundMuted": "🔕 Notificações sonoras silenciadas",
+      "soundEnabled": "Notificações sonoras ativadas",
+      "soundMuted": "Notificações sonoras silenciadas",
       "initFailed": "Falha ao iniciar caixa postal. Recarregue a página.",
       "messageDeleted": "Mensagem excluída",
       "switchedTo": "Alternado para {address}",
@@ -1339,7 +1339,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       ]
     },
     "otpShowcase": {
-      "badge": "⚡ Extração Automática de Códigos",
+      "badge": "Extração Automática de Códigos",
       "title": "Receba códigos OTP de verificação instantaneamente no email temporário.",
       "subtitle": "O TempoEmails analisa mensagens recebidas para identificar códigos de 4 a 8 dígitos e links de ativação no segundo em que chegam.",
       "tag1": "Códigos OTP de 4 a 8 Dígitos",
@@ -1444,7 +1444,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "home": "Início",
       "blog": "Blog",
       "backToHome": "Voltar ao Início",
-      "allArticles": "← Todos os Artigos",
+      "allArticles": "Todos os Artigos",
       "readArticle": "Ler artigo",
       "all": "Todos",
       "guide": "Guia",
@@ -1520,7 +1520,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "hero": {
       "chips": ["Sans inscription","Détection auto des OTP","Zéro journal"],
       "worksWith": "Compatible avec",
-      "badge": "⚡ Email Temporaire Instantané & Boîte Jetable 10 Minutes",
+      "badge": "Email Temporaire Instantané & Boîte Jetable 10 Minutes",
       "titleLine1": "Email Temporaire Gratuit.",
       "titleLine2": "Email Jetable en Quelques Secondes.",
       "subtitle": "Générez une adresse email temporaire jetable en un clic. Recevez vos codes de vérification OTP et liens d’activation sans spam, sans journaux et sans inscription."
@@ -1634,15 +1634,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "deleteMessageDesc": "Voulez-vous supprimer définitivement ce message ?"
     },
     "cookieConsent": {
-      "title": "🍪 Préférences de Cookies",
+      "title": "Préférences de Cookies",
       "desc": "Nous utilisons des cookies pour conserver vos réglages (thème sombre, boîtes récentes) et analyser le trafic. Voir notre",
       "privacyPolicy": "Politique de Confidentialité",
       "essentialOnly": "Essentiels Seuls",
       "acceptAll": "Tout Accepter"
     },
     "toasts": {
-      "soundEnabled": "🔔 Notifications sonores activées",
-      "soundMuted": "🔕 Notifications sonores désactivées",
+      "soundEnabled": "Notifications sonores activées",
+      "soundMuted": "Notifications sonores désactivées",
       "initFailed": "Échec de l’initialisation. Veuillez actualiser.",
       "messageDeleted": "Message supprimé",
       "switchedTo": "Basculé sur {address}",
@@ -1729,7 +1729,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       ]
     },
     "otpShowcase": {
-      "badge": "⚡ Détection Automatique de Codes",
+      "badge": "Détection Automatique de Codes",
       "title": "Recevez instantanément vos codes OTP sur un email jetable.",
       "subtitle": "TempoEmails détecte automatiquement les codes de vérification de 4 à 8 chiffres et les liens d’activation dès leur réception.",
       "tag1": "Codes OTP de 4 à 8 Chiffres",
@@ -1834,7 +1834,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "home": "Accueil",
       "blog": "Blog",
       "backToHome": "Retour à l'Accueil",
-      "allArticles": "← Tous les Articles",
+      "allArticles": "Tous les Articles",
       "readArticle": "Lire l'article",
       "all": "Tous",
       "guide": "Guide",
@@ -1910,7 +1910,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "hero": {
       "chips": ["Ohne Anmeldung","Automatische OTP-Erkennung","Keine Logs"],
       "worksWith": "Funktioniert mit",
-      "badge": "⚡ Sofortige Wegwerf-Email & 10-Minuten-Postfach",
+      "badge": "Sofortige Wegwerf-Email & 10-Minuten-Postfach",
       "titleLine1": "Kostenlose Temporäre Email.",
       "titleLine2": "Wegwerf-Email in Sekunden.",
       "subtitle": "Erstelle mit einem Klick eine anonyme Wegwerf-Email Adresse. Empfange Bestätigungscodes, OTPs und Aktivierungslinks ohne Spam, ohne Logs und ohne Registrierung."
@@ -2024,15 +2024,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "deleteMessageDesc": "Möchtest du diese Nachricht dauerhaft löschen?"
     },
     "cookieConsent": {
-      "title": "🍪 Cookie-Einstellungen",
+      "title": "Cookie-Einstellungen",
       "desc": "Wir nutzen Cookies für deine Einstellungen (wie Dark Mode und letzte Postfächer) und Besucherstatistiken. Siehe unsere",
       "privacyPolicy": "Datenschutzerklärung",
       "essentialOnly": "Nur Notwendige",
       "acceptAll": "Alle Akzeptieren"
     },
     "toasts": {
-      "soundEnabled": "🔔 Benachrichtigungston aktiviert",
-      "soundMuted": "🔕 Benachrichtigungston stummgeschaltet",
+      "soundEnabled": "Benachrichtigungston aktiviert",
+      "soundMuted": "Benachrichtigungston stummgeschaltet",
       "initFailed": "Postfach konnte nicht initialisiert werden. Bitte neu laden.",
       "messageDeleted": "Nachricht gelöscht",
       "switchedTo": "Gewechselt zu {address}",
@@ -2119,7 +2119,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       ]
     },
     "otpShowcase": {
-      "badge": "⚡ Automatische Code-Erkennung",
+      "badge": "Automatische Code-Erkennung",
       "title": "Erhalte OTP-Bestätigungscodes sofort in deiner Wegwerf-Email.",
       "subtitle": "TempoEmails durchsucht eingehende Emails automatisch nach 4- bis 8-stelligen OTP-Codes und Aktivierungslinks, sobald sie eintreffen.",
       "tag1": "4- bis 8-stellige OTPs",
@@ -2224,7 +2224,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "home": "Startseite",
       "blog": "Blog",
       "backToHome": "Zurück zur Startseite",
-      "allArticles": "← Alle Artikel",
+      "allArticles": "Alle Artikel",
       "readArticle": "Artikel lesen",
       "all": "Alle",
       "guide": "Leitfaden",
@@ -2300,7 +2300,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "hero": {
       "chips": ["Без регистрации","Автоопределение OTP","Никаких логов"],
       "worksWith": "Работает с",
-      "badge": "⚡ Мгновенная Временная Почта и Одноразовый Ящик",
+      "badge": "Мгновенная Временная Почта и Одноразовый Ящик",
       "titleLine1": "Бесплатная Временная Почта.",
       "titleLine2": "Одноразовый Email за Секунды.",
       "subtitle": "Создайте одноразовый временный email в один клик. Получайте коды подтверждения OTP и ссылки активации без спама, логов и регистрации."
@@ -2414,15 +2414,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "deleteMessageDesc": "Вы уверены, что хотите навсегда удалить это сообщение?"
     },
     "cookieConsent": {
-      "title": "🍪 Настройки Cookie",
+      "title": "Настройки Cookie",
       "desc": "Мы используем cookie для сохранения настроек (тема, недавние ящики) и анализа посещаемости. Читайте нашу",
       "privacyPolicy": "Политику Конфиденциальности",
       "essentialOnly": "Только Необходимые",
       "acceptAll": "Принять Все"
     },
     "toasts": {
-      "soundEnabled": "🔔 Звуковые уведомления включены",
-      "soundMuted": "🔕 Звуковые уведомления выключены",
+      "soundEnabled": "Звуковые уведомления включены",
+      "soundMuted": "Звуковые уведомления выключены",
       "initFailed": "Не удалось инициализировать почту. Пожалуйста, обновите страницу.",
       "messageDeleted": "Письмо удалено",
       "switchedTo": "Переключено на {address}",
@@ -2509,7 +2509,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       ]
     },
     "otpShowcase": {
-      "badge": "⚡ Автоматический Поиск Кодов",
+      "badge": "Автоматический Поиск Кодов",
       "title": "Мгновенно получайте OTP-коды подтверждения на временную почту.",
       "subtitle": "TempoEmails моментально сканирует входящие сообщения и извлекает коды подтверждения из 4–8 цифр и ссылки активации.",
       "tag1": "Коды OTP из 4–8 Цифр",
@@ -2614,7 +2614,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "home": "Главная",
       "blog": "Блог",
       "backToHome": "На главную",
-      "allArticles": "← Все статьи",
+      "allArticles": "Все статьи",
       "readArticle": "Читать статью",
       "all": "Все",
       "guide": "Руководство",
@@ -2690,7 +2690,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "hero": {
       "chips": ["无需注册","自动识别验证码","零日志"],
       "worksWith": "适用于",
-      "badge": "⚡ 即时临时邮箱与10分钟一次性收件箱",
+      "badge": "即时临时邮箱与10分钟一次性收件箱",
       "titleLine1": "免费临时邮箱。",
       "titleLine2": "数秒内生成一次性邮箱。",
       "subtitle": "一键生成即时一次性临时电子邮箱地址。秒收验证码、OTP与激活链接，零垃圾邮件、零日志、免注册。"
@@ -2804,15 +2804,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "deleteMessageDesc": "您确定要彻底删除该邮件吗？"
     },
     "cookieConsent": {
-      "title": "🍪 Cookie 偏好设置",
+      "title": "Cookie 偏好设置",
       "desc": "我们使用 Cookie 储存您的个性化设置（如深色模式和历史邮箱）并统计访问量。请参阅我们的",
       "privacyPolicy": "隐私政策",
       "essentialOnly": "仅必要 Cookie",
       "acceptAll": "全部同意"
     },
     "toasts": {
-      "soundEnabled": "🔔 已开启邮件提示音",
-      "soundMuted": "🔕 已静音邮件提示音",
+      "soundEnabled": "已开启邮件提示音",
+      "soundMuted": "已静音邮件提示音",
       "initFailed": "邮箱初始化失败，请尝试刷新页面。",
       "messageDeleted": "邮件已删除",
       "switchedTo": "已切换至 {address}",
@@ -2899,7 +2899,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       ]
     },
     "otpShowcase": {
-      "badge": "⚡ 智能识别验证码",
+      "badge": "智能识别验证码",
       "title": "在临时邮箱中即时提取验证码与激活链接。",
       "subtitle": "TempoEmails 会在邮件送达的第一时间自动扫描邮件内容，精准提取4-8位OTP数字验证码及确认链接，提供一键快捷复制。",
       "tag1": "4至8位数字验证码",
@@ -3004,7 +3004,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "home": "首页",
       "blog": "博客",
       "backToHome": "返回首页",
-      "allArticles": "← 所有文章",
+      "allArticles": "所有文章",
       "readArticle": "阅读全文",
       "all": "全部",
       "guide": "指南",
@@ -3080,7 +3080,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "hero": {
       "chips": ["登録不要","OTPを自動検出","ログなし"],
       "worksWith": "対応サービス",
-      "badge": "⚡ 即時発行の捨てメアド＆10分間使い捨てメール",
+      "badge": "即時発行の捨てメアド＆10分間使い捨てメール",
       "titleLine1": "無料捨てメアド。",
       "titleLine2": "数秒で使い捨てアドレス作成。",
       "subtitle": "ワンクリックで使い捨てメールアドレスを発行。スパムやログ、個人情報登録なしで認証コードや確認メールを即座に受信できます。"
@@ -3194,15 +3194,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "deleteMessageDesc": "このメールを完全に削除してもよろしいですか？"
     },
     "cookieConsent": {
-      "title": "🍪 Cookie の設定",
+      "title": "Cookie の設定",
       "desc": "ダークモードやアドレス履歴の保持、アクセス解析のために Cookie を使用しています。詳しくは",
       "privacyPolicy": "プライバシーポリシー",
       "essentialOnly": "必須のみ",
       "acceptAll": "すべて同意"
     },
     "toasts": {
-      "soundEnabled": "🔔 通知音をオンにしました",
-      "soundMuted": "🔕 通知音をオフにしました",
+      "soundEnabled": "通知音をオンにしました",
+      "soundMuted": "通知音をオフにしました",
       "initFailed": "初期化に失敗しました。ページを再読み込みしてください。",
       "messageDeleted": "メールを削除しました",
       "switchedTo": "切り替えました: {address}",
@@ -3289,7 +3289,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       ]
     },
     "otpShowcase": {
-      "badge": "⚡ 自動認証コード解析",
+      "badge": "自動認証コード解析",
       "title": "届いたメールの認証コードを瞬時に抽出。",
       "subtitle": "TempoEmailsはメールを受信した瞬間に4〜8桁のOTPコードや有効化リンクを自動解析し、ワンクリックでコピーできるように表示します。",
       "tag1": "4〜8桁の確認コード",
@@ -3394,7 +3394,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "home": "ホーム",
       "blog": "ブログ",
       "backToHome": "ホームに戻る",
-      "allArticles": "← すべての記事",
+      "allArticles": "すべての記事",
       "readArticle": "記事を読む",
       "all": "すべて",
       "guide": "ガイド",
@@ -3470,7 +3470,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "hero": {
       "chips": ["بدون تسجيل","اكتشاف تلقائي لرموز OTP","بدون سجلات"],
       "worksWith": "يعمل مع",
-      "badge": "⚡ بريد إلكتروني مؤقت وفوري لمدة 10 دقائق",
+      "badge": "بريد إلكتروني مؤقت وفوري لمدة 10 دقائق",
       "titleLine1": "بريد مؤقت مجاني.",
       "titleLine2": "إيميل وهمي في ثوانٍ معدودة.",
       "subtitle": "أنشئ عنوان بريد إلكتروني مؤقت فوراً بنقرة واحدة. استقبل رموز التحقق OTP وروابط التفعيل بدون رسائل مزعجة وبلا تسجيل."
@@ -3584,15 +3584,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "deleteMessageDesc": "هل تريد حذف هذه الرسالة نهائياً؟"
     },
     "cookieConsent": {
-      "title": "🍪 إعدادات ملفات تعريف الارتباط",
+      "title": "إعدادات ملفات تعريف الارتباط",
       "desc": "نستخدم ملفات تعريف الارتباط لحفظ تفضيلاتك وقياس زيارات الموقع. اطلع على",
       "privacyPolicy": "سياسة الخصوصية",
       "essentialOnly": "الضرورية فقط",
       "acceptAll": "قبول الكل"
     },
     "toasts": {
-      "soundEnabled": "🔔 تم تفعيل التنبيهات الصوتية",
-      "soundMuted": "🔕 تم كتم التنبيهات الصوتية",
+      "soundEnabled": "تم تفعيل التنبيهات الصوتية",
+      "soundMuted": "تم كتم التنبيهات الصوتية",
       "initFailed": "فشل تهيئة البريد. يرجى تحديث الصفحة.",
       "messageDeleted": "تم حذف الرسالة",
       "switchedTo": "تم التبديل إلى {address}",
@@ -3679,7 +3679,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       ]
     },
     "otpShowcase": {
-      "badge": "⚡ كشف تلقائي لأكواد التحقق",
+      "badge": "كشف تلقائي لأكواد التحقق",
       "title": "استقبل رموز التحقق OTP فوراً عبر البريد المؤقت.",
       "subtitle": "يقوم TempoEmails تلقائياً بفحص الرسائل الواردة واستخراج رموز التفعيل المكونة من 4 إلى 8 أرقام فور وصولها.",
       "tag1": "رموز OTP من 4 إلى 8 أرقام",
@@ -3784,7 +3784,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "home": "الرئيسية",
       "blog": "المدونة",
       "backToHome": "العودة للرئيسية",
-      "allArticles": "← جميع المقالات",
+      "allArticles": "جميع المقالات",
       "readArticle": "اقرأ المقال",
       "all": "الكل",
       "guide": "دليل",
@@ -3860,7 +3860,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "hero": {
       "chips": ["Tanpa daftar","Deteksi OTP otomatis","Tanpa log"],
       "worksWith": "Kompatibel dengan",
-      "badge": "⚡ Email Sementara Cepat & Kotak Masuk 10 Menit",
+      "badge": "Email Sementara Cepat & Kotak Masuk 10 Menit",
       "titleLine1": "Email Sementara Gratis.",
       "titleLine2": "Email Sekali Pakai dalam Hitungan Detik.",
       "subtitle": "Buat alamat email sementara sekali pakai dalam satu klik. Terima kode verifikasi OTP dan tautan aktivasi tanpa spam, tanpa log, dan tanpa registrasi."
@@ -3974,15 +3974,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "deleteMessageDesc": "Apakah Anda yakin ingin menghapus pesan ini secara permanen?"
     },
     "cookieConsent": {
-      "title": "🍪 Preferensi Cookie",
+      "title": "Preferensi Cookie",
       "desc": "Kami menggunakan cookie untuk menyimpan setelan (seperti mode gelap dan riwayat email) dan memantau lalu lintas. Baca",
       "privacyPolicy": "Kebijakan Privasi",
       "essentialOnly": "Hanya yang Penting",
       "acceptAll": "Terima Semua"
     },
     "toasts": {
-      "soundEnabled": "🔔 Suara notifikasi diaktifkan",
-      "soundMuted": "🔕 Suara notifikasi dibisukan",
+      "soundEnabled": "Suara notifikasi diaktifkan",
+      "soundMuted": "Suara notifikasi dibisukan",
       "initFailed": "Gagal memuat kotak masuk. Silakan muat ulang halaman.",
       "messageDeleted": "Pesan berhasil dihapus",
       "switchedTo": "Beralih ke {address}",
@@ -4069,7 +4069,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       ]
     },
     "otpShowcase": {
-      "badge": "⚡ Deteksi Kode Otomatis",
+      "badge": "Deteksi Kode Otomatis",
       "title": "Terima kode OTP verifikasi secara instan di email sementara.",
       "subtitle": "TempoEmails secara otomatis membaca pesan masuk untuk mengekstrak 4–8 digit kode verifikasi dan tautan aktivasi tepat saat email diterima.",
       "tag1": "4 sampai 8 Digit Kode OTP",
@@ -4174,7 +4174,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "home": "Beranda",
       "blog": "Blog",
       "backToHome": "Kembali ke Beranda",
-      "allArticles": "← Semua Artikel",
+      "allArticles": "Semua Artikel",
       "readArticle": "Baca artikel",
       "all": "Semua",
       "guide": "Panduan",

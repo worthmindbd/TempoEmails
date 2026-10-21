@@ -2,10 +2,22 @@ import type { Locale } from './languages';
 import { SITE_CONFIG } from '../lib/config';
 
 export interface AboutFeatureItem {
-  icon: string;
   title: string;
   desc: string;
 }
+
+/**
+ * Icon name (see `src/components/ui/Icon.astro`) for each entry of
+ * `AboutPageData.features`, in order. Icons are presentation, not copy,
+ * so they live here once instead of per-locale.
+ */
+export const ABOUT_FEATURE_ICONS = [
+  'zap',
+  'inbox',
+  'smartphone',
+  'globe',
+  'shield',
+] as const;
 
 export interface AboutPrincipleItem {
   label: string;
@@ -83,27 +95,22 @@ export const ABOUT_PAGE_CONTENT: Record<Locale, AboutPageData> = {
     whyP2: "We wanted something better: a clean, fast, privacy-first tool that just works.",
     features: [
       {
-        icon: "⚡",
         title: "Automatic Code Detection",
         desc: "No more searching through long promotional emails. TempoEmails automatically detects 4-to-8 digit OTP codes and activation links, pinning them to the top with a one-click copy button.",
       },
       {
-        icon: "📬",
         title: "Live Auto-Refreshing Inbox",
         desc: "Incoming emails land in your browser within seconds. The inbox updates automatically every 10 seconds, so you don't have to keep clicking refresh.",
       },
       {
-        icon: "📱",
         title: "Mobile QR Code Scanner",
         desc: "Need to sign up on your phone while browsing on your computer? Scan the QR code on your screen to open or copy your active temporary inbox on mobile instantly.",
       },
       {
-        icon: "🌐",
         title: "Active Domain Pool",
         desc: "We maintain multiple deliverable domain names. If a particular site blocks one domain, simply click 'Change' or 'Custom' to switch to another active domain.",
       },
       {
-        icon: "🔒",
         title: "Zero Logs & Total Anonymity",
         desc: "We don't log your personal identity or track your activity. Your messages live temporarily in memory and are permanently purged when your session ends.",
       },
@@ -140,27 +147,22 @@ export const ABOUT_PAGE_CONTENT: Record<Locale, AboutPageData> = {
     whyP2: "Queríamos algo infinitamente superior: una herramienta limpia, ultrarrápida, centrada en la privacidad y que simplemente funcione.",
     features: [
       {
-        icon: "⚡",
         title: "Detección automática de códigos OTP",
         desc: "Olvídese de buscar entre correos promocionales extensos. TempoEmails detecta automáticamente códigos de 4 a 8 dígitos y enlaces de activación, fijándolos en la parte superior con un botón de copia inmediata.",
       },
       {
-        icon: "📬",
         title: "Bandeja en tiempo real y auto-actualizada",
         desc: "Los correos entrantes aparecen en su pantalla en segundos. La bandeja se actualiza automáticamente cada 10 segundos sin necesidad de recargar la página.",
       },
       {
-        icon: "📱",
         title: "Escáner de código QR para móviles",
         desc: "¿Necesita registrarse en el móvil mientras navega en su ordenador? Escanee el código QR en pantalla para abrir o copiar su dirección temporal al instante.",
       },
       {
-        icon: "🌐",
         title: "Grupo de dominios activos en rotación",
         desc: "Mantenemos múltiples dominios de alta entregabilidad. Si un sitio web bloquea un dominio, pulse 'Cambiar' o 'Personalizado' para alternar a otro dominio activo.",
       },
       {
-        icon: "🔒",
         title: "Cero registros y anonimato absoluto",
         desc: "No registramos su identidad personal ni rastreamos su navegación. Sus mensajes se procesan en memoria volátil y se eliminan permanentemente al cerrar la sesión.",
       },
@@ -197,27 +199,22 @@ export const ABOUT_PAGE_CONTENT: Record<Locale, AboutPageData> = {
     whyP2: "Queríamos algo muito melhor: uma ferramenta limpa, ágil, com foco absoluto na privacidade e que simplesmente funcione.",
     features: [
       {
-        icon: "⚡",
         title: "Detecção Automática de Códigos OTP",
         desc: "Chega de garimpar códigos em emails longos. O TempoEmails localiza instantaneamente códigos de 4 a 8 dígitos e links de ativação, fixando-os no topo com um botão de cópia em um clique.",
       },
       {
-        icon: "📬",
         title: "Caixa em Tempo Real com Auto-Refresh",
         desc: "Mensagens recebidas surgem na sua tela em poucos segundos. A caixa atualiza a cada 10 segundos sem que você precise clicar em recarregar.",
       },
       {
-        icon: "📱",
         title: "Leitor de QR Code para Celular",
         desc: "Precisa concluir um cadastro no celular enquanto navega no computador? Escaneie o QR Code na tela para abrir ou copiar sua caixa descartável no smartphone.",
       },
       {
-        icon: "🌐",
         title: "Conjunto de Domínios Ativos",
         desc: "Mantemos múltiplos domínios limpos em rotação contínua. Caso um site rejeite um domínio, basta clicar em 'Mudar' ou 'Personalizar' para usar outro domínio funcional.",
       },
       {
-        icon: "🔒",
         title: "Zero Logs e Anonimato Total",
         desc: "Não rastreamos seu IP nem registramos dados pessoais. Os emails ficam temporariamente na memória e são destruídos permanentemente após a expiração.",
       },
@@ -254,27 +251,22 @@ export const ABOUT_PAGE_CONTENT: Record<Locale, AboutPageData> = {
     whyP2: "Nous voulions proposer une expérience irréprochable : un outil épuré, ultra-rapide, respectueux de votre vie privée et d'une simplicité absolue.",
     features: [
       {
-        icon: "⚡",
         title: "Détection automatique des codes OTP",
         desc: "Fini la recherche fastidieuse dans des courriels interminables. TempoEmails extrait automatiquement les codes à 4-8 chiffres et les liens d'activation en tête de message avec copie en un clic.",
       },
       {
-        icon: "📬",
         title: "Boîte en temps réel avec auto-actualisation",
         desc: "Vos courriels s'affichent instantanément en quelques secondes. L'inbox se rafraîchit automatiquement toutes les 10 secondes sans aucune action manuelle.",
       },
       {
-        icon: "📱",
         title: "Scanner QR Code pour mobile",
         desc: "Besoin de vous inscrire sur mobile depuis votre poste fixe ? Flashez le QR code affiché à l'écran pour récupérer ou ouvrir votre boîte temporaire sur smartphone.",
       },
       {
-        icon: "🌐",
         title: "Pool de domaines actifs diversifiés",
         desc: "Nous maintenons une variété de noms de domaines fiables. Si un site web refuse un domaine particulier, cliquez sur 'Changer' ou 'Personnalisé' pour en choisir un autre.",
       },
       {
-        icon: "🔒",
         title: "Zéro journalisation et anonymat complet",
         desc: "Nous ne conservons aucun journal d'activité ni empreinte personnelle. Vos messages sont traités en mémoire vive et effacés définitivement à l'expiration.",
       },
@@ -311,27 +303,22 @@ export const ABOUT_PAGE_CONTENT: Record<Locale, AboutPageData> = {
     whyP2: "Wir wollten eine echte Alternative schaffen: ein sauberes, blitzschnelles und datenschutzorientiertes Tool, das reibungslos funktioniert.",
     features: [
       {
-        icon: "⚡",
         title: "Automatische OTP-Code-Erkennung",
         desc: "Kein mühsames Durchsuchen langer Werbe-Mails mehr: TempoEmails filtert 4- bis 8-stellige Verifizierungscodes und Aktivierungslinks automatisch heraus und platziert sie mit Ein-Klick-Kopierbutton ganz oben.",
       },
       {
-        icon: "📬",
         title: "Echtzeit-Postfach mit automatischer Aktualisierung",
         desc: "Eingehende E-Mails treffen innerhalb von Sekunden ein. Der Posteingang aktualisiert sich alle 10 Sekunden vollautomatisch ohne manuelles Neuladen.",
       },
       {
-        icon: "📱",
         title: "Mobiler QR-Code-Scanner",
         desc: "Sie möchten sich am Smartphone registrieren, während Sie am Computer arbeiten? Scannen Sie einfach den QR-Code, um das Postfach sofort mobil zu öffnen.",
       },
       {
-        icon: "🌐",
         title: "Vielfältiger Pool aktiver Domains",
         desc: "Wir pflegen mehrere vertrauenswürdige Domainnamen. Blockiert ein Anbieter eine bestimmte Domain, wechseln Sie mit 'Ändern' oder 'Benutzerdefiniert' sekundenschnell zu einer alternativen Domain.",
       },
       {
-        icon: "🔒",
         title: "Keine Protokollierung & maximale Anonymität",
         desc: "Wir erfassen keine Identitätsdaten und kein Nutzerverhalten. Alle Nachrichten verbleiben ausschließlich im flüchtigen Speicher und werden nach Ablauf unwiderruflich gelöscht.",
       },
@@ -368,27 +355,22 @@ export const ABOUT_PAGE_CONTENT: Record<Locale, AboutPageData> = {
     whyP2: "Мы хотели создать безупречный инструмент: чистый, быстрый, ориентированный на конфиденциальность и безотказный в работе.",
     features: [
       {
-        icon: "⚡",
         title: "Автоматическое распознавание OTP кодов",
         desc: "Больше не нужно вчитываться в длинные рекламные сообщения. TempoEmails мгновенно находит коды из 4–8 цифр и ссылки активации, закрепляя их наверху с кнопкой копирования в один клик.",
       },
       {
-        icon: "📬",
         title: "Автоматическое обновление в реальном времени",
         desc: "Письма появляются во входящих за считанные секунды. Список обновляется каждые 10 секунд без необходимости нажимать кнопку обновления страницы.",
       },
       {
-        icon: "📱",
         title: "QR-код для быстрого доступа с телефона",
         desc: "Регистрируетесь на смартфоне, пока сидите за компьютером? Отсканируйте QR-код на экране, чтобы сразу открыть временный ящик на мобильном устройстве.",
       },
       {
-        icon: "🌐",
         title: "Пул активных и чистых доменов",
         desc: "Мы поддерживаем надежные доменные имена. Если сервис отклоняет один домен, просто нажмите 'Сменить' или 'Свой ящик', чтобы переключиться на другой адрес.",
       },
       {
-        icon: "🔒",
         title: "Полное отсутствие логов и анонимность",
         desc: "Мы не сохраняем личные данные и историю действий. Входящие письма хранятся исключительно в оперативной памяти и безвозвратно удаляются по таймеру.",
       },
@@ -425,27 +407,22 @@ export const ABOUT_PAGE_CONTENT: Record<Locale, AboutPageData> = {
     whyP2: "我们希望打造一款体验截然不同的工具：界面清爽、响应迅捷、隐私优先且开箱即用。",
     features: [
       {
-        icon: "⚡",
         title: "智能检测提取 OTP 验证码",
         desc: "告别在长篇累牍的营销邮件中苦寻代码的烦恼。TempoEmails 能自动识别 4-8 位数字验证码和激活链接，并在顶部提供一键复制按钮。",
       },
       {
-        icon: "📬",
         title: "收件箱毫秒级实时自动刷新",
         desc: "新邮件在几秒钟之内即可送达您的浏览器。收件箱每 10 秒自动静默检测更新，无需频繁手动点击刷新按钮。",
       },
       {
-        icon: "📱",
         title: "手机端专属扫码同步直达",
         desc: "在电脑前浏览却需要在手机上完成注册？只需扫描屏幕上的二维码，即可在移动设备上快速打开或复制当前临时邮箱。",
       },
       {
-        icon: "🌐",
         title: "持续维护的高质量可用域名池",
         desc: "我们保持多组干净健康的域名轮换。如果某个网站限制了特定域名，只需点击“更换”或“自定义”，即可无缝切换可用域名。",
       },
       {
-        icon: "🔒",
         title: "零日志留存与彻底的匿名保障",
         desc: "我们绝不收集您的真实身份或追踪行为痕迹。收到的邮件仅短暂暂存于易失性内存中，到期即自动被物理粉碎清除。",
       },
@@ -482,27 +459,22 @@ export const ABOUT_PAGE_CONTENT: Record<Locale, AboutPageData> = {
     whyP2: "私たちはもっと優れた体験を求めました。清潔で高速、プライバシー第一で確実に動作するツールです。",
     features: [
       {
-        icon: "⚡",
         title: "認証コード（OTP）の自動検出",
         desc: "長いプロモーションメールからコードを探し出す手間はありません。4〜8桁のOTPコードと有効化リンクを自動検出し、最上部にワンクリックコピーボタン付きで固定表示します。",
       },
       {
-        icon: "📬",
         title: "リアルタイム自動更新インボックス",
         desc: "届いたメールは数秒で画面に反映されます。10秒ごとに自動更新されるため、何度も再読み込みボタンを押す必要はありません。",
       },
       {
-        icon: "📱",
         title: "モバイル用 QR コードリーダー連携",
         desc: "パソコンを見ながらスマホ側で新規登録したい場合も、画面上のQRコードを読み取るだけでモバイル端末から瞬時にメールボックスを利用できます。",
       },
       {
-        icon: "🌐",
         title: "ローテーション稼働する有効ドメインプール",
         desc: "到達率の高い複数のドメインを運用しています。特定のサイトでドメインが弾かれた場合は、「変更」または「カスタム」ですぐに別のアドレスへ切り替え可能です。",
       },
       {
-        icon: "🔒",
         title: "ログ完全不保持・完全匿名性",
         desc: "個人情報や利用状況を記録することは一切ありません。受信メッセージは揮発性メモリに一時保管され、セッション終了後に完全消去されます。",
       },
@@ -539,27 +511,22 @@ export const ABOUT_PAGE_CONTENT: Record<Locale, AboutPageData> = {
     whyP2: "أردنا تقديم حل أفضل بكثير: أداة نظيفة، وفائقة السرعة، وتضع الخصوصية أولاً وتعمل بكفاءة تامة.",
     features: [
       {
-        icon: "⚡",
         title: "استخراج تلقائي لرموز التحقق (OTP)",
         desc: "لا داعي للبحث داخل الرسائل الطويلة. يتعرف TempoEmails تلقائياً على رموز التحقق المكونة من 4 إلى 8 أرقام وروابط التفعيل، ويثبتها في الأعلى مع زر نسخ فوري.",
       },
       {
-        icon: "📬",
         title: "صندوق بريد مباشر يتحدث تلقائياً",
         desc: "تصل الرسائل الواردة إلى متصفحك في غضون ثوانٍ. يتم تحديث الصندوق تلقائياً كل 10 ثوانٍ دون الحاجة للنقر المتكرر على زر التحديث.",
       },
       {
-        icon: "📱",
         title: "رمز QR للمسح عبر الهاتف المحمول",
         desc: "هل تحتاج إلى التسجيل عبر هاتفك أثناء التصفح من جهاز الكمبيوتر؟ امسح رمز QR المعروض على شاشتك لفتح بريدك المؤقت على الهاتف فوراً.",
       },
       {
-        icon: "🌐",
         title: "مجموعة نطاقات نشطة وموثوقة",
         desc: "نحافظ على نطاقات متعددة عالية التسليم. إذا قام موقع معين بحظر نطاق ما، ما عليك سوى النقر على 'تغيير' أو 'مخصص' للتبديل إلى نطاق نشط آخر.",
       },
       {
-        icon: "🔒",
         title: "انعدام السجلات والسرية التامة",
         desc: "نحن لا نسجل هويتك الشخصية ولا نتتبع نشاطك على الإطلاق. تبقى رسائلك مؤقتاً في الذاكرة وتُحذف نهائياً بمجرد انتهاء جلستك.",
       },
@@ -596,27 +563,22 @@ export const ABOUT_PAGE_CONTENT: Record<Locale, AboutPageData> = {
     whyP2: "Kami ingin sesuatu yang jauh lebih unggul: layanan yang bersih, super cepat, mengutamakan privasi, dan bekerja tanpa kendala.",
     features: [
       {
-        icon: "⚡",
         title: "Deteksi Otomatis Kode OTP",
         desc: "Tidak perlu lagi menyusuri pesan promosi yang panjang. TempoEmails secara pintar mendeteksi kode OTP 4-8 digit dan tautan aktivasi, menyematkannya di bagian atas dengan tombol salin instan.",
       },
       {
-        icon: "📬",
         title: "Kotak Masuk Waktu Nyata Auto-Refresh",
         desc: "Email yang masuk akan muncul di layar peramban Anda dalam hitungan detik. Kotak masuk diperbarui otomatis setiap 10 detik tanpa perlu memuat ulang secara manual.",
       },
       {
-        icon: "📱",
         title: "Pemindai QR Code Ponsel",
         desc: "Perlu mendaftar lewat ponsel saat membuka laptop? Pindai kode QR di layar untuk membuka atau menyalin kotak masuk aktif Anda di smartphone seketika.",
       },
       {
-        icon: "🌐",
         title: "Kumpulan Domain Aktif Berkualitas",
         desc: "Kami menjaga rotasi beberapa nama domain bereputasi baik. Jika suatu situs menolak domain tertentu, cukup klik 'Ganti' atau 'Kustom' untuk beralih ke domain aktif lainnya.",
       },
       {
-        icon: "🔒",
         title: "Nol Log & Anonimitas Total",
         desc: "Kami tidak mencatat identitas pribadi maupun rekam jejak aktivitas Anda. Pesan hanya disimpan sementara di memori dan dihapus tuntas begitu sesi berakhir.",
       },
@@ -708,25 +670,25 @@ export const CONTACT_PAGE_CONTENT: Record<Locale, ContactPageData> = {
     resources: [
       {
         badge: "Guide",
-        title: "Understanding OTP Verification Codes →",
+        title: "Understanding OTP Verification Codes",
         desc: "How automated OTP parsers detect 4-8 digit verification tokens.",
         slug: "/blog/understanding-otp-verification-codes/",
       },
       {
         badge: "Architecture",
-        title: "How Temporary Email Works →",
+        title: "How Temporary Email Works",
         desc: "Under the hood of MX records, inboxes, and automatic purging.",
         slug: "/blog/how-temporary-email-works/",
       },
       {
         badge: "Privacy",
-        title: "How Disposable Email Protects Privacy →",
+        title: "How Disposable Email Protects Privacy",
         desc: "Preventing data harvesting, cross-site profiling, and spam traps.",
         slug: "/blog/how-disposable-email-protects-privacy/",
       },
       {
         badge: "Security",
-        title: "Email Privacy Best Practices →",
+        title: "Email Privacy Best Practices",
         desc: "Actionable steps to safeguard your primary email address.",
         slug: "/blog/email-privacy-best-practices/",
       },
@@ -821,25 +783,25 @@ export const CONTACT_PAGE_CONTENT: Record<Locale, ContactPageData> = {
     resources: [
       {
         badge: "Guía",
-        title: "Entendiendo los códigos OTP →",
+        title: "Entendiendo los códigos OTP",
         desc: "Cómo los analizadores automáticos detectan códigos de verificación de 4 a 8 dígitos.",
         slug: "/blog/understanding-otp-verification-codes/",
       },
       {
         badge: "Arquitectura",
-        title: "Cómo funciona el correo temporal →",
+        title: "Cómo funciona el correo temporal",
         desc: "Detrás de escena: registros MX, buzones dinámicos y destrucción de datos.",
         slug: "/blog/how-temporary-email-works/",
       },
       {
         badge: "Privacidad",
-        title: "Cómo el correo desechable defiende su privacidad →",
+        title: "Cómo el correo desechable defiende su privacidad",
         desc: "Evitando el rastreo de perfiles y los riesgos de filtración masiva.",
         slug: "/blog/how-disposable-email-protects-privacy/",
       },
       {
         badge: "Seguridad",
-        title: "Mejores prácticas de privacidad en email →",
+        title: "Mejores prácticas de privacidad en email",
         desc: "Pasos prácticos para salvaguardar su buzón principal de correo.",
         slug: "/blog/email-privacy-best-practices/",
       },
@@ -934,25 +896,25 @@ export const CONTACT_PAGE_CONTENT: Record<Locale, ContactPageData> = {
     resources: [
       {
         badge: "Guia",
-        title: "Entendendo os Códigos OTP →",
+        title: "Entendendo os Códigos OTP",
         desc: "Como identificadores automáticos capturam tokens de 4 a 8 dígitos.",
         slug: "/blog/understanding-otp-verification-codes/",
       },
       {
         badge: "Arquitetura",
-        title: "Como Funciona o Email Temporário →",
+        title: "Como Funciona o Email Temporário",
         desc: "Por dentro dos registros MX, caixas voláteis e purga automática.",
         slug: "/blog/how-temporary-email-works/",
       },
       {
         badge: "Privacidade",
-        title: "Como o Email Descartável Protege Seus Dados →",
+        title: "Como o Email Descartável Protege Seus Dados",
         desc: "Blindagem contra rastreadores digitais e vazamento de contas.",
         slug: "/blog/how-disposable-email-protects-privacy/",
       },
       {
         badge: "Segurança",
-        title: "Boas Práticas de Privacidade no Email →",
+        title: "Boas Práticas de Privacidade no Email",
         desc: "Passos essenciais para proteger seu endereço de email principal.",
         slug: "/blog/email-privacy-best-practices/",
       },
@@ -1047,25 +1009,25 @@ export const CONTACT_PAGE_CONTENT: Record<Locale, ContactPageData> = {
     resources: [
       {
         badge: "Guide",
-        title: "Comprendre les codes de vérification OTP →",
+        title: "Comprendre les codes de vérification OTP",
         desc: "Comment les algorithmes détectent automatiquement les jetons de 4 à 8 chiffres.",
         slug: "/blog/understanding-otp-verification-codes/",
       },
       {
         badge: "Architecture",
-        title: "Fonctionnement technique de l'email temporaire →",
+        title: "Fonctionnement technique de l'email temporaire",
         desc: "Plongée dans les enregistrements MX, les flux de données et la purge sans log.",
         slug: "/blog/how-temporary-email-works/",
       },
       {
         badge: "Confidentialité",
-        title: "Protéger sa vie privée avec un email jetable →",
+        title: "Protéger sa vie privée avec un email jetable",
         desc: "Faites barrage à l'exploitation commerciale de vos données personnelles.",
         slug: "/blog/how-disposable-email-protects-privacy/",
       },
       {
         badge: "Sécurité",
-        title: "Bonnes pratiques pour la sécurité de vos emails →",
+        title: "Bonnes pratiques pour la sécurité de vos emails",
         desc: "Conseils opérationnels pour préserver votre boîte mail principale.",
         slug: "/blog/email-privacy-best-practices/",
       },
@@ -1160,25 +1122,25 @@ export const CONTACT_PAGE_CONTENT: Record<Locale, ContactPageData> = {
     resources: [
       {
         badge: "Leitfaden",
-        title: "OTP-Verifizierungscodes verstehen →",
+        title: "OTP-Verifizierungscodes verstehen",
         desc: "Wie automatische Parser 4- bis 8-stellige Sicherheitscodes erfassen.",
         slug: "/blog/understanding-otp-verification-codes/",
       },
       {
         badge: "Architektur",
-        title: "Wie temporäre E-Mails funktionieren →",
+        title: "Wie temporäre E-Mails funktionieren",
         desc: "Technischer Einblick in MX-Records, flüchtige Speicher und automatische Löschung.",
         slug: "/blog/how-temporary-email-works/",
       },
       {
         badge: "Datenschutz",
-        title: "Privatsphäre schützen mit Wegwerf-E-Mails →",
+        title: "Privatsphäre schützen mit Wegwerf-E-Mails",
         desc: "Effektiver Schutz vor Datensammlern, Tracking und Spam-Listen.",
         slug: "/blog/how-disposable-email-protects-privacy/",
       },
       {
         badge: "Sicherheit",
-        title: "E-Mail-Sicherheit Best Practices →",
+        title: "E-Mail-Sicherheit Best Practices",
         desc: "Konkrete Schritte zur Absicherung Ihres Haupt-E-Mail-Postfachs.",
         slug: "/blog/email-privacy-best-practices/",
       },
@@ -1273,25 +1235,25 @@ export const CONTACT_PAGE_CONTENT: Record<Locale, ContactPageData> = {
     resources: [
       {
         badge: "Руководство",
-        title: "Все об OTP кодах подтверждения →",
+        title: "Все об OTP кодах подтверждения",
         desc: "Как алгоритмы мгновенно распознают проверочные токены из 4–8 цифр.",
         slug: "/blog/understanding-otp-verification-codes/",
       },
       {
         badge: "Архитектура",
-        title: "Как устроена временная почта →",
+        title: "Как устроена временная почта",
         desc: "Разбор MX-записей, доставки сообщений и мгновенного удаления.",
         slug: "/blog/how-temporary-email-works/",
       },
       {
         badge: "Приватность",
-        title: "Защита приватности с помощью одноразовой почты →",
+        title: "Защита приватности с помощью одноразовой почты",
         desc: "Борьба с цифровым профилированием и спам-ловушками.",
         slug: "/blog/how-disposable-email-protects-privacy/",
       },
       {
         badge: "Безопасность",
-        title: "Правила безопасности электронной почты →",
+        title: "Правила безопасности электронной почты",
         desc: "Практические шаги по надежной защите вашего основного ящика.",
         slug: "/blog/email-privacy-best-practices/",
       },
@@ -1386,25 +1348,25 @@ export const CONTACT_PAGE_CONTENT: Record<Locale, ContactPageData> = {
     resources: [
       {
         badge: "指南",
-        title: "深入理解 OTP 动态验证码 →",
+        title: "深入理解 OTP 动态验证码",
         desc: "自动化算法如何高效抓取 4-8 位动态验证码。",
         slug: "/blog/understanding-otp-verification-codes/",
       },
       {
         badge: "技术架构",
-        title: "临时邮箱的底层工作原理 →",
+        title: "临时邮箱的底层工作原理",
         desc: "深入了解 MX 记录解析、高速收信架构与阅后即焚流程。",
         slug: "/blog/how-temporary-email-works/",
       },
       {
         badge: "隐私保护",
-        title: "一次性邮箱如何捍卫您的数字隐私 →",
+        title: "一次性邮箱如何捍卫您的数字隐私",
         desc: "有效防范跨站精准追踪与个人主邮箱数据外泄。",
         slug: "/blog/how-disposable-email-protects-privacy/",
       },
       {
         badge: "网络安全",
-        title: "电子邮件隐私防护最佳实践 →",
+        title: "电子邮件隐私防护最佳实践",
         desc: "保护日常核心邮箱免遭骚扰的实用实操建议。",
         slug: "/blog/email-privacy-best-practices/",
       },
@@ -1499,25 +1461,25 @@ export const CONTACT_PAGE_CONTENT: Record<Locale, ContactPageData> = {
     resources: [
       {
         badge: "ガイド",
-        title: "OTP認証コードの仕組みを理解する →",
+        title: "OTP認証コードの仕組みを理解する",
         desc: "自動解析エンジンが4〜8桁のコードを瞬時に抽出する仕組み。",
         slug: "/blog/understanding-otp-verification-codes/",
       },
       {
         badge: "アーキテクチャ",
-        title: "使い捨て捨てメアドの仕組み →",
+        title: "使い捨て捨てメアドの仕組み",
         desc: "MXレコードのルーティングからリアルタイム処理、自動消去の裏側。",
         slug: "/blog/how-temporary-email-works/",
       },
       {
         badge: "プライバシー",
-        title: "使い捨てメールでプライバシーを守る方法 →",
+        title: "使い捨てメールでプライバシーを守る方法",
         desc: "データ収集や行動追跡、アカウント漏洩を防ぐ実践的な知識。",
         slug: "/blog/how-disposable-email-protects-privacy/",
       },
       {
         badge: "セキュリティ",
-        title: "メールプライバシー保護のベストプラクティス →",
+        title: "メールプライバシー保護のベストプラクティス",
         desc: "メインの個人用アドレスを迷惑メールから守るための重要ステップ。",
         slug: "/blog/email-privacy-best-practices/",
       },
@@ -1612,25 +1574,25 @@ export const CONTACT_PAGE_CONTENT: Record<Locale, ContactPageData> = {
     resources: [
       {
         badge: "دليل",
-        title: "دليل فهم رموز التحقق OTP →",
+        title: "دليل فهم رموز التحقق OTP",
         desc: "كيف تلتقط أدوات التحليل الآلية الرموز من 4 إلى 8 أرقام.",
         slug: "/blog/understanding-otp-verification-codes/",
       },
       {
         badge: "الهندسة التقنية",
-        title: "كيف يعمل البريد المؤقت خلف الكواليس →",
+        title: "كيف يعمل البريد المؤقت خلف الكواليس",
         desc: "سجلات MX، والصناديق اللحظية، والتدمير الذاتي للبيانات.",
         slug: "/blog/how-temporary-email-works/",
       },
       {
         badge: "الخصوصية",
-        title: "كيف يحمي البريد المؤقت بياناتك الشخصية →",
+        title: "كيف يحمي البريد المؤقت بياناتك الشخصية",
         desc: "منع التتبع الإعلاني وتقليل مخاطر اختراق البيانات.",
         slug: "/blog/how-disposable-email-protects-privacy/",
       },
       {
         badge: "الأمان",
-        title: "أفضل ممارسات أمان البريد الإلكتروني →",
+        title: "أفضل ممارسات أمان البريد الإلكتروني",
         desc: "إرشادات عملية للحفاظ على أمان بريدك الشخصي.",
         slug: "/blog/email-privacy-best-practices/",
       },
@@ -1725,25 +1687,25 @@ export const CONTACT_PAGE_CONTENT: Record<Locale, ContactPageData> = {
     resources: [
       {
         badge: "Panduan",
-        title: "Memahami Kode Verifikasi OTP →",
+        title: "Memahami Kode Verifikasi OTP",
         desc: "Cara parser otomatis mendeteksi kode verifikasi 4-8 digit.",
         slug: "/blog/understanding-otp-verification-codes/",
       },
       {
         badge: "Arsitektur",
-        title: "Cara Kerja Email Sementara →",
+        title: "Cara Kerja Email Sementara",
         desc: "Di balik layar perutean MX record, kotak masuk cepat, dan pembersihan otomatis.",
         slug: "/blog/how-temporary-email-works/",
       },
       {
         badge: "Privasi",
-        title: "Bagaimana Email Sementara Melindungi Privasi Anda →",
+        title: "Bagaimana Email Sementara Melindungi Privasi Anda",
         desc: "Mencegah pelacakan data lintas situs dan bahaya kebocoran sandi.",
         slug: "/blog/how-disposable-email-protects-privacy/",
       },
       {
         badge: "Keamanan",
-        title: "Praktik Privasi Email Terbaik →",
+        title: "Praktik Privasi Email Terbaik",
         desc: "Langkah nyata menjaga kotak masuk email utama Anda tetap aman.",
         slug: "/blog/email-privacy-best-practices/",
       },

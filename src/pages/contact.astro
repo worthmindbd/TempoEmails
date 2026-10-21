@@ -1,5 +1,6 @@
 ---
 import ContentLayout from '../layouts/ContentLayout.astro';
+import Icon from '../components/ui/Icon.astro';
 import { SITE_CONFIG } from '../lib/config';
 import { useTranslation, getLocaleFromUrl, getLocalizedPath } from '../i18n/utils';
 import { getContactPageData } from '../i18n/pages-data';
@@ -178,7 +179,13 @@ const faqSchema = {
     {contact.resources.map((r) => (
       <a href={getLocalizedPath(r.slug, currentLocale)} class="group surface card-hover rounded-2xl p-5">
         <div class="text-xs font-medium text-accent-text">{r.badge}</div>
-        <div class="mt-2 font-display font-semibold tracking-tight text-base text-ink group-hover:text-accent-text transition-colors">{r.title}</div>
+        <div class="mt-2 flex items-center justify-between gap-3">
+          <span class="font-display font-semibold tracking-tight text-base text-ink group-hover:text-accent-text transition-colors">{r.title}</span>
+          <Icon
+            name="arrow-right"
+            class="w-4 h-4 shrink-0 text-ink-2 transition-all duration-200 group-hover:text-accent-text group-hover:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5"
+          />
+        </div>
         <p class="text-sm text-muted mt-1 leading-relaxed">{r.desc}</p>
       </a>
     ))}

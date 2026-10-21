@@ -2,6 +2,33 @@
 import { SUPPORTED_LOCALES, LANGUAGES, type Locale } from '../../i18n/languages';
 import { getLocalizedPath, useTranslation } from '../../i18n/utils';
 
+// Real SVG flag artwork (from the flag-icons package) instead of emoji flags.
+// `?url` imports emit one small hashed asset per flag actually used — the
+// full flag-icons stylesheet would drag every country's SVG into the build.
+import flagBr from 'flag-icons/flags/4x3/br.svg?url';
+import flagCn from 'flag-icons/flags/4x3/cn.svg?url';
+import flagDe from 'flag-icons/flags/4x3/de.svg?url';
+import flagEs from 'flag-icons/flags/4x3/es.svg?url';
+import flagFr from 'flag-icons/flags/4x3/fr.svg?url';
+import flagId from 'flag-icons/flags/4x3/id.svg?url';
+import flagJp from 'flag-icons/flags/4x3/jp.svg?url';
+import flagRu from 'flag-icons/flags/4x3/ru.svg?url';
+import flagSa from 'flag-icons/flags/4x3/sa.svg?url';
+import flagUs from 'flag-icons/flags/4x3/us.svg?url';
+
+const FLAG_ICONS: Record<string, string> = {
+  br: flagBr,
+  cn: flagCn,
+  de: flagDe,
+  es: flagEs,
+  fr: flagFr,
+  id: flagId,
+  jp: flagJp,
+  ru: flagRu,
+  sa: flagSa,
+  us: flagUs,
+};
+
 interface Props {
   currentLocale: Locale;
   variant?: 'header' | 'footer' | 'drawer';
@@ -67,7 +94,11 @@ const pathname = Astro.url.pathname;
             role="menuitem"
           >
             <span class="flex items-center gap-2.5">
-              <span class="text-base leading-none select-none" aria-hidden="true">{lang.flag}</span>
+              <span
+                class="flag-icon select-none"
+                style={`background-image: url("${FLAG_ICONS[lang.flagCode]}")`}
+                aria-hidden="true"
+              ></span>
               <span>{lang.nativeName}</span>
             </span>
             <span class="text-xs text-subtle">{lang.name}</span>

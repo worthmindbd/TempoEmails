@@ -180,8 +180,8 @@ const navLinks = [
       const i18n = (window as any).__TEMPO_I18N__;
       const isEnabled = soundNotifier.isEnabled();
       const soundMsg = isEnabled
-        ? (i18n?.toasts?.soundEnabled || '🔔 Sound notifications enabled')
-        : (i18n?.toasts?.soundMuted || '🔕 Sound notifications muted');
+        ? (i18n?.toasts?.soundEnabled || 'Sound notifications enabled')
+        : (i18n?.toasts?.soundMuted || 'Sound notifications muted');
       window.dispatchEvent(
         new CustomEvent('tempomail:toast', {
           detail: {

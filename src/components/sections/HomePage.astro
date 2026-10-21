@@ -7,6 +7,7 @@ import Features from './Features.astro';
 import HowItWorks from './HowItWorks.astro';
 import Faq from './Faq.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
+import Icon from '../ui/Icon.astro';
 import { useTranslation, getLocalizedPath } from '../../i18n/utils';
 import { getBlogArticles } from '../../i18n/blog-data';
 import type { Locale } from '../../i18n/languages';
@@ -112,7 +113,8 @@ const services = ['Discord', 'ChatGPT', 'Telegram', 'Steam', 'Reddit', 'Midjourn
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <SectionHeading eyebrow={t.common.blog} title={t.pages.blog.heading} />
         <a href={getLocalizedPath('/blog/', locale)} class="btn btn-secondary shrink-0 self-start sm:self-auto" data-reveal>
-          {t.common.allArticles.replace(/^[←→]\s*/, '')}
+          {t.common.allArticles}
+          <Icon name="arrow-right" class="w-4 h-4 rtl:-scale-x-100" strokeWidth={2} />
         </a>
       </div>
 

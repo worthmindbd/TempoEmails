@@ -118,19 +118,19 @@ export class MockClient {
       welcome: {
         fromName: 'TempoEmails Team',
         fromAddr: SITE_CONFIG.emails.hello,
-        subject: '🎉 Your temporary inbox is ready to receive emails!',
+        subject: 'Your temporary inbox is ready to receive emails!',
         code: 'TEMPO',
         text: `Welcome to TempoEmails!\n\nYour temporary mailbox is active and ready to receive confirmation codes, OTPs, and activation links.\n\nEnjoy complete privacy without spam!`,
         html: `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; color: #202020; line-height: 1.6;">
           <div style="background: linear-gradient(135deg, #ea2804, #ff6a3d); border-radius: 12px; padding: 24px; color: #ffffff; margin-bottom: 20px;">
-            <h2 style="margin: 0 0 8px 0; font-size: 24px;">Welcome to TempoEmails 🚀</h2>
+            <h2 style="margin: 0 0 8px 0; font-size: 24px;">Welcome to TempoEmails</h2>
             <p style="margin: 0; opacity: 0.9;">Your temporary disposable mailbox is live and listening.</p>
           </div>
           <p>You can use this email address on any website to receive sign-up confirmation emails, OTP codes, and password resets safely.</p>
           <ul style="padding-left: 20px; color: #575757;">
-            <li>🛡️ <strong>100% Private</strong>: No personal data or registration needed.</li>
-            <li>⚡ <strong>Smart OTP Detection</strong>: Verification codes are highlighted instantly.</li>
-            <li>🔄 <strong>Persistent Storage</strong>: Received emails stay saved in your browser local storage.</li>
+            <li><strong>100% Private</strong>: No personal data or registration needed.</li>
+            <li><strong>Smart OTP Detection</strong>: Verification codes are highlighted instantly.</li>
+            <li><strong>Persistent Storage</strong>: Received emails stay saved in your browser local storage.</li>
           </ul>
         </div>`,
       },

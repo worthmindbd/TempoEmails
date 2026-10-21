@@ -1,6 +1,4 @@
 ---
-import { stripLeadingEmoji } from '../../lib/utils/text';
-
 interface Props {
   eyebrow?: string;
   title: string;
@@ -14,7 +12,7 @@ const { eyebrow, title, subtitle, align = 'start', id, class: className = '' } =
 ---
 
 <div class:list={[align === 'center' ? 'text-center mx-auto max-w-2xl' : 'max-w-2xl', className]} data-reveal>
-  {eyebrow && <p class="eyebrow mb-4">{stripLeadingEmoji(eyebrow)}</p>}
+  {eyebrow && <p class="eyebrow mb-4">{eyebrow}</p>}
   <h2 id={id} class="section-title">{title}</h2>
   {subtitle && (
     <p class:list={['mt-5 text-base sm:text-lg text-muted leading-relaxed max-w-xl', align === 'center' && 'mx-auto']}>

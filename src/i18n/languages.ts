@@ -17,7 +17,7 @@ export interface LanguageInfo {
   code: Locale;
   name: string;
   nativeName: string;
-  flag: string;
+  flagCode: string;
   dir: 'ltr' | 'rtl';
   ogLocale: string;
   hreflang: string;
@@ -28,7 +28,7 @@ export const LANGUAGES: Record<Locale, LanguageInfo> = {
     code: 'en',
     name: 'English',
     nativeName: 'English',
-    flag: '🇺🇸',
+    flagCode: 'us',
     dir: 'ltr',
     ogLocale: 'en_US',
     hreflang: 'en',
@@ -37,7 +37,7 @@ export const LANGUAGES: Record<Locale, LanguageInfo> = {
     code: 'es',
     name: 'Spanish',
     nativeName: 'Español',
-    flag: '🇪🇸',
+    flagCode: 'es',
     dir: 'ltr',
     ogLocale: 'es_ES',
     hreflang: 'es',
@@ -46,7 +46,7 @@ export const LANGUAGES: Record<Locale, LanguageInfo> = {
     code: 'pt',
     name: 'Portuguese',
     nativeName: 'Português',
-    flag: '🇧🇷',
+    flagCode: 'br',
     dir: 'ltr',
     ogLocale: 'pt_BR',
     hreflang: 'pt',
@@ -55,7 +55,7 @@ export const LANGUAGES: Record<Locale, LanguageInfo> = {
     code: 'fr',
     name: 'French',
     nativeName: 'Français',
-    flag: '🇫🇷',
+    flagCode: 'fr',
     dir: 'ltr',
     ogLocale: 'fr_FR',
     hreflang: 'fr',
@@ -64,7 +64,7 @@ export const LANGUAGES: Record<Locale, LanguageInfo> = {
     code: 'de',
     name: 'German',
     nativeName: 'Deutsch',
-    flag: '🇩🇪',
+    flagCode: 'de',
     dir: 'ltr',
     ogLocale: 'de_DE',
     hreflang: 'de',
@@ -73,7 +73,7 @@ export const LANGUAGES: Record<Locale, LanguageInfo> = {
     code: 'ru',
     name: 'Russian',
     nativeName: 'Русский',
-    flag: '🇷🇺',
+    flagCode: 'ru',
     dir: 'ltr',
     ogLocale: 'ru_RU',
     hreflang: 'ru',
@@ -82,7 +82,7 @@ export const LANGUAGES: Record<Locale, LanguageInfo> = {
     code: 'zh',
     name: 'Chinese',
     nativeName: '简体中文',
-    flag: '🇨🇳',
+    flagCode: 'cn',
     dir: 'ltr',
     ogLocale: 'zh_CN',
     hreflang: 'zh-CN',
@@ -91,7 +91,7 @@ export const LANGUAGES: Record<Locale, LanguageInfo> = {
     code: 'ja',
     name: 'Japanese',
     nativeName: '日本語',
-    flag: '🇯🇵',
+    flagCode: 'jp',
     dir: 'ltr',
     ogLocale: 'ja_JP',
     hreflang: 'ja',
@@ -100,7 +100,7 @@ export const LANGUAGES: Record<Locale, LanguageInfo> = {
     code: 'ar',
     name: 'Arabic',
     nativeName: 'العربية',
-    flag: '🇸🇦',
+    flagCode: 'sa',
     dir: 'rtl',
     ogLocale: 'ar_AR',
     hreflang: 'ar',
@@ -109,7 +109,7 @@ export const LANGUAGES: Record<Locale, LanguageInfo> = {
     code: 'id',
     name: 'Indonesian',
     nativeName: 'Bahasa Indonesia',
-    flag: '🇮🇩',
+    flagCode: 'id',
     dir: 'ltr',
     ogLocale: 'id_ID',
     hreflang: 'id',

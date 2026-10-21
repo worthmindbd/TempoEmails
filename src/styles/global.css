@@ -383,6 +383,19 @@ p {
     border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
   }
 
+  /* SVG country flag (see LanguageSelector) sized like flag-icons' `.fi`:
+     a 4:3 tile that scales with the surrounding font size. */
+  .flag-icon {
+    display: inline-block;
+    width: 1.3333em;
+    height: 1em;
+    line-height: 1;
+    background-size: contain;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    border-radius: 2px;
+  }
+
   .hairline {
     border-color: var(--line);
   }
@@ -706,7 +719,7 @@ html.dark .bg-noise {
 /* ---------------------------------------------------------- dialogs */
 
 /* Shared by every modal. Open/close state is driven by JS toggling
-   `opacity-0 pointer-events-none` on the overlay and `scale-95` ↔
+   `opacity-0 pointer-events-none` on the overlay and `scale-95` /
    `scale-100` on the panel. On phones the panel docks to the bottom edge. */
 @layer components {
   .dialog-overlay {
