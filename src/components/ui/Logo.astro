@@ -1,0 +1,23 @@
+---
+interface Props {
+  href: string;
+  class?: string;
+}
+
+const { href, class: className = '' } = Astro.props;
+---
+
+<a href={href} class:list={['group inline-flex items-center gap-2.5 shrink-0 select-none', className]} aria-label="TempoEmails">
+  <span
+    class="relative grid place-items-center w-8 h-8 rounded-[10px] bg-gradient-to-br from-brand to-brand-glow text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_4px_12px_-4px_rgba(234,40,4,0.6)] transition-transform duration-300 group-hover:-rotate-6"
+    aria-hidden="true"
+  >
+    <svg class="w-[18px] h-[18px]" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="16" cy="16" r="5"></circle>
+      <path d="M21 11v6.5a3.5 3.5 0 0 0 7 0V16A12 12 0 1 0 25.9 22.8"></path>
+    </svg>
+  </span>
+  <span class="font-display text-[19px] font-bold tracking-tight text-ink leading-none">
+    Tempo<span class="text-muted font-semibold">Emails</span>
+  </span>
+</a>

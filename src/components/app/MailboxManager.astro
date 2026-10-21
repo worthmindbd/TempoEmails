@@ -1,5 +1,4 @@
 ---
-import GlassCard from '../ui/GlassCard.astro';
 import EmailAddressBar from './EmailAddressBar.astro';
 import InboxList from './InboxList.astro';
 import EmailDetail from './EmailDetail.astro';
@@ -16,24 +15,27 @@ interface Props {
 const { locale = 'en' } = Astro.props;
 ---
 
-<div id="mailbox-manager" class="w-full max-w-6xl mx-auto space-y-5">
-  <!-- Top Address & Action Controls Island -->
-  <EmailAddressBar locale={locale} />
+<div id="mailbox-manager" class="relative w-full max-w-6xl mx-auto">
+  <!-- Ember halo behind the app window -->
+  <div
+    class="absolute -inset-x-6 -top-10 bottom-10 rounded-[3rem] bg-[radial-gradient(50%_60%_at_50%_0%,color-mix(in_srgb,var(--brand)_22%,transparent),transparent)] blur-2xl pointer-events-none"
+    aria-hidden="true"
+  ></div>
 
-  <!-- Main Inbox Grid (Split View on Desktop, Toggle on Mobile) -->
-  <GlassCard variant="panel" class="overflow-hidden border border-white/60 dark:border-white/10 shadow-2xl">
-    <div class="grid grid-cols-1 md:grid-cols-12 min-h-[540px]">
-      <!-- Left Column: Inbox List (md:col-span-5 or 4) -->
-      <div id="inbox-list-pane" class="md:col-span-5 lg:col-span-4 border-r border-black/5 dark:border-white/10 h-full">
+  <!-- One app window: address header + split inbox/reader (toggled on mobile) -->
+  <div class="relative surface-raised rounded-[1.75rem] sm:rounded-[2rem] overflow-hidden">
+    <EmailAddressBar locale={locale} />
+
+    <div class="grid grid-cols-1 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-cols-[22rem_minmax(0,1fr)] md:min-h-[560px]">
+      <div id="inbox-list-pane" class="md:border-e hairline h-full bg-surface">
         <InboxList locale={locale} />
       </div>
 
-      <!-- Right Column: Email Reader Detail (md:col-span-7 or 8) -->
-      <div id="email-detail-pane" class="hidden md:block md:col-span-7 lg:col-span-8 h-full">
+      <div id="email-detail-pane" class="hidden md:block h-full">
         <EmailDetail locale={locale} />
       </div>
     </div>
-  </GlassCard>
+  </div>
 
   <!-- Modals -->
   <QrCodeModal locale={locale} />
@@ -259,26 +261,23 @@ const { locale = 'en' } = Astro.props;
 
       display.textContent = this.account.address;
       if (providerBadge) {
+        const labels: Record<string, string> = {
+          mailtm: 'Mail.tm',
+          inboxes: 'Inboxes',
+          tempmaillol: 'TempMail',
+          guerrilla: 'Guerrilla',
+        };
         const prov = this.account.provider;
-        if (prov === 'mailtm') {
-          providerBadge.textContent = 'MAIL.TM';
-          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 font-mono font-bold cursor-pointer hover:opacity-80 transition-opacity';
-          providerBadge.title = 'Click to switch provider';
-        } else if (prov === 'inboxes') {
-          providerBadge.textContent = 'INBOXES';
-          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/25 font-mono font-bold cursor-pointer hover:opacity-80 transition-opacity';
-          providerBadge.title = 'Click to switch provider';
-        } else if (prov === 'tempmaillol') {
-          providerBadge.textContent = 'TEMPMAIL';
-          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/25 font-mono font-bold cursor-pointer hover:opacity-80 transition-opacity';
-          providerBadge.title = 'Click to switch provider';
-        } else if (prov === 'guerrilla') {
-          providerBadge.textContent = 'GUERRILLA';
-          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 font-mono font-bold cursor-pointer hover:opacity-80 transition-opacity';
+        const base = 'chip h-6 px-2 text-[11px] font-mono uppercase tracking-wide transition-colors';
+        if (labels[prov]) {
+          providerBadge.textContent = labels[prov];
+          providerBadge.className = `${base} cursor-pointer hover:border-line-strong hover:text-ink`;
           providerBadge.title = 'Click to switch provider';
         } else {
-          providerBadge.textContent = 'MOCK';
-          providerBadge.className = 'text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/25 font-mono font-bold';
+          // Simulated inbox: flag it in the accent colour, not clickable.
+          providerBadge.textContent = 'Mock';
+          providerBadge.className = `${base} text-accent-text! border-accent/30!`;
+          providerBadge.removeAttribute('title');
         }
       }
     }
@@ -292,7 +291,7 @@ const { locale = 'en' } = Astro.props;
         if (this.addressDisplayBackup === null) {
           this.addressDisplayBackup = display.textContent || '';
         }
-        display.innerHTML = '<span class="inline-block w-48 h-5 bg-black/10 dark:bg-white/10 animate-pulse rounded"></span>';
+        display.innerHTML = '<span class="inline-block w-56 h-7 bg-ink/10 animate-pulse rounded-md align-middle"></span>';
       } else {
         // If the address was NOT re-rendered yet (failure path) the skeleton is
         // still showing — restore the previous content. On success paths
@@ -350,8 +349,8 @@ const { locale = 'en' } = Astro.props;
         const progressBar = document.getElementById('refresh-progress-bar');
 
         if (progressBar) {
-          const pct = Math.min(100, ((POLL_SECONDS - this.pollCountdown) / POLL_SECONDS) * 100);
-          progressBar.style.width = `${pct}%`;
+          const progress = Math.min(1, (POLL_SECONDS - this.pollCountdown) / POLL_SECONDS);
+          progressBar.style.transform = `scaleX(${progress})`;
         }
 
         if (this.pollCountdown <= 0) {
@@ -363,7 +362,7 @@ const { locale = 'en' } = Astro.props;
     resetRefreshTimer() {
       this.pollCountdown = POLL_SECONDS;
       const progressBar = document.getElementById('refresh-progress-bar');
-      if (progressBar) progressBar.style.width = '0%';
+      if (progressBar) progressBar.style.transform = 'scaleX(0)';
     }
 
     renderMessageList() {
@@ -411,19 +410,24 @@ const { locale = 'en' } = Astro.props;
         const noSubjectText = i18n?.emailDetail?.noSubject || '(No Subject)';
         const clickToViewText = i18n?.inboxList?.clickToView || 'Click to view email details...';
 
-        item.className = `p-4 cursor-pointer transition-all hover:bg-black/5 dark:hover:bg-white/5 relative flex items-start gap-3 border-b border-black/5 dark:border-white/5 ${
-          isSelected ? 'bg-[#ea2804]/10 dark:bg-[#ea2804]/15 border-l-4 border-l-[#ea2804]' : ''
+        item.className = `animate-rise-in relative flex items-start gap-3 p-3 rounded-2xl cursor-pointer transition-colors ${
+          isSelected ? 'bg-accent/8 ring-1 ring-accent/20' : 'hover:bg-ink/4'
         }`;
+        item.setAttribute('role', 'button');
+        item.tabIndex = 0;
+        if (isSelected) item.setAttribute('aria-current', 'true');
 
         // SECURITY: Build the item with DOM APIs + textContent only.
         // Email fields (from.name, subject, intro, OTP) are attacker-controlled;
         // never interpolate them into innerHTML.
         const avatar = document.createElement('div');
-        avatar.className = 'relative w-9 h-9 rounded-full bg-gradient-to-br from-[#ea2804] to-[#ff6a3d] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs';
+        avatar.className = `relative w-10 h-10 rounded-xl grid place-items-center font-semibold text-sm shrink-0 ${
+          isUnread ? 'bg-gradient-to-br from-brand to-brand-glow text-white shadow-soft' : 'bg-ink/6 text-ink-2'
+        }`;
         avatar.textContent = initial;
         if (isUnread) {
           const unreadDot = document.createElement('span');
-          unreadDot.className = 'absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 border-2 border-white dark:border-zinc-900 rounded-full';
+          unreadDot.className = 'absolute -top-1 -end-1 w-3 h-3 bg-accent border-2 border-surface rounded-full';
           unreadDot.title = unreadBadgeText;
           avatar.appendChild(unreadDot);
         }
@@ -432,33 +436,34 @@ const { locale = 'en' } = Astro.props;
         body.className = 'flex-1 min-w-0';
 
         const topRow = document.createElement('div');
-        topRow.className = 'flex items-center justify-between gap-1 mb-1';
+        topRow.className = 'flex items-baseline justify-between gap-2 mb-0.5';
 
         const senderSpan = document.createElement('span');
-        senderSpan.className = `font-bold text-xs ${isUnread ? 'text-[#ea2804] dark:text-[#ff6a3d]' : 'text-[#202020] dark:text-[#fcfcfc]'} truncate`;
+        senderSpan.className = `text-sm truncate ${isUnread ? 'font-semibold text-ink' : 'font-medium text-ink-2'}`;
         senderSpan.textContent = senderName || 'Unknown Sender';
 
         const timeSpan = document.createElement('span');
-        timeSpan.className = 'text-[10px] text-[#8d8d8d] dark:text-zinc-400 font-mono shrink-0';
+        timeSpan.className = 'text-[11px] text-subtle font-mono shrink-0';
         timeSpan.textContent = formatRelativeTime(msg.createdAt);
 
         topRow.append(senderSpan, timeSpan);
 
         const subjectDiv = document.createElement('div');
-        subjectDiv.className = `text-xs ${isUnread ? 'font-bold text-[#101010] dark:text-white' : 'font-medium text-[#3a3a3a] dark:text-zinc-300'} truncate mb-1`;
+        subjectDiv.className = `text-[13px] truncate ${isUnread ? 'font-medium text-ink' : 'text-ink-2'}`;
         subjectDiv.textContent = msg.subject || noSubjectText;
 
         const introDiv = document.createElement('div');
-        introDiv.className = 'text-[11px] text-[#8d8d8d] dark:text-zinc-400 line-clamp-1';
+        introDiv.className = 'text-xs text-subtle truncate mt-0.5';
         introDiv.textContent = msg.intro || clickToViewText;
 
         body.append(topRow, subjectDiv, introDiv);
 
         if (msg.extractedOtp) {
           const otpBadge = document.createElement('div');
-          otpBadge.className = 'mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#ea2804]/10 dark:bg-[#ea2804]/20 border border-[#ea2804]/30 text-[#ea2804] dark:text-[#ff6a3d] font-mono text-[11px] font-bold';
+          otpBadge.className = 'mt-2 inline-flex items-center gap-1.5 h-6 px-2 rounded-lg bg-accent/8 border border-accent/20 text-accent-text font-mono text-xs font-semibold tracking-wider';
           const otpLabel = document.createElement('span');
-          otpLabel.textContent = '⚡ OTP:';
+          otpLabel.className = 'font-sans font-medium tracking-normal opacity-80';
+          otpLabel.textContent = 'OTP';
           const otpValue = document.createElement('span');
           otpValue.textContent = msg.extractedOtp;
           otpBadge.append(otpLabel, otpValue);
@@ -469,6 +474,12 @@ const { locale = 'en' } = Astro.props;
 
         item.addEventListener('click', () => {
           this.selectMessage(msg.id);
+        });
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.selectMessage(msg.id);
+          }
         });
 
         listContainer.appendChild(item);
@@ -602,14 +613,14 @@ const { locale = 'en' } = Astro.props;
               <style>
                 body {
                   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                  color: ${isDark ? '#f4f4f5' : '#202020'};
-                  background: ${isDark ? '#18181b' : '#ffffff'};
+                  color: ${isDark ? '#f5f2ed' : '#1b1916'};
+                  background: ${isDark ? '#181614' : '#ffffff'};
                   line-height: 1.6;
                   padding: 16px;
                   margin: 0;
                   word-break: break-word;
                 }
-                a { color: #ea2804; }
+                a { color: ${isDark ? '#ff7a4f' : '#c42804'}; }
                 img { max-width: 100%; height: auto; }
               </style>
             </head>
@@ -633,26 +644,19 @@ const { locale = 'en' } = Astro.props;
     }
 
     switchViewTab(tab: 'html' | 'text') {
+      const active = ['bg-surface', 'text-ink', 'shadow-soft'];
+      const idle = ['text-muted'];
       const htmlBtn = document.getElementById('tab-html-btn');
       const textBtn = document.getElementById('tab-text-btn');
-      const htmlWrapper = document.getElementById('html-view-wrapper');
-      const textWrapper = document.getElementById('text-view-wrapper');
-
-      if (tab === 'html') {
-        htmlBtn?.classList.add('bg-white', 'dark:bg-zinc-800', 'text-[#202020]', 'dark:text-white', 'shadow-xs');
-        htmlBtn?.classList.remove('text-[#575757]', 'dark:text-zinc-400');
-        textBtn?.classList.remove('bg-white', 'dark:bg-zinc-800', 'text-[#202020]', 'dark:text-white', 'shadow-xs');
-        textBtn?.classList.add('text-[#575757]', 'dark:text-zinc-400');
-        htmlWrapper?.classList.remove('hidden');
-        textWrapper?.classList.add('hidden');
-      } else {
-        textBtn?.classList.add('bg-white', 'dark:bg-zinc-800', 'text-[#202020]', 'dark:text-white', 'shadow-xs');
-        textBtn?.classList.remove('text-[#575757]', 'dark:text-zinc-400');
-        htmlBtn?.classList.remove('bg-white', 'dark:bg-zinc-800', 'text-[#202020]', 'dark:text-white', 'shadow-xs');
-        htmlBtn?.classList.add('text-[#575757]', 'dark:text-zinc-400');
-        textWrapper?.classList.remove('hidden');
-        htmlWrapper?.classList.add('hidden');
-      }
+      const [on, off] = tab === 'html' ? [htmlBtn, textBtn] : [textBtn, htmlBtn];
+      on?.classList.add(...active);
+      on?.classList.remove(...idle);
+      on?.setAttribute('aria-pressed', 'true');
+      off?.classList.remove(...active);
+      off?.classList.add(...idle);
+      off?.setAttribute('aria-pressed', 'false');
+      document.getElementById('html-view-wrapper')?.classList.toggle('hidden', tab !== 'html');
+      document.getElementById('text-view-wrapper')?.classList.toggle('hidden', tab !== 'text');
     }
 
     async deleteCurrentSelectedMessage() {
@@ -843,7 +847,7 @@ const { locale = 'en' } = Astro.props;
 
       if (saved.length === 0) {
         const emptyMsg = document.createElement('div');
-        emptyMsg.className = 'text-center py-6 text-xs text-[#8d8d8d]';
+        emptyMsg.className = 'text-center py-8 text-sm text-subtle';
         emptyMsg.textContent = i18n?.historyDrawer?.emptyTitle || 'No previous inboxes found in this session.';
         list.innerHTML = '';
         list.appendChild(emptyMsg);
@@ -854,18 +858,17 @@ const { locale = 'en' } = Astro.props;
 
           // SECURITY: DOM APIs + textContent only (addresses are user-influenced data).
           const item = document.createElement('div');
-          item.className = `flex items-center justify-between p-3 rounded-xl border text-xs transition-all ${
-            isCurrent
-              ? 'bg-[#ea2804]/10 dark:bg-[#ea2804]/20 border-[#ea2804]/40 font-bold'
-              : 'bg-black/5 dark:bg-white/5 border-transparent hover:border-black/10 dark:hover:border-white/10'
+          item.className = `flex items-center justify-between gap-2 ps-3 pe-1.5 h-12 rounded-xl border text-sm transition-colors ${
+            isCurrent ? 'bg-accent/8 border-accent/25' : 'border-line hover:bg-ink/4'
           }`;
 
-          const switchBtn = document.createElement('div');
-          switchBtn.className = 'flex items-center gap-2 truncate cursor-pointer flex-1';
+          const switchBtn = document.createElement('button');
+          switchBtn.type = 'button';
+          switchBtn.className = 'flex items-center gap-2.5 min-w-0 h-full text-start cursor-pointer flex-1';
           const statusDot = document.createElement('span');
-          statusDot.className = `w-2 h-2 rounded-full ${isCurrent ? 'bg-[#ea2804]' : 'bg-[#8d8d8d]'}`;
+          statusDot.className = `w-2 h-2 rounded-full shrink-0 ${isCurrent ? 'bg-accent' : 'bg-ink/20'}`;
           const addressSpan = document.createElement('span');
-          addressSpan.className = 'font-mono text-[#202020] dark:text-zinc-200 truncate';
+          addressSpan.className = `font-mono truncate ${isCurrent ? 'text-ink font-medium' : 'text-ink-2'}`;
           addressSpan.textContent = acc.address;
           switchBtn.append(statusDot, addressSpan);
 
@@ -874,17 +877,17 @@ const { locale = 'en' } = Astro.props;
 
           if (isCurrent) {
             const activeLabel = document.createElement('span');
-            activeLabel.className = 'text-[10px] text-[#ea2804] uppercase font-bold tracking-wider';
+            activeLabel.className = 'text-xs font-medium text-accent-text';
             activeLabel.textContent = i18n?.historyDrawer?.activeInbox || 'Active';
             actions.appendChild(activeLabel);
           }
 
           const deleteBtn = document.createElement('button');
           deleteBtn.type = 'button';
-          deleteBtn.className = 'text-rose-500 hover:text-rose-700 p-1 transition-colors cursor-pointer';
+          deleteBtn.className = 'btn btn-ghost w-8 h-8 p-0 hover:text-[#c81e3a]!';
           deleteBtn.title = i18n?.historyDrawer?.clearAll || 'Delete from history';
           deleteBtn.setAttribute('aria-label', i18n?.historyDrawer?.clearAll || 'Delete from history');
-          deleteBtn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+          deleteBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>';
 
           actions.appendChild(deleteBtn);
           item.append(switchBtn, actions);

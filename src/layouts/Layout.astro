@@ -118,7 +118,8 @@ const organizationSchema = {
     <meta name="keywords" content={keywords} />
     <meta name="author" content="TempoEmails" />
     <meta name="publisher" content="TempoEmails" />
-    <meta name="theme-color" content="#ea2804" />
+    <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e0d0c" media="(prefers-color-scheme: dark)" />
     <meta name="application-name" content="TempoEmails" />
     <meta name="apple-mobile-web-app-title" content="TempoEmails" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -187,11 +188,11 @@ const organizationSchema = {
     {isApp && <script type="application/ld+json" set:html={JSON.stringify(webAppSchema)} />}
     {!noindex && <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />}
 
-    <!-- Google Fonts: Bricolage Grotesque (Display), Inter (Body), JetBrains Mono (Code) -->
+    <!-- Google Fonts: Bricolage Grotesque (display), Geist (body/UI), Geist Mono (addresses, codes) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
@@ -200,9 +201,11 @@ const organizationSchema = {
       window.__TEMPO_I18N__ = clientI18nPayload;
     </script>
 
-    <!-- Zero-FOUC Theme Script -->
+    <!-- Zero-FOUC Theme Script (also flags JS so scroll reveals never hide
+         content for visitors without JavaScript) -->
     <script is:inline>
       (function () {
+        document.documentElement.classList.add('js');
         // Guarded: localStorage can throw when storage is blocked by the browser.
         try {
           const storedTheme = localStorage.getItem('theme');
@@ -261,13 +264,24 @@ const organizationSchema = {
       })();
     </script>
   </head>
-  <body class="bg-[#f9f7f3] dark:bg-[#0e0e11] text-[#202020] dark:text-[#fcfcfc] min-h-screen flex flex-col antialiased selection:bg-[#ea2804] selection:text-white overflow-x-hidden">
-    <!-- Atmospheric Ambient Glow Mesh Background -->
-    <div class="fixed inset-0 hero-glow-mesh pointer-events-none z-0"></div>
+  <body class="bg-canvas text-ink min-h-dvh flex flex-col antialiased">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:start-3 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-full focus:bg-ink focus:text-canvas focus:text-sm focus:font-semibold"
+    >
+      {clientI18nPayload.a11y.skipToContent}
+    </a>
+
+    <!-- Atmosphere: ember glow + faint grid at the top of the page, film grain everywhere -->
+    <!-- Negative z-index keeps these behind content without making <main> a
+         stacking context (which would trap the app's dialogs under the header). -->
+    <div class="absolute inset-x-0 top-0 h-[56rem] bg-atmosphere pointer-events-none -z-1" aria-hidden="true"></div>
+    <div class="absolute inset-x-0 top-0 h-[40rem] bg-grid pointer-events-none -z-1 opacity-70" aria-hidden="true"></div>
+    <div class="fixed inset-0 bg-noise pointer-events-none -z-1" aria-hidden="true"></div>
 
     <Header currentLocale={currentLocale} isApp={isApp} />
 
-    <main class="flex-1 relative z-10">
+    <main id="main" class="flex-1 relative">
       <slot />
     </main>
 
@@ -275,5 +289,30 @@ const organizationSchema = {
 
     <ToastContainer />
     <CookieConsent locale={currentLocale} />
+
+    <script>
+      // Scroll reveal for any `[data-reveal]` element (see global.css).
+      function setupReveal() {
+        const items = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-visible)');
+        if (!('IntersectionObserver' in window)) {
+          items.forEach((el) => el.classList.add('is-visible'));
+          return;
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add('is-visible');
+              io.unobserve(entry.target);
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+        );
+        items.forEach((el) => io.observe(el));
+      }
+
+      setupReveal();
+      document.addEventListener('astro:page-load', setupReveal);
+    </script>
   </body>
 </html>

@@ -38,7 +38,7 @@ A modern, privacy-first temporary email web app. Generate a burner inbox in one 
 | State | `localStorage` via `StorageManager` class (schema-validated, quota-evicted) |
 | Audio | Web Audio API (synthesized chime) |
 | QR Codes | [qrserver.com](https://goqr.me/api/) external API |
-| Fonts | Bricolage Grotesque · Inter · JetBrains Mono (Google Fonts) |
+| Fonts | Bricolage Grotesque · Geist · Geist Mono (Google Fonts) |
 | Prod server | `server.mjs` — static files + same-origin `/api/mail/*` proxy + canonical 301s |
 
 ---
@@ -54,7 +54,7 @@ A modern, privacy-first temporary email web app. Generate a burner inbox in one 
 | State | `localStorage` via `StorageManager` class |
 | Audio | Web Audio API (synthesized chime) |
 | QR Codes | [qrserver.com](https://goqr.me/api/) external API |
-| Fonts | Bricolage Grotesque · Inter · JetBrains Mono (Google Fonts) |
+| Fonts | Bricolage Grotesque · Geist · Geist Mono (Google Fonts) |
 
 ---
 
@@ -118,7 +118,7 @@ src/
 │   └── ContentLayout.astro      # Article shell: breadcrumbs, Article JSON-LD, link localizer
 ├── middleware.ts                # /api/mail/* proxy for Astro-served runtimes (dev; prod uses server.mjs)
 ├── styles/
-│   └── global.css               # Tailwind v4 + glassmorphism + animations
+│   └── global.css               # Tailwind v4 tokens, component classes, prose, motion
 ├── i18n/
 │   ├── languages.ts, translations.ts, utils.ts, blog-data.ts, pages-data.ts
 ├── components/
@@ -131,17 +131,18 @@ src/
 │   │   ├── InboxHistoryDrawer.astro
 │   │   └── QrCodeModal.astro
 │   ├── sections/                # Landing page sections
-│   │   ├── Header.astro         # Sticky glass nav
-│   │   ├── Features.astro       # 6-card feature grid
-│   │   ├── HowItWorks.astro     # 4-step process
+│   │   ├── HomePage.astro       # Homepage composition shared by / and /[lang]/
+│   │   ├── Header.astro         # Floating glass nav
+│   │   ├── Features.astro       # Bento feature grid
+│   │   ├── HowItWorks.astro     # 4-step timeline
 │   │   ├── OtpShowcase.astro    # OTP engine showcase
-│   │   ├── UseCases.astro       # Use-case grid
-│   │   ├── Faq.astro            # Accordion FAQ
-│   │   └── Footer.astro         # Dark footer
-│   └── ui/                      # Reusable UI primitives
-│       ├── Badge.astro
-│       ├── Button.astro
-│       ├── GlassCard.astro
+│   │   ├── UseCases.astro       # Tabbed use cases
+│   │   ├── Faq.astro            # Split FAQ (<details>)
+│   │   └── Footer.astro         # Footer
+│   └── ui/                      # Reusable UI pieces
+│       ├── Logo.astro
+│       ├── SectionHeading.astro
+│       ├── DialogHeader.astro
 │       ├── ThemeToggle.astro
 │       ├── ToastContainer.astro
 │       ├── ConfirmModal.astro

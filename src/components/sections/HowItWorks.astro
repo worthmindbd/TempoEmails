@@ -1,7 +1,7 @@
 ---
-import GlassCard from '../ui/GlassCard.astro';
-import Badge from '../ui/Badge.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
 import { useTranslation } from '../../i18n/utils';
+import { stripStepNumber } from '../../lib/utils/text';
 import type { Locale } from '../../i18n/languages';
 
 interface Props {
@@ -12,55 +12,39 @@ const { locale = 'en' } = Astro.props;
 const t = useTranslation(locale);
 
 const steps = [
-  {
-    step: '01',
-    title: t.howItWorks.step1Title,
-    description: t.howItWorks.step1Desc,
-  },
-  {
-    step: '02',
-    title: t.howItWorks.step2Title,
-    description: t.howItWorks.step2Desc,
-  },
-  {
-    step: '03',
-    title: t.howItWorks.step3Title,
-    description: t.howItWorks.step3Desc,
-  },
-  {
-    step: '04',
-    title: t.howItWorks.step4Title,
-    description: t.howItWorks.step4Desc,
-  },
+  { title: t.howItWorks.step1Title, description: t.howItWorks.step1Desc },
+  { title: t.howItWorks.step2Title, description: t.howItWorks.step2Desc },
+  { title: t.howItWorks.step3Title, description: t.howItWorks.step3Desc },
+  { title: t.howItWorks.step4Title, description: t.howItWorks.step4Desc },
 ];
 ---
 
-<section id="how-it-works" class="w-full max-w-6xl mx-auto my-16 px-4">
-  <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
-    <Badge variant="neutral" size="md">
-      {t.howItWorks.badge}
-    </Badge>
-    <h2 class="font-display text-3xl md:text-4xl font-black text-[#202020] dark:text-[#fcfcfc] tracking-tight">
-      {t.howItWorks.title}
-    </h2>
-    <p class="text-sm md:text-base text-[#575757] dark:text-zinc-400">
-      {t.howItWorks.subtitle}
-    </p>
-  </div>
+<section id="how-it-works" class="px-5 sm:px-8 py-16 sm:py-24">
+  <div class="max-w-6xl mx-auto">
+    <SectionHeading eyebrow={t.howItWorks.badge} title={t.howItWorks.title} subtitle={t.howItWorks.subtitle} align="center" />
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-    {steps.map((s) => (
-      <GlassCard variant="card" class="p-5 sm:p-6 relative group overflow-hidden border border-black/5 dark:border-white/10">
-        <div class="font-mono text-3xl sm:text-4xl font-black text-[#ea2804]/20 dark:text-[#ea2804]/30 mb-3 sm:mb-4 transition-colors group-hover:text-[#ea2804]/40">
-          {s.step}
-        </div>
-        <h3 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc] mb-2">
-          {s.title}
-        </h3>
-        <p class="text-xs md:text-sm text-[#575757] dark:text-zinc-400 leading-relaxed">
-          {s.description}
-        </p>
-      </GlassCard>
-    ))}
+    <ol class="relative mt-14 sm:mt-20 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      <!-- Connector line behind the step markers (desktop) -->
+      <span class="hidden lg:block absolute top-6 inset-x-[12.5%] h-px bg-gradient-to-r from-transparent via-line-strong to-transparent" aria-hidden="true"></span>
+
+      {steps.map((step, i) => (
+        <li class="relative flex sm:flex-col gap-5 sm:gap-6 lg:items-center lg:text-center" data-reveal style={`--reveal-delay: ${i}`}>
+          <span
+            class:list={[
+              'relative z-10 grid place-items-center w-12 h-12 shrink-0 rounded-2xl font-mono text-sm font-semibold',
+              i === steps.length - 1
+                ? 'bg-gradient-to-br from-brand to-brand-glow text-white shadow-[0_8px_24px_-8px_rgba(234,40,4,0.6)]'
+                : 'surface text-ink',
+            ]}
+          >
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <div>
+            <h3 class="font-display text-lg font-semibold tracking-tight text-ink">{stripStepNumber(step.title)}</h3>
+            <p class="mt-2 text-sm text-muted leading-relaxed lg:max-w-[15rem] lg:mx-auto">{step.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
   </div>
 </section>

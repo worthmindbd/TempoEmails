@@ -82,46 +82,50 @@ const faqSchema = {
   <script type="application/ld+json" set:html={JSON.stringify(contactPageSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     {contact.lead}
   </p>
 
-  <blockquote class="border-l-4 border-[#ea2804] pl-4 italic text-[#575757] dark:text-zinc-400 mb-6">
+  <blockquote>
     {contact.responseTime}
   </blockquote>
 
   <!-- Direct Contact Channels -->
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     {contact.channelsHeading}
   </h2>
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     {contact.channelsSub}
   </p>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-8!">
     {contact.channels.map((ch, idx) => (
-      <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-3">
-        <div class="flex items-center gap-2 text-[#ea2804]">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+      <div class="surface rounded-2xl p-5 flex flex-col">
+        <div class="flex items-center gap-3">
+          <span class="icon-tile w-10! h-10! rounded-xl!" aria-hidden="true">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             {idx === 0 && <path d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>}
             {idx === 1 && <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>}
             {idx === 2 && <path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>}
             {idx === 3 && <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>}
           </svg>
-          <h3 class="font-display font-bold text-base text-[#202020] dark:text-[#fcfcfc]">{ch.title}</h3>
+          </span>
+          <h3 class="font-display font-semibold tracking-tight text-lg text-ink">{ch.title}</h3>
         </div>
-        <p class="text-xs text-[#575757] dark:text-zinc-400">
+        <p class="mt-3 text-sm text-muted leading-relaxed">
           {ch.desc}
         </p>
-        <div class="flex items-center justify-between pt-1">
-          <a href={`mailto:${ch.email}`} class="text-sm font-mono font-semibold text-[#ea2804] hover:underline break-all">
+        <div class="mt-auto pt-4 flex items-center justify-between gap-2">
+          <a href={`mailto:${ch.email}`} class="text-sm font-mono font-medium text-ink hover:text-accent-text transition-colors break-all">
             {ch.email}
           </a>
           <button
             type="button"
             data-copy-email={ch.email}
             data-copied-text={t.common.copied}
-            class="copy-email-btn px-2.5 py-1 text-xs font-mono rounded-lg bg-black/5 dark:bg-white/10 hover:bg-[#ea2804]/10 hover:text-[#ea2804] transition-colors"
+            data-copied-toast={t.common.copyEmailToast}
+            data-failed-toast={t.common.copyFailedToast}
+            class="copy-email-btn btn btn-secondary btn-sm shrink-0"
             title={t.addressBar.copyAddress}
           >
             {ch.copyLabel}
@@ -132,80 +136,78 @@ const faqSchema = {
   </div>
 
   <!-- Frequently Asked Questions -->
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     {contact.faqHeading}
   </h2>
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     {contact.faqSub}
   </p>
 
-  <div class="space-y-6 mb-8">
+  <div class="divide-y divide-line border-y hairline my-8!">
     {contact.faqs.map((f) => (
-      <div class="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-        <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-2">
-          {f.q}
-        </h3>
-        <p class="text-sm text-[#575757] dark:text-zinc-300 leading-relaxed mb-3">
-          {f.a}
-        </p>
-        {f.list && f.list.length > 0 && (
-          <ul class="list-disc pl-5 space-y-1.5 text-sm text-[#575757] dark:text-zinc-300">
-            {f.list.map((item) => (
-              <li>{item}</li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <details class="group">
+        <summary class="flex items-start justify-between gap-6 py-5 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+          <h3 class="font-display text-lg font-semibold tracking-tight text-ink group-hover:text-accent-text transition-colors">{f.q}</h3>
+          <span class="shrink-0 grid place-items-center w-7 h-7 rounded-full border border-line-strong text-ink-2 transition-transform duration-300 group-open:rotate-45" aria-hidden="true">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+          </span>
+        </summary>
+        <div class="pb-5 pe-12 text-base text-muted leading-relaxed">
+          <p>{f.a}</p>
+          {f.list && f.list.length > 0 && (
+            <ul class="list-disc ps-5 mt-3 space-y-1.5 marker:text-accent-text">
+              {f.list.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </details>
     ))}
   </div>
 
   <!-- Helpful Guides & Educational Resources -->
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     {contact.resourcesHeading}
   </h2>
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     {contact.resourcesSub}
   </p>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-8!">
     {contact.resources.map((r) => (
-      <a
-        href={getLocalizedPath(r.slug, currentLocale)}
-        class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-[#ea2804]/30 hover:bg-[#ea2804]/5 transition-all group"
-      >
-        <div class="text-xs font-mono text-[#ea2804] font-semibold mb-1">{r.badge}</div>
-        <div class="font-display font-bold text-sm text-[#202020] dark:text-[#fcfcfc] group-hover:text-[#ea2804] transition-colors">
-          {r.title}
-        </div>
-        <p class="text-xs text-[#575757] dark:text-zinc-400 mt-1">{r.desc}</p>
+      <a href={getLocalizedPath(r.slug, currentLocale)} class="group surface card-hover rounded-2xl p-5">
+        <div class="text-xs font-medium text-accent-text">{r.badge}</div>
+        <div class="mt-2 font-display font-semibold tracking-tight text-base text-ink group-hover:text-accent-text transition-colors">{r.title}</div>
+        <p class="text-sm text-muted mt-1 leading-relaxed">{r.desc}</p>
       </a>
     ))}
   </div>
 
   <!-- Tips for Bug Reports -->
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     {contact.bugReportHeading}
   </h2>
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     {contact.bugReportIntro}
   </p>
-  <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-6">
+  <ul>
     {contact.bugReportPoints.map((pt) => (
       <li>{pt}</li>
     ))}
   </ul>
 
   <!-- Legal and Compliance Links -->
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     {contact.legalHeading}
   </h2>
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     {contact.legalIntro}
   </p>
-  <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-4">
+  <ul>
     {contact.legalLinks.map((l) => (
       <li>
-        <a href={getLocalizedPath(l.slug, currentLocale)} class="text-[#ea2804] hover:underline font-semibold">
+        <a href={getLocalizedPath(l.slug, currentLocale)}>
           {l.label}
         </a>
         {' — '}{l.desc}
@@ -224,14 +226,13 @@ const faqSchema = {
       try {
         await navigator.clipboard.writeText(email);
         const originalText = btn.textContent;
-        btn.textContent = 'Copied!';
-        btn.classList.add('text-[#ea2804]', 'font-bold');
+        btn.textContent = btn.dataset.copiedText || 'Copied!';
 
         window.dispatchEvent(
           new CustomEvent('tempomail:toast', {
             detail: {
               type: 'success',
-              message: `Copied ${email} to clipboard!`,
+              message: (btn.dataset.copiedToast || 'Copied {email} to clipboard!').replace('{email}', email),
               duration: 2500,
             },
           })
@@ -239,14 +240,13 @@ const faqSchema = {
 
         setTimeout(() => {
           btn.textContent = originalText;
-          btn.classList.remove('text-[#ea2804]', 'font-bold');
         }, 2000);
       } catch {
         window.dispatchEvent(
           new CustomEvent('tempomail:toast', {
             detail: {
               type: 'error',
-              message: 'Failed to copy address',
+              message: btn.dataset.failedToast || 'Failed to copy address',
               duration: 2500,
             },
           })

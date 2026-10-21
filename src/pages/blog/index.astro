@@ -1,7 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import GlassCard from '../../components/ui/GlassCard.astro';
-import Badge from '../../components/ui/Badge.astro';
 import { useTranslation, getLocaleFromUrl, getLocalizedPath } from '../../i18n/utils';
 import type { Locale } from '../../i18n/languages';
 
@@ -76,12 +74,7 @@ function getCategoryLabel(cat: string) {
   return cat;
 }
 
-const categoryColors: Record<string, string> = {
-  Privacy: 'bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400',
-  Security: 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400',
-  Guides: 'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400',
-  Technology: 'bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400',
-};
+const [lead, ...rest] = articles;
 ---
 
 <Layout
@@ -92,85 +85,112 @@ const categoryColors: Record<string, string> = {
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(blogSchema)} />
 
-  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-    <!-- Breadcrumb Navigation -->
-    <nav class="mb-8 flex flex-wrap items-center gap-2 text-xs font-mono text-[#8d8d8d] dark:text-zinc-500">
-      <a href={homeUrl} class="hover:text-[#ea2804] transition-colors shrink-0">{t.common.home}</a>
-      <span>→</span>
-      <span class="text-[#575757] dark:text-zinc-300">{t.common.blog}</span>
-    </nav>
+  <section class="px-5 sm:px-8 pt-12 sm:pt-20">
+    <div class="max-w-6xl mx-auto">
+      <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-[13px] text-subtle">
+        <a href={homeUrl} class="hover:text-ink transition-colors">{t.common.home}</a>
+        <svg class="w-3.5 h-3.5 opacity-50 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+        <span class="text-muted" aria-current="page">{t.common.blog}</span>
+      </nav>
 
-    <!-- Header -->
-    <div class="text-center mb-12 space-y-4">
-      <Badge variant="neutral" size="md">
-        TempoEmails {t.common.blog}
-      </Badge>
-      <h1 class="font-display text-4xl sm:text-5xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight">
-        {t.pages.blog.heading}
-      </h1>
-      <p class="text-base sm:text-lg text-[#575757] dark:text-zinc-300 max-w-2xl mx-auto leading-relaxed">
-        {t.pages.blog.subheading}
-      </p>
-    </div>
+      <div class="mt-8 grid lg:grid-cols-[1fr_auto] items-end gap-6">
+        <div class="max-w-2xl animate-rise-in">
+          <h1 class="font-display font-bold text-ink tracking-[-0.045em] leading-[1] text-[clamp(2.5rem,1.5rem+4vw,4.5rem)]">
+            {t.pages.blog.heading}
+          </h1>
+          <p class="mt-5 text-lg text-muted leading-relaxed max-w-xl">{t.pages.blog.subheading}</p>
+        </div>
 
-    <!-- Category Filters -->
-    <div class="flex flex-wrap items-center justify-center gap-2 mb-10">
-      <span class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#ea2804]/10 text-[#ea2804] dark:bg-[#ea2804]/20 dark:text-[#ff6a3d] border border-[#ea2804]/20">
-        {t.common.all} ({articles.length})
-      </span>
-      {categories.map(cat => (
-        <span class={`px-3.5 py-1.5 rounded-full text-xs font-semibold ${categoryColors[cat] || 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400'}`}>
-          {getCategoryLabel(cat)} ({articles.filter(a => a.category === cat).length})
-        </span>
-      ))}
-    </div>
+        <div class="blog-filters flex flex-wrap gap-2 lg:justify-end" role="group" aria-label={t.common.blog}>
+          <button type="button" data-filter="all" aria-pressed="true" class="blog-filter chip h-9 px-4 text-[13px] cursor-pointer transition-colors hover:border-line-strong aria-pressed:bg-ink aria-pressed:text-canvas aria-pressed:border-ink">
+            {t.common.all} <span class="font-mono opacity-60">{articles.length}</span>
+          </button>
+          {categories.map((cat) => (
+            <button type="button" data-filter={cat} aria-pressed="false" class="blog-filter chip h-9 px-4 text-[13px] cursor-pointer transition-colors hover:border-line-strong aria-pressed:bg-ink aria-pressed:text-canvas aria-pressed:border-ink">
+              {getCategoryLabel(cat)} <span class="font-mono opacity-60">{articles.filter((a) => a.category === cat).length}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
-    <!-- Articles Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      {articles.map((article) => (
-        <a href={getLocalizedPath(article.slug, currentLocale)} class="group block">
-          <GlassCard variant="card" class="h-full p-6 transition-all duration-200 group-hover:shadow-lg group-hover:border-[#ea2804]/20 dark:group-hover:border-[#ea2804]/30">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${categoryColors[article.category] || 'bg-zinc-500/10 text-zinc-600'}`}>
-                  {getCategoryLabel(article.category)}
-                </span>
-                <time class="text-[10px] font-mono text-[#8d8d8d] dark:text-zinc-500" datetime={article.date}>
-                  {formatDate(article.date)}
-                </time>
-              </div>
-
-              <h2 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc] leading-snug group-hover:text-[#ea2804] dark:group-hover:text-[#ff6a3d] transition-colors">
-                {article.title}
-              </h2>
-
-              <p class="text-xs text-[#575757] dark:text-zinc-400 leading-relaxed line-clamp-3">
-                {article.description}
-              </p>
-
-              <div class="flex items-center gap-1.5 text-xs font-semibold text-[#ea2804] dark:text-[#ff6a3d] pt-1">
-                <span>{t.common.readArticle}</span>
-                <svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path d="M5 12h14M12 5l7 7-7 7"></path>
-                </svg>
-              </div>
+      <!-- Lead story -->
+      {lead && (
+        <a
+          href={getLocalizedPath(lead.slug, currentLocale)}
+          data-category={lead.category}
+          class="blog-card group mt-12 surface-raised card-hover rounded-[2rem] p-2 grid md:grid-cols-[1.1fr_1fr] gap-2"
+        >
+          <div class="relative min-h-56 md:min-h-80 rounded-[1.6rem] overflow-hidden bg-[#16120f]" aria-hidden="true">
+            <div class="absolute inset-0 bg-[radial-gradient(80%_100%_at_100%_100%,rgba(234,40,4,0.7),transparent_65%)] transition-transform duration-700 group-hover:scale-110"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(50%_60%_at_0%_0%,rgba(255,106,61,0.25),transparent_70%)]"></div>
+            <span class="absolute bottom-5 start-6 font-display text-[7rem] leading-none font-bold tracking-tighter text-white/10">01</span>
+          </div>
+          <div class="p-6 sm:p-10 flex flex-col">
+            <div class="flex items-center gap-2 text-sm text-subtle">
+              <span class="font-medium text-accent-text">{getCategoryLabel(lead.category)}</span>
+              <span aria-hidden="true">·</span>
+              <time datetime={lead.date}>{formatDate(lead.date)}</time>
             </div>
-          </GlassCard>
+            <h2 class="mt-4 font-display text-2xl sm:text-4xl font-bold tracking-tight leading-tight text-ink group-hover:text-accent-text transition-colors">{lead.title}</h2>
+            <p class="mt-4 text-base text-muted leading-relaxed line-clamp-3">{lead.description}</p>
+            <span class="mt-auto pt-8 inline-flex items-center gap-1.5 text-sm font-semibold text-ink">
+              {t.common.readArticle}
+              <svg class="w-4 h-4 transition-transform group-hover:translate-x-1 rtl:-scale-x-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </span>
+          </div>
         </a>
-      ))}
-    </div>
+      )}
 
-    <!-- Back to Home -->
-    <div class="text-center mt-12">
-      <a
-        href={homeUrl}
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"></path>
-        </svg>
-        {t.common.backToHome}
-      </a>
+      <!-- All other articles -->
+      <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {rest.map((article, i) => (
+          <a
+            href={getLocalizedPath(article.slug, currentLocale)}
+            data-category={article.category}
+            class="blog-card group surface card-hover rounded-3xl p-6 sm:p-7 flex flex-col min-h-[13rem]"
+            data-reveal
+            style={`--reveal-delay: ${i % 3}`}
+          >
+            <div class="flex items-center justify-between gap-3 text-xs text-subtle">
+              <span class="font-medium text-accent-text">{getCategoryLabel(article.category)}</span>
+              <time datetime={article.date}>{formatDate(article.date)}</time>
+            </div>
+            <h2 class="mt-4 font-display text-xl font-semibold tracking-tight leading-snug text-ink group-hover:text-accent-text transition-colors">
+              {article.title}
+            </h2>
+            <span class="mt-auto pt-6 inline-flex items-center gap-1.5 text-sm font-medium text-ink-2">
+              {t.common.readArticle}
+              <svg class="w-4 h-4 transition-transform group-hover:translate-x-1 rtl:-scale-x-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </span>
+          </a>
+        ))}
+      </div>
     </div>
   </section>
 </Layout>
+
+<script>
+  // Category filter: toggles card visibility client-side; every article stays
+  // in the HTML so crawlers and no-JS visitors see the full index.
+  function setupBlogFilters() {
+    const root = document.querySelector<HTMLElement>('.blog-filters');
+    if (!root || root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('.blog-filter'));
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('.blog-card'));
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter || 'all';
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        cards.forEach((card) => {
+          const show = filter === 'all' || card.dataset.category === filter;
+          card.classList.toggle('hidden', !show);
+          if (show) card.classList.add('is-visible');
+        });
+      });
+    });
+  }
+
+  setupBlogFilters();
+  document.addEventListener('astro:page-load', setupBlogFilters);
+</script>

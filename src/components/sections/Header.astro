@@ -1,6 +1,7 @@
 ---
 import ThemeToggle from '../ui/ThemeToggle.astro';
 import LanguageSelector from '../ui/LanguageSelector.astro';
+import Logo from '../ui/Logo.astro';
 import { useTranslation, getLocalizedPath } from '../../i18n/utils';
 import type { Locale } from '../../i18n/languages';
 
@@ -15,193 +16,132 @@ const homeUrl = currentLocale === 'en' ? '/' : `/${currentLocale}/`;
 const blogUrl = getLocalizedPath('/blog/', currentLocale);
 const aboutUrl = getLocalizedPath('/about/', currentLocale);
 const contactUrl = getLocalizedPath('/contact/', currentLocale);
+
+const path = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const navLinks = [
+  { href: `${homeUrl}#features`, label: t.nav.features },
+  { href: `${homeUrl}#how-it-works`, label: t.nav.howItWorks },
+  { href: `${homeUrl}#faq`, label: t.nav.faq },
+  { href: blogUrl, label: t.nav.blog, current: path.startsWith(blogUrl) },
+  { href: aboutUrl, label: t.nav.about, current: path === aboutUrl, wide: true },
+  { href: contactUrl, label: t.nav.contact, current: path === contactUrl, wide: true },
+];
 ---
 
-<header class="sticky top-0 z-40 w-full border-b border-black/5 dark:border-white/10 glass-panel backdrop-blur-xl transition-all duration-300">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
-    <!-- Brand Wordmark Logo -->
-    <a href={homeUrl} class="flex items-center gap-2 sm:gap-2.5 group select-none shrink-0">
-      <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-[#ea2804] to-[#ff6a3d] flex items-center justify-center text-white shadow-md shadow-[#ea2804]/25 transition-transform group-hover:scale-105">
-        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="4"></circle>
-          <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"></path>
-        </svg>
-      </div>
-      <div class="flex flex-col">
-        <span class="font-display text-lg sm:text-xl font-black tracking-tight text-[#202020] dark:text-white">
-          Tempo<span class="text-[#ea2804] dark:text-[#ff6a3d]">Emails</span>
-        </span>
-        <span class="text-[8px] sm:text-[9px] uppercase tracking-widest font-mono text-[#8d8d8d] dark:text-zinc-400 -mt-1">
-          Burner Inbox
-        </span>
-      </div>
-    </a>
+<header class="sticky top-0 z-40 w-full px-3 sm:px-5 pt-3">
+  <div
+    id="site-header-bar"
+    class="glass mx-auto max-w-6xl h-14 rounded-full ps-3 pe-2 sm:ps-4 flex items-center justify-between gap-2"
+  >
+    <Logo href={homeUrl} />
 
-    <!-- Desktop Navigation Links -->
-    <nav class="hidden md:flex items-center gap-1">
-      <a href={`${homeUrl}#features`} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        {t.nav.features}
-      </a>
-      <a href={`${homeUrl}#how-it-works`} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        {t.nav.howItWorks}
-      </a>
-      <a href={`${homeUrl}#faq`} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        {t.nav.faq}
-      </a>
-      <a href={blogUrl} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        {t.nav.blog}
-      </a>
-      <a href={aboutUrl} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        {t.nav.about}
-      </a>
-      <a href={contactUrl} class="px-3 py-1.5 rounded-full text-sm font-medium text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-        {t.nav.contact}
-      </a>
+    <nav class="hidden md:flex items-center gap-0.5" aria-label="Primary">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          aria-current={link.current ? 'page' : undefined}
+          class:list={[
+            'relative px-3 py-1.5 rounded-full text-sm font-medium transition-colors',
+            link.wide && 'hidden lg:inline-flex',
+            link.current
+              ? 'text-ink bg-ink/6'
+              : 'text-muted hover:text-ink hover:bg-ink/5',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
     </nav>
 
-    <!-- Right Controls -->
-    <div class="flex items-center gap-1.5 sm:gap-2">
-      <!-- Language Selector -->
-      <LanguageSelector currentLocale={currentLocale} variant="header" />
+    <div class="flex items-center gap-1.5">
+      <div class="hidden sm:block">
+        <LanguageSelector currentLocale={currentLocale} variant="header" />
+      </div>
 
-      <!-- Sound Chime Toggle -->
       <button
         id="sound-toggle-btn"
         type="button"
-        class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white transition-colors cursor-pointer"
+        class="btn btn-ghost w-9 h-9 p-0"
         title={t.a11y.toggleSound}
         aria-label={t.a11y.toggleSound}
         aria-pressed="true"
       >
-        <svg id="sound-on-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        <svg id="sound-on-icon" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
         </svg>
-        <svg id="sound-off-icon" class="w-4 h-4 hidden text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-          <line x1="23" y1="9" x2="17" y2="15"></line>
-          <line x1="17" y1="9" x2="23" y2="15"></line>
+        <svg id="sound-off-icon" class="w-[18px] h-[18px] hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.7 3A6 6 0 0 1 18 8a21.3 21.3 0 0 0 .6 5"></path>
+          <path d="M17 17H3s3-2 3-9a4.67 4.67 0 0 1 .3-1.7"></path>
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+          <path d="m2 2 20 20"></path>
         </svg>
       </button>
 
-      <!-- Recent Inboxes History Button (only rendered on pages that contain the
-           mailbox island — elsewhere the inbox-history modal does not exist and
-           the button would be dead) -->
+      <ThemeToggle locale={currentLocale} />
+
       {isApp && (
-        <button
-          id="header-history-btn"
-          type="button"
-          class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors shadow-xs cursor-pointer"
-        >
-          <svg class="w-3.5 h-3.5 text-[#ea2804]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
+        <button id="header-history-btn" type="button" class="btn btn-secondary btn-sm hidden sm:inline-flex ms-1">
+          <svg class="w-4 h-4 text-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path>
+            <path d="M3 3v5h5"></path>
+            <path d="M12 7v5l3 2"></path>
           </svg>
           <span>{t.nav.history}</span>
         </button>
       )}
 
-      <!-- Light / Dark Mode Toggle -->
-      <ThemeToggle locale={currentLocale} />
-
-      <!-- Mobile Hamburger Menu Button -->
       <button
         id="mobile-menu-toggle"
         type="button"
-        class="md:hidden w-9 h-9 rounded-full flex items-center justify-center bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#575757] dark:text-zinc-300 hover:text-[#202020] dark:hover:text-white transition-colors cursor-pointer"
+        class="md:hidden btn btn-ghost w-9 h-9 p-0"
         aria-label={t.a11y.toggleMenu}
         aria-expanded="false"
         aria-controls="mobile-nav-drawer"
       >
-        <!-- Hamburger Icon -->
-        <svg id="hamburger-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
+        <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round">
+          <path d="M4 8h16M4 16h16"></path>
         </svg>
-        <!-- Close (X) Icon -->
-        <svg id="close-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
+        <svg id="close-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6 6 18"></path>
         </svg>
       </button>
     </div>
   </div>
 
-  <!-- Mobile Navigation Drawer -->
+  <!-- Mobile navigation drawer -->
   <div
     id="mobile-nav-drawer"
-    class="hidden md:hidden border-t border-black/5 dark:border-white/10 bg-white/95 dark:bg-[#121216]/95 backdrop-blur-2xl px-4 pt-3 pb-5 space-y-3 transition-all duration-200 shadow-xl"
+    class="hidden md:hidden mx-auto max-w-6xl mt-2 surface-raised rounded-3xl p-2 animate-rise-in"
   >
-    <nav class="flex flex-col space-y-1">
-      <a
-        href={`${homeUrl}#features`}
-        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
-      >
-        <span>{t.nav.features}</span>
-        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
-      </a>
-      <a
-        href={`${homeUrl}#how-it-works`}
-        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
-      >
-        <span>{t.nav.howItWorks}</span>
-        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
-      </a>
-      <a
-        href={`${homeUrl}#faq`}
-        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
-      >
-        <span>{t.nav.faq}</span>
-        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
-      </a>
-      <a
-        href={blogUrl}
-        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
-      >
-        <span>{t.nav.blog}</span>
-        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
-      </a>
-      <a
-        href={aboutUrl}
-        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
-      >
-        <span>{t.nav.about}</span>
-        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
-      </a>
-      <a
-        href={contactUrl}
-        class="mobile-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-[#202020] dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/5 active:bg-[#ea2804]/10 transition-colors"
-      >
-        <span>{t.nav.contact}</span>
-        <span class="text-xs text-[#8d8d8d] dark:text-zinc-500 font-mono">→</span>
-      </a>
+    <nav class="grid grid-cols-2 gap-1" aria-label="Mobile">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          aria-current={link.current ? 'page' : undefined}
+          class:list={[
+            'mobile-nav-link px-4 py-3.5 rounded-2xl text-[15px] font-medium transition-colors',
+            link.current ? 'bg-accent/8 text-accent-text' : 'text-ink hover:bg-ink/5',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
     </nav>
 
-    <!-- Mobile Language Selector Row -->
-    <div class="pt-2 border-t border-black/5 dark:border-white/10">
-      <div class="text-[10px] uppercase font-mono font-bold tracking-wider text-[#8d8d8d] dark:text-zinc-500 mb-1.5 px-1">
-        {t.nav.selectLanguage}
-      </div>
+    <div class="mt-2 pt-2 border-t hairline flex flex-col gap-2 p-1">
       <LanguageSelector currentLocale={currentLocale} variant="drawer" />
-    </div>
-
-    <!-- Mobile Quick History Button -->
-    {isApp && (
-      <div class="pt-2 border-t border-black/5 dark:border-white/10">
-        <button
-          id="mobile-history-btn"
-          type="button"
-          class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold bg-[#ea2804]/10 dark:bg-[#ea2804]/20 text-[#ea2804] dark:text-[#ff6a3d] border border-[#ea2804]/30 hover:bg-[#ea2804]/20 transition-all cursor-pointer"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
+      {isApp && (
+        <button id="mobile-history-btn" type="button" class="btn btn-secondary w-full">
+          <svg class="w-4 h-4 text-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path>
+            <path d="M3 3v5h5"></path>
+            <path d="M12 7v5l3 2"></path>
           </svg>
           <span>{t.nav.history}</span>
         </button>
-      </div>
-    )}
+      )}
+    </div>
   </div>
 </header>
 
@@ -218,13 +158,8 @@ const contactUrl = getLocalizedPath('/contact/', currentLocale);
 
     const updateSoundUI = () => {
       const enabled = soundNotifier.isEnabled();
-      if (enabled) {
-        soundOn?.classList.remove('hidden');
-        soundOff?.classList.add('hidden');
-      } else {
-        soundOn?.classList.add('hidden');
-        soundOff?.classList.remove('hidden');
-      }
+      soundOn?.classList.toggle('hidden', !enabled);
+      soundOff?.classList.toggle('hidden', enabled);
       soundBtn?.setAttribute('aria-pressed', String(enabled));
     };
 
@@ -263,17 +198,10 @@ const contactUrl = getLocalizedPath('/contact/', currentLocale);
       const isCurrentlyOpen = !mobileNavDrawer.classList.contains('hidden');
       const shouldOpen = open !== undefined ? open : !isCurrentlyOpen;
 
-      if (shouldOpen) {
-        mobileNavDrawer.classList.remove('hidden');
-        hamburgerIcon?.classList.add('hidden');
-        closeIcon?.classList.remove('hidden');
-        mobileMenuToggle.setAttribute('aria-expanded', 'true');
-      } else {
-        mobileNavDrawer.classList.add('hidden');
-        hamburgerIcon?.classList.remove('hidden');
-        closeIcon?.classList.add('hidden');
-        mobileMenuToggle.setAttribute('aria-expanded', 'false');
-      }
+      mobileNavDrawer.classList.toggle('hidden', !shouldOpen);
+      hamburgerIcon?.classList.toggle('hidden', shouldOpen);
+      closeIcon?.classList.toggle('hidden', !shouldOpen);
+      mobileMenuToggle.setAttribute('aria-expanded', String(shouldOpen));
     };
 
     mobileMenuToggle?.addEventListener('click', (e) => {

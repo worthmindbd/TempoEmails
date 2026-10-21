@@ -1,5 +1,6 @@
 ---
 import LanguageSelector from '../ui/LanguageSelector.astro';
+import Logo from '../ui/Logo.astro';
 import { useTranslation, getLocalizedPath } from '../../i18n/utils';
 import type { Locale } from '../../i18n/languages';
 
@@ -10,92 +11,77 @@ interface Props {
 const { currentLocale = 'en' } = Astro.props;
 const t = useTranslation(currentLocale);
 const homeUrl = currentLocale === 'en' ? '/' : `/${currentLocale}/`;
-const aboutUrl = getLocalizedPath('/about/', currentLocale);
-const contactUrl = getLocalizedPath('/contact/', currentLocale);
-const blogUrl = getLocalizedPath('/blog/', currentLocale);
-const privacyUrl = getLocalizedPath('/privacy-policy/', currentLocale);
-const termsUrl = getLocalizedPath('/terms-of-service/', currentLocale);
-const disclaimerUrl = getLocalizedPath('/disclaimer/', currentLocale);
+
+const groups = [
+  {
+    title: t.footer.quickLinks,
+    links: [
+      { href: `${homeUrl}#mailbox-manager-section`, label: t.footer.instantInbox },
+      { href: `${homeUrl}#features`, label: t.nav.features },
+      { href: `${homeUrl}#how-it-works`, label: t.nav.howItWorks },
+      { href: `${homeUrl}#faq`, label: t.nav.faq },
+    ],
+  },
+  {
+    title: t.footer.company,
+    links: [
+      { href: getLocalizedPath('/about/', currentLocale), label: t.nav.about },
+      { href: getLocalizedPath('/contact/', currentLocale), label: t.nav.contact },
+      { href: getLocalizedPath('/blog/', currentLocale), label: t.nav.blog },
+    ],
+  },
+  {
+    title: t.footer.legal,
+    links: [
+      { href: getLocalizedPath('/privacy-policy/', currentLocale), label: t.footer.privacyPolicy },
+      { href: getLocalizedPath('/terms-of-service/', currentLocale), label: t.footer.termsOfService },
+      { href: getLocalizedPath('/disclaimer/', currentLocale), label: t.footer.disclaimer },
+    ],
+  },
+];
 ---
 
-<footer class="w-full bg-[#0e0e11] text-[#fcfcfc] border-t border-white/10 mt-20 pt-16 pb-12">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
-      <!-- Brand column -->
-      <div class="md:col-span-4 space-y-4">
-        <div class="flex items-center gap-2.5">
-          <a href={homeUrl} class="flex items-center gap-2.5 group">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#ea2804] to-[#ff6a3d] flex items-center justify-center text-white font-bold">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="4"></circle>
-                <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"></path>
-              </svg>
-            </div>
-            <span class="font-display text-xl font-black tracking-tight text-white">
-              Tempo<span class="text-[#ea2804]">Emails</span>
-            </span>
-          </a>
-        </div>
-        <p class="text-xs text-zinc-400 max-w-sm leading-relaxed">
-          {t.footer.brandDesc}
-        </p>
-
-        <!-- Footer Language Selector -->
-        <div class="pt-2">
-          <LanguageSelector currentLocale={currentLocale} variant="footer" />
-        </div>
+<footer class="relative z-10 mt-20 sm:mt-28 border-t hairline bg-canvas-2 overflow-hidden px-5 sm:px-8">
+  <div class="max-w-6xl mx-auto pt-14 sm:pt-16">
+    <div class="grid gap-12 lg:grid-cols-[1.2fr_2fr]">
+      <div class="space-y-5 max-w-xs">
+        <Logo href={homeUrl} />
+        <p class="text-sm text-muted leading-relaxed">{t.footer.brandDesc}</p>
+        <LanguageSelector currentLocale={currentLocale} variant="footer" />
       </div>
 
-      <!-- Quick Links -->
-      <div class="md:col-span-2 space-y-3">
-        <h3 class="font-display text-sm font-bold text-white tracking-wide uppercase">
-          {t.footer.quickLinks}
-        </h3>
-        <ul class="space-y-2 text-xs text-zinc-400">
-          <li><a href={`${homeUrl}#mailbox-manager-section`} class="hover:text-white transition-colors">{t.footer.instantInbox}</a></li>
-          <li><a href={`${homeUrl}#features`} class="hover:text-white transition-colors">{t.nav.features}</a></li>
-          <li><a href={`${homeUrl}#how-it-works`} class="hover:text-white transition-colors">{t.nav.howItWorks}</a></li>
-          <li><a href={`${homeUrl}#faq`} class="hover:text-white transition-colors">{t.nav.faq}</a></li>
-        </ul>
-      </div>
-
-      <!-- Company -->
-      <div class="md:col-span-2 space-y-3">
-        <h3 class="font-display text-sm font-bold text-white tracking-wide uppercase">
-          {t.footer.company}
-        </h3>
-        <ul class="space-y-2 text-xs text-zinc-400">
-          <li><a href={aboutUrl} class="hover:text-white transition-colors">{t.nav.about}</a></li>
-          <li><a href={contactUrl} class="hover:text-white transition-colors">{t.nav.contact}</a></li>
-          <li><a href={blogUrl} class="hover:text-white transition-colors">{t.nav.blog}</a></li>
-        </ul>
-      </div>
-
-      <!-- Legal -->
-      <div class="md:col-span-4 space-y-3">
-        <h3 class="font-display text-sm font-bold text-white tracking-wide uppercase">
-          {t.footer.legal}
-        </h3>
-        <ul class="space-y-2 text-xs text-zinc-400">
-          <li><a href={privacyUrl} class="hover:text-white transition-colors">{t.footer.privacyPolicy}</a></li>
-          <li><a href={termsUrl} class="hover:text-white transition-colors">{t.footer.termsOfService}</a></li>
-          <li><a href={disclaimerUrl} class="hover:text-white transition-colors">{t.footer.disclaimer}</a></li>
-        </ul>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-8">
+        {groups.map((group) => (
+          <div>
+            <h2 class="text-sm font-semibold text-ink mb-4">{group.title}</h2>
+            <ul class="space-y-3">
+              {group.links.map((link) => (
+                <li>
+                  <a href={link.href} class="text-sm text-muted hover:text-ink transition-colors">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </div>
 
-    <!-- Copyright Row -->
-    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500 font-mono text-center sm:text-left">
-      <div>
-        © {new Date().getFullYear()} TempoEmails. {t.footer.allRightsReserved}
-      </div>
-      <div class="flex flex-wrap items-center justify-center sm:justify-end gap-3 sm:gap-4">
-        <a href={privacyUrl} class="hover:text-white transition-colors">{t.footer.privacyPolicy}</a>
-        <span>•</span>
-        <a href={termsUrl} class="hover:text-white transition-colors">{t.footer.termsOfService}</a>
-        <span>•</span>
-        <a href={contactUrl} class="hover:text-white transition-colors">{t.nav.contact}</a>
-      </div>
+    <div class="mt-14 pt-6 border-t hairline flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[13px] text-subtle">
+      <p>© {new Date().getFullYear()} TempoEmails. {t.footer.allRightsReserved}</p>
+      <p class="inline-flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-success" aria-hidden="true"></span>
+        {t.addressBar.liveBadge}
+      </p>
     </div>
+  </div>
+
+  <!-- Oversized wordmark, decorative only -->
+  <div
+    class="pointer-events-none select-none font-display font-extrabold leading-[0.8] tracking-[-0.06em] text-center text-ink/[0.05] text-[clamp(3.5rem,14.5vw,12.5rem)] mt-8 -mb-[0.14em] whitespace-nowrap"
+    aria-hidden="true"
+  >
+    TempoEmails
   </div>
 </footer>

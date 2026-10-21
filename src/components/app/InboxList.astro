@@ -11,50 +11,42 @@ const t = useTranslation(locale);
 ---
 
 <div class="h-full flex flex-col">
-  <!-- Inbox Header -->
-  <div class="flex items-center justify-between px-5 py-4 border-b border-black/5 dark:border-white/10">
+  <div class="flex items-center justify-between gap-3 px-5 h-14 border-b hairline">
     <div class="flex items-center gap-2.5">
-      <div class="w-2.5 h-2.5 rounded-full bg-[#ea2804] animate-pulse"></div>
-      <h2 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc]">
-        {t.inboxList.title}
-      </h2>
-      <span id="inbox-count-badge" role="status" aria-live="polite" class="text-xs px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 font-mono text-[#575757] dark:text-zinc-300 font-semibold">
+      <h2 class="font-display text-[17px] font-semibold text-ink">{t.inboxList.title}</h2>
+      <span
+        id="inbox-count-badge"
+        role="status"
+        aria-live="polite"
+        class="min-w-6 h-6 px-1.5 grid place-items-center rounded-full bg-ink/6 font-mono text-xs font-medium text-ink-2"
+      >
         0
       </span>
     </div>
+    <span class="inline-flex items-center gap-1.5 text-xs text-subtle">
+      <span class="w-1.5 h-1.5 rounded-full bg-success" aria-hidden="true"></span>
+      {t.inboxList.autoChecking}
+    </span>
   </div>
 
-  <!-- Messages List Container -->
-  <div id="messages-container" class="flex-1 overflow-y-auto relative min-h-[360px]">
-    <!-- Empty State -->
-    <div id="inbox-empty-state" class="flex flex-col items-center justify-center p-8 text-center h-full min-h-[320px]">
-      <div class="relative flex items-center justify-center mb-5">
-        <div class="w-20 h-20 rounded-full bg-[#ea2804]/5 dark:bg-[#ea2804]/10 flex items-center justify-center">
-          <div class="w-14 h-14 rounded-full bg-[#ea2804]/10 dark:bg-[#ea2804]/20 flex items-center justify-center text-[#ea2804] dark:text-[#ff6a3d]">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-              <polyline points="22,6 12,13 2,6"></polyline>
-            </svg>
-          </div>
-        </div>
-        <!-- Pulse Rings -->
-        <span class="absolute w-24 h-24 rounded-full border border-[#ea2804]/20 animate-pulse-ring pointer-events-none"></span>
+  <div id="messages-container" class="flex-1 overflow-y-auto relative min-h-[300px] md:max-h-[620px]">
+    <!-- Empty state -->
+    <div id="inbox-empty-state" class="flex flex-col items-center justify-center px-8 py-10 text-center h-full min-h-[300px]">
+      <div class="relative grid place-items-center w-24 h-24 mb-6" aria-hidden="true">
+        <span class="absolute inset-0 rounded-full border border-accent/25 animate-pulse-ring"></span>
+        <span class="absolute inset-0 rounded-full border border-accent/20 animate-pulse-ring [animation-delay:1.2s]"></span>
+        <span class="relative grid place-items-center w-16 h-16 rounded-2xl surface text-accent-text rotate-[-6deg]">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-6l-2 3h-4l-2-3H2"></path>
+            <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+          </svg>
+        </span>
       </div>
-
-      <h3 class="font-display text-base font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">
-        {t.inboxList.emptyTitle}
-      </h3>
-      <p class="text-xs text-[#575757] dark:text-zinc-400 max-w-xs mb-4">
-        {t.inboxList.emptyDesc}
-      </p>
-      
-      <div class="flex items-center gap-2 text-[11px] font-mono text-[#8d8d8d] dark:text-zinc-500">
-        <span class="w-2 h-2 rounded-full bg-[#2b9a66]"></span>
-        {t.inboxList.autoChecking}
-      </div>
+      <h3 class="font-display text-lg font-semibold text-ink mb-1.5">{t.inboxList.emptyTitle}</h3>
+      <p class="text-sm text-muted max-w-[17rem] leading-relaxed">{t.inboxList.emptyDesc}</p>
     </div>
 
-    <!-- Live Message Items List will be injected here -->
-    <div id="inbox-items-list" class="hidden"></div>
+    <!-- Live message items are injected here by MailboxManager -->
+    <div id="inbox-items-list" class="hidden p-2 space-y-1"></div>
   </div>
 </div>

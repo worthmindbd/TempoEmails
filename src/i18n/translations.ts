@@ -30,6 +30,8 @@ export interface TranslationSchema {
     selectLanguage: string;
   };
   hero: {
+    chips: string[];
+    worksWith: string;
     badge: string;
     titleLine1: string;
     titleLine2: string;
@@ -209,6 +211,11 @@ export interface TranslationSchema {
     q6: string;
     a6: string;
   };
+  cta: {
+    title: string;
+    subtitle: string;
+    button: string;
+  };
   footer: {
     brandDesc: string;
     quickLinks: string;
@@ -221,6 +228,7 @@ export interface TranslationSchema {
     allRightsReserved: string;
   };
   a11y: {
+    skipToContent: string;
     toggleTheme: string;
     toggleSound: string;
     toggleMenu: string;
@@ -228,6 +236,7 @@ export interface TranslationSchema {
     changeLanguage: string;
   };
   common: {
+    onThisPage: string;
     close: string;
     home: string;
     blog: string;
@@ -308,6 +317,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Language"
     },
     "hero": {
+      "chips": ["No sign-up","Auto OTP detection","Zero logs"],
+      "worksWith": "Works with",
       "badge": "⚡ Instant Temp Mail & 10 Minute Burner Inbox",
       "titleLine1": "Free Temp Mail.",
       "titleLine2": "Disposable Email in Seconds.",
@@ -561,6 +572,11 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "q6": "Is TempoEmails completely free with zero logs and no registration?",
       "a6": "Yes. TempoEmails is 100% free with no registration, no passwords, and zero personal logs. Your messages exist in temporary memory and are deleted automatically when you close or wipe your session."
     },
+    "cta": {
+      "title": "Your inbox is already live.",
+      "subtitle": "No account, no password — just copy the address and go.",
+      "button": "Open my inbox"
+    },
     "footer": {
       "brandDesc": "Free disposable email generator. Receive verification codes and OTPs instantly while keeping your personal inbox safe from spam.",
       "quickLinks": "Quick Links",
@@ -573,6 +589,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "allRightsReserved": "All rights reserved."
     },
     "a11y": {
+      "skipToContent": "Skip to content",
       "toggleTheme": "Toggle dark mode",
       "toggleSound": "Toggle email notification sound",
       "toggleMenu": "Toggle navigation menu",
@@ -580,6 +597,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "changeLanguage": "Change language, current is {lang}"
     },
     "common": {
+      "onThisPage": "On this page",
       "close": "Close",
       "home": "Home",
       "blog": "Blog",
@@ -658,6 +676,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Idioma"
     },
     "hero": {
+      "chips": ["Sin registro","Detección automática de OTP","Cero registros"],
+      "worksWith": "Funciona con",
       "badge": "⚡ Correo Temporal Instantáneo y Buzón Desechable",
       "titleLine1": "Correo Temporal Gratis.",
       "titleLine2": "Email Desechable en Segundos.",
@@ -911,6 +931,11 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "q6": "¿Es completamente gratis y sin registros?",
       "a6": "Sí, 100% gratis, sin contraseñas, sin registros y sin guardar registros personales."
     },
+    "cta": {
+      "title": "Tu bandeja ya está activa.",
+      "subtitle": "Sin cuenta ni contraseña: copia la dirección y listo.",
+      "button": "Abrir mi bandeja"
+    },
     "footer": {
       "brandDesc": "Generador gratuito de correo temporal desechable. Recibe códigos de verificación y OTPs al instante protegiendo tu buzón personal del spam.",
       "quickLinks": "Enlaces Rápidos",
@@ -923,6 +948,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "allRightsReserved": "Todos los derechos reservados."
     },
     "a11y": {
+      "skipToContent": "Saltar al contenido",
       "toggleTheme": "Alternar modo oscuro",
       "toggleSound": "Activar o desactivar el sonido de las notificaciones",
       "toggleMenu": "Mostrar u ocultar el menú de navegación",
@@ -930,6 +956,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "changeLanguage": "Cambiar idioma, el actual es {lang}"
     },
     "common": {
+      "onThisPage": "En esta página",
       "close": "Cerrar",
       "home": "Inicio",
       "blog": "Blog",
@@ -1008,6 +1035,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Idioma"
     },
     "hero": {
+      "chips": ["Sem cadastro","Detecção automática de OTP","Zero registros"],
+      "worksWith": "Funciona com",
       "badge": "⚡ Email Temporário Instantâneo e Caixa Descartável",
       "titleLine1": "Email Temporário Grátis.",
       "titleLine2": "Email Descartável em Segundos.",
@@ -1261,6 +1290,11 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "q6": "É totalmente gratuito e sem cadastro?",
       "a6": "Sim, 100% grátis, sem senhas, sem formulários e sem registro de dados pessoais."
     },
+    "cta": {
+      "title": "Sua caixa de entrada já está ativa.",
+      "subtitle": "Sem conta, sem senha — é só copiar o endereço.",
+      "button": "Abrir minha caixa"
+    },
     "footer": {
       "brandDesc": "Gerador gratuito de email descartável e temporário. Receba códigos de verificação e OTPs mantendo seu email principal longe do spam.",
       "quickLinks": "Links Rápidos",
@@ -1273,6 +1307,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "allRightsReserved": "Todos os direitos reservados."
     },
     "a11y": {
+      "skipToContent": "Pular para o conteúdo",
       "toggleTheme": "Alternar modo escuro",
       "toggleSound": "Ativar ou desativar o som das notificações",
       "toggleMenu": "Mostrar ou ocultar o menu de navegação",
@@ -1280,6 +1315,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "changeLanguage": "Mudar idioma, o atual é {lang}"
     },
     "common": {
+      "onThisPage": "Nesta página",
       "close": "Fechar",
       "home": "Início",
       "blog": "Blog",
@@ -1358,6 +1394,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Langue"
     },
     "hero": {
+      "chips": ["Sans inscription","Détection auto des OTP","Zéro journal"],
+      "worksWith": "Compatible avec",
       "badge": "⚡ Email Temporaire Instantané & Boîte Jetable 10 Minutes",
       "titleLine1": "Email Temporaire Gratuit.",
       "titleLine2": "Email Jetable en Quelques Secondes.",
@@ -1611,6 +1649,11 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "q6": "Est-ce totalement gratuit et sans inscription ?",
       "a6": "Oui, 100 % gratuit, sans mot de passe, sans formulaires et sans enregistrement de journaux personnels."
     },
+    "cta": {
+      "title": "Votre boîte est déjà active.",
+      "subtitle": "Ni compte ni mot de passe : copiez l’adresse et c’est parti.",
+      "button": "Ouvrir ma boîte"
+    },
     "footer": {
       "brandDesc": "Générateur d’email temporaire et jetable gratuit. Recevez vos codes OTP et liens de confirmation en protégeant votre boîte personnelle.",
       "quickLinks": "Liens Rapides",
@@ -1623,6 +1666,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "allRightsReserved": "Tous droits réservés."
     },
     "a11y": {
+      "skipToContent": "Aller au contenu",
       "toggleTheme": "Basculer le mode sombre",
       "toggleSound": "Activer ou désactiver le son des notifications",
       "toggleMenu": "Afficher ou masquer le menu de navigation",
@@ -1630,6 +1674,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "changeLanguage": "Changer de langue, langue actuelle : {lang}"
     },
     "common": {
+      "onThisPage": "Sur cette page",
       "close": "Fermer",
       "home": "Accueil",
       "blog": "Blog",
@@ -1708,6 +1753,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Sprache"
     },
     "hero": {
+      "chips": ["Ohne Anmeldung","Automatische OTP-Erkennung","Keine Logs"],
+      "worksWith": "Funktioniert mit",
       "badge": "⚡ Sofortige Wegwerf-Email & 10-Minuten-Postfach",
       "titleLine1": "Kostenlose Temporäre Email.",
       "titleLine2": "Wegwerf-Email in Sekunden.",
@@ -1961,6 +2008,11 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "q6": "Ist TempoEmails wirklich kostenlos und ohne Registrierung?",
       "a6": "Ja, 100 % kostenlos, ohne Passwörter, ohne Anmeldung und ohne Speicherung persönlicher Daten."
     },
+    "cta": {
+      "title": "Ihr Postfach ist schon aktiv.",
+      "subtitle": "Kein Konto, kein Passwort – Adresse kopieren und loslegen.",
+      "button": "Mein Postfach öffnen"
+    },
     "footer": {
       "brandDesc": "Kostenloser Generator für temporäre Wegwerf-Emails. Empfange Bestätigungscodes und halte dein privates Postfach sauber von Spam.",
       "quickLinks": "Direktlinks",
@@ -1973,6 +2025,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "allRightsReserved": "Alle Rechte vorbehalten."
     },
     "a11y": {
+      "skipToContent": "Zum Inhalt springen",
       "toggleTheme": "Dunkelmodus umschalten",
       "toggleSound": "Ton der Benachrichtigungen ein- oder ausschalten",
       "toggleMenu": "Navigationsmenü ein- oder ausblenden",
@@ -1980,6 +2033,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "changeLanguage": "Sprache ändern, aktuell {lang}"
     },
     "common": {
+      "onThisPage": "Auf dieser Seite",
       "close": "Schließen",
       "home": "Startseite",
       "blog": "Blog",
@@ -2058,6 +2112,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Язык"
     },
     "hero": {
+      "chips": ["Без регистрации","Автоопределение OTP","Никаких логов"],
+      "worksWith": "Работает с",
       "badge": "⚡ Мгновенная Временная Почта и Одноразовый Ящик",
       "titleLine1": "Бесплатная Временная Почта.",
       "titleLine2": "Одноразовый Email за Секунды.",
@@ -2311,6 +2367,11 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "q6": "Это действительно бесплатно и без регистрации?",
       "a6": "Да, 100% бесплатно, без регистрации, паролей и сохранения персональных логов."
     },
+    "cta": {
+      "title": "Ваш ящик уже работает.",
+      "subtitle": "Без аккаунта и пароля — просто скопируйте адрес.",
+      "button": "Открыть мой ящик"
+    },
     "footer": {
       "brandDesc": "Бесплатный генератор одноразовой временной почты. Получайте коды активации и OTP, защищая личный ящик от спама.",
       "quickLinks": "Быстрые Ссылки",
@@ -2323,6 +2384,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "allRightsReserved": "Все права защищены."
     },
     "a11y": {
+      "skipToContent": "Перейти к содержимому",
       "toggleTheme": "Переключить тёмную тему",
       "toggleSound": "Включить или выключить звук уведомлений",
       "toggleMenu": "Показать или скрыть меню навигации",
@@ -2330,6 +2392,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "changeLanguage": "Сменить язык, текущий: {lang}"
     },
     "common": {
+      "onThisPage": "На этой странице",
       "close": "Закрыть",
       "home": "Главная",
       "blog": "Блог",
@@ -2408,6 +2471,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "选择语言"
     },
     "hero": {
+      "chips": ["无需注册","自动识别验证码","零日志"],
+      "worksWith": "适用于",
       "badge": "⚡ 即时临时邮箱与10分钟一次性收件箱",
       "titleLine1": "免费临时邮箱。",
       "titleLine2": "数秒内生成一次性邮箱。",
@@ -2661,6 +2726,11 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "q6": "使用完全免费且免注册吗？",
       "a6": "是的，100% 永久免费，无需注册账号，无需设置密码，且不会记录任何用户隐私日志。"
     },
+    "cta": {
+      "title": "你的收件箱已就绪。",
+      "subtitle": "无需账号和密码，复制地址即可使用。",
+      "button": "打开我的收件箱"
+    },
     "footer": {
       "brandDesc": "免费一次性临时邮箱生成器。快速接收验证码与激活链接，守护您的私人邮箱免受垃圾邮件侵扰。",
       "quickLinks": "快捷链接",
@@ -2673,6 +2743,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "allRightsReserved": "保留所有权利。"
     },
     "a11y": {
+      "skipToContent": "跳到主要内容",
       "toggleTheme": "切换深色模式",
       "toggleSound": "开关邮件通知声音",
       "toggleMenu": "显示或隐藏导航菜单",
@@ -2680,6 +2751,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "changeLanguage": "更改语言，当前为 {lang}"
     },
     "common": {
+      "onThisPage": "本页内容",
       "close": "关闭",
       "home": "首页",
       "blog": "博客",
@@ -2758,6 +2830,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "言語"
     },
     "hero": {
+      "chips": ["登録不要","OTPを自動検出","ログなし"],
+      "worksWith": "対応サービス",
       "badge": "⚡ 即時発行の捨てメアド＆10分間使い捨てメール",
       "titleLine1": "無料捨てメアド。",
       "titleLine2": "数秒で使い捨てアドレス作成。",
@@ -3011,6 +3085,11 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "q6": "本当に無料で登録も不要ですか？",
       "a6": "はい、完全無料でパスワード設定やアカウント登録も一切不要です。"
     },
+    "cta": {
+      "title": "受信箱はすでに稼働中です。",
+      "subtitle": "アカウントもパスワードも不要。アドレスをコピーするだけ。",
+      "button": "受信箱を開く"
+    },
     "footer": {
       "brandDesc": "無料の使い捨てメール（捨てメアド）サービス。本物のアドレスをスパムから守り、安全に認証コードを受信。",
       "quickLinks": "リンク",
@@ -3023,6 +3102,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "allRightsReserved": "無断転載を禁じます。"
     },
     "a11y": {
+      "skipToContent": "本文へスキップ",
       "toggleTheme": "ダークモードを切り替える",
       "toggleSound": "通知音のオン・オフを切り替える",
       "toggleMenu": "ナビゲーションメニューの表示を切り替える",
@@ -3030,6 +3110,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "changeLanguage": "言語を変更（現在の言語: {lang}）"
     },
     "common": {
+      "onThisPage": "このページの内容",
       "close": "閉じる",
       "home": "ホーム",
       "blog": "ブログ",
@@ -3108,6 +3189,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "اللغة"
     },
     "hero": {
+      "chips": ["بدون تسجيل","اكتشاف تلقائي لرموز OTP","بدون سجلات"],
+      "worksWith": "يعمل مع",
       "badge": "⚡ بريد إلكتروني مؤقت وفوري لمدة 10 دقائق",
       "titleLine1": "بريد مؤقت مجاني.",
       "titleLine2": "إيميل وهمي في ثوانٍ معدودة.",
@@ -3361,6 +3444,11 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "q6": "هل الخدمة مجانية تماماً وبدون تسجيل؟",
       "a6": "نعم، مجانية 100% بدون تسجيل حسابات أو كلمات سر وبلا أي سجلات لبياناتك."
     },
+    "cta": {
+      "title": "صندوق بريدك جاهز بالفعل.",
+      "subtitle": "بدون حساب أو كلمة مرور — فقط انسخ العنوان وابدأ.",
+      "button": "افتح صندوقي"
+    },
     "footer": {
       "brandDesc": "خدمة بريد إلكتروني مؤقت ومجاني. استقبل أكواد التفعيل واحفظ بريدك الشخصي من الرسائل المزعجة.",
       "quickLinks": "روابط سريعة",
@@ -3373,6 +3461,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "allRightsReserved": "جميع الحقوق محفوظة."
     },
     "a11y": {
+      "skipToContent": "تخطَّ إلى المحتوى",
       "toggleTheme": "تبديل الوضع الداكن",
       "toggleSound": "تشغيل أو إيقاف صوت الإشعارات",
       "toggleMenu": "إظهار أو إخفاء قائمة التنقل",
@@ -3380,6 +3469,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "changeLanguage": "تغيير اللغة، اللغة الحالية {lang}"
     },
     "common": {
+      "onThisPage": "في هذه الصفحة",
       "close": "إغلاق",
       "home": "الرئيسية",
       "blog": "المدونة",
@@ -3458,6 +3548,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Bahasa"
     },
     "hero": {
+      "chips": ["Tanpa daftar","Deteksi OTP otomatis","Tanpa log"],
+      "worksWith": "Kompatibel dengan",
       "badge": "⚡ Email Sementara Cepat & Kotak Masuk 10 Menit",
       "titleLine1": "Email Sementara Gratis.",
       "titleLine2": "Email Sekali Pakai dalam Hitungan Detik.",
@@ -3711,6 +3803,11 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "q6": "Apakah benar-benar gratis dan tanpa registrasi?",
       "a6": "Ya, 100% gratis tanpa password, tanpa pendaftaran, dan tanpa mencatat data pribadi Anda."
     },
+    "cta": {
+      "title": "Kotak masuk Anda sudah aktif.",
+      "subtitle": "Tanpa akun, tanpa kata sandi — cukup salin alamatnya.",
+      "button": "Buka kotak masuk"
+    },
     "footer": {
       "brandDesc": "Generator email sementara sekali pakai gratis. Dapatkan kode verifikasi dan OTP instan sambil menjaga kotak masuk pribadi Anda aman dari spam.",
       "quickLinks": "Tautan Cepat",
@@ -3723,6 +3820,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "allRightsReserved": "Hak cipta dilindungi undang-undang."
     },
     "a11y": {
+      "skipToContent": "Lewati ke konten",
       "toggleTheme": "Alihkan mode gelap",
       "toggleSound": "Aktifkan atau nonaktifkan suara notifikasi",
       "toggleMenu": "Tampilkan atau sembunyikan menu navigasi",
@@ -3730,6 +3828,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "changeLanguage": "Ubah bahasa, bahasa saat ini {lang}"
     },
     "common": {
+      "onThisPage": "Di halaman ini",
       "close": "Tutup",
       "home": "Beranda",
       "blog": "Blog",

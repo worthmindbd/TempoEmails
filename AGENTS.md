@@ -45,8 +45,8 @@ README before "fixing" it.
 
 ### Component Organisation
 - `src/components/app/` — core app components (MailboxManager is the central controller)
-- `src/components/sections/` — landing page sections (Header, Features, HowItWorks, OtpShowcase, UseCases, Faq, Footer)
-- `src/components/ui/` — reusable primitives (Badge, Button, GlassCard, ThemeToggle, ToastContainer, ConfirmModal, CookieConsent, LanguageSelector)
+- `src/components/sections/` — `HomePage.astro` (shared by `/` and `/[lang]/`) plus its sections (Header, Features, HowItWorks, OtpShowcase, UseCases, Faq, Footer)
+- `src/components/ui/` — reusable pieces (Logo, SectionHeading, DialogHeader, ThemeToggle, ToastContainer, ConfirmModal, CookieConsent, LanguageSelector). Buttons, chips and surfaces are CSS classes, not components, so JS-built DOM can use them too
 
 ### Mail Service (`src/lib/mail/`)
 - `types.ts` — core interfaces (`MailAccount`, `MailMessage`, `DetailedMailMessage`, provider union type)
@@ -74,9 +74,11 @@ README before "fixing" it.
 
 ### Styling
 - Tailwind CSS v4 via `@tailwindcss/vite` plugin
-- `src/styles/global.css` — glassmorphism classes (`glass-panel`, `glass-card`, `glass-pill`), hero glow mesh, custom animations, scrollbar styles
+- `src/styles/global.css` — semantic colour tokens (CSS vars flipped by `html.dark`, exposed as Tailwind utilities: `bg-surface`, `text-ink`, `text-muted`, `border-line`, `bg-accent`, `text-accent-text` …), component classes (`.btn-*`, `.chip`, `.surface*`, `.dialog-*`, `.section-title`, `.eyebrow`), `.content-body` article prose, `[data-reveal]` scroll reveal, background layers. See `DESIGN.md`
+- Never hardcode hex colours in markup; use the tokens. Modal open/close is JS toggling `opacity-0 pointer-events-none` (overlay) and `scale-95` (panel)
+- Do not put a lingering `transform`/`filter` on an ancestor of the app dialogs, and do not give `<main>` a z-index: either traps the `position: fixed` dialogs
 - Dark mode: class-based (`html.dark`), zero-FOUC inline script in Layout head
-- Fonts: Bricolage Grotesque (display), Inter (body), JetBrains Mono (mono)
+- Fonts: Bricolage Grotesque (display), Geist (body), Geist Mono (mono). Bricolage has two axes, so the Google Fonts URL must use a weight range (`opsz,wght@12..96,500..800`); a `;` list returns HTTP 400
 
 ## Conventions
 

@@ -1,5 +1,5 @@
 ---
-import Button from '../ui/Button.astro';
+import DialogHeader from '../ui/DialogHeader.astro';
 import { useTranslation } from '../../i18n/utils';
 import type { Locale } from '../../i18n/languages';
 
@@ -13,58 +13,31 @@ const t = useTranslation(locale);
 
 <div
   id="history-modal"
-  class="fixed inset-0 z-50 flex items-center justify-center p-3.5 sm:p-4 bg-black/60 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200"
+  class="dialog-overlay opacity-0 pointer-events-none"
   role="dialog"
   aria-hidden="true"
   inert
   aria-modal="true"
   aria-labelledby="history-modal-title"
 >
-  <div class="relative w-full max-w-md max-h-[90vh] overflow-y-auto glass-panel p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-2xl transform scale-95 transition-transform duration-200" id="history-modal-content">
-    <div class="flex items-center justify-between mb-4">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-full bg-[#ea2804]/10 text-[#ea2804] flex items-center justify-center">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-        </div>
-        <h3 id="history-modal-title" class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc]">{t.historyDrawer.title}</h3>
-      </div>
-      <button
-        id="history-modal-close"
-        type="button"
-        class="w-8 h-8 rounded-full flex items-center justify-center text-[#8d8d8d] hover:text-[#202020] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
-        aria-label={t.common.close}
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
+  <div id="history-modal-content" class="dialog-panel max-w-md scale-95">
+    <DialogHeader id="history-modal-title" closeId="history-modal-close" title={t.historyDrawer.title} closeLabel={t.common.close} />
+    <p class="text-sm text-muted mb-5">{t.historyDrawer.desc}</p>
+
+    <div id="history-inboxes-list" class="space-y-1.5 max-h-72 overflow-y-auto -mx-1 px-1">
+      <div class="text-center py-8 text-sm text-subtle">{t.historyDrawer.emptyTitle}</div>
     </div>
 
-    <p class="text-xs text-[#575757] dark:text-zinc-400 mb-4">
-      {t.historyDrawer.desc}
-    </p>
-
-    <!-- Inboxes List -->
-    <div id="history-inboxes-list" class="space-y-2 max-h-64 overflow-y-auto pr-1">
-      <div class="text-center py-6 text-xs text-[#8d8d8d]">{t.historyDrawer.emptyTitle}</div>
-    </div>
-
-    <div class="flex justify-between items-center pt-4 mt-2 border-t border-black/5 dark:border-white/10">
+    <div class="flex justify-between items-center pt-4 mt-4 border-t hairline">
       <button
         id="clear-all-history-btn"
         type="button"
         disabled
-        class="text-xs text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+        class="btn btn-ghost btn-sm -ms-3 text-[#c81e3a]! hover:bg-[#c81e3a]/8!"
       >
         {t.historyDrawer.clearAll}
       </button>
-      <Button variant="ghost" size="sm" id="history-modal-done">
-        {t.common.close}
-      </Button>
+      <button type="button" id="history-modal-done" class="btn btn-secondary btn-sm">{t.common.close}</button>
     </div>
   </div>
 </div>

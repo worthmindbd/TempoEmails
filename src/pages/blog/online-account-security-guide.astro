@@ -32,101 +32,101 @@ import ContentLayout from '../../layouts/ContentLayout.astro';
     }
   ]}
 >
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     The average person manages between 70 and 150 online accounts. From banks and tax portals to streaming subscriptions, shopping sites, and forums, our personal and financial lives are spread across dozens of servers.
   </p>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     Unfortunately, cyberattacks are no longer random occurrences targeting only large corporations. Automated credential stuffing bots, data breach scrapers, and sophisticated phishing rings constantly probe everyday user accounts for vulnerabilities. A single compromised account can trigger a domino effect, leading to identity theft, financial losses, and privacy invasion.
   </p>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    This guide provides a systematic, actionable framework to fortify every layer of your digital presence—from cryptographic password generation to multi-factor authentication (MFA) and strategic email compartmentalization with <a href="/" class="text-[#ea2804] hover:underline">disposable temporary email</a>.
+  <p>
+    This guide provides a systematic, actionable framework to fortify every layer of your digital presence—from cryptographic password generation to multi-factor authentication (MFA) and strategic email compartmentalization with <a href="/">disposable temporary email</a>.
   </p>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     1. The Foundation: Passwords and Credential Hygiene
   </h2>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     Passwords remain the primary gatekeeper for most online accounts. However, human memory is fundamentally unsuited for modern cryptographic demands. Humans favor predictable patterns (e.g., capitalization at the beginning, a common word in the middle, an exclamation mark at the end), which modern cracking tools can guess in fractions of a second.
   </p>
 
-  <h3 class="font-display text-xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-3 mt-6">
+  <h3>
     The Mortal Sin: Password Reuse
   </h3>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     When you reuse the same password (or slight variations of it) across multiple websites, you expose yourself to <strong>credential stuffing attacks</strong>. If an obscure gaming forum or online store you joined five years ago suffers a database breach, automated hacker scripts test that same email and password combination against hundreds of high-value services (Amazon, PayPal, Google, Apple ID) within minutes.
   </p>
 
-  <h3 class="font-display text-xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-3 mt-6">
+  <h3>
     Why You Must Use a Password Manager
   </h3>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     The only realistic way to maintain unique, 16+ character, high-entropy passwords for every single service is by using a reputable, audited password manager. Trusted options include:
   </p>
 
-  <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-4">
+  <ul>
     <li><strong>Bitwarden:</strong> Open-source, cloud-synced, and independently audited with generous free and premium tiers.</li>
     <li><strong>1Password:</strong> Industry-standard enterprise and family password manager with stellar UX and Secret Key cryptography.</li>
     <li><strong>KeePassXC:</strong> Completely offline, local-database password manager for users who want zero cloud exposure.</li>
   </ul>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     With a password manager, you only need to remember one long, memorable master passphrase (such as four randomly generated words combined with symbols). The software handles generating, storing, and autofilling unique 20-character passwords everywhere else.
   </p>
 
-  <blockquote class="border-l-4 border-[#ea2804] pl-4 italic text-[#575757] dark:text-zinc-400 mb-4">
+  <blockquote>
     "A password is only as secure as the weakest service where you entered it. If you reuse passwords, your most critical accounts are only as safe as the least secure website you use."
   </blockquote>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     2. Multi-Factor Authentication (MFA): Ranking Your Defenses
   </h2>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     Two-Factor Authentication (2FA) ensures that even if an attacker steals or guesses your password, they still cannot access your account without a secondary physical or cryptographic proof. However, not all 2FA methods offer equal protection:
   </p>
 
-  <h3 class="font-display text-xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-3 mt-6">
+  <h3>
     Good: SMS / Text Message 2FA (Better than nothing, but vulnerable)
   </h3>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     SMS-based verification codes are vastly superior to no 2FA at all, but they are vulnerable to <strong>SIM swapping attacks</strong> (where an attacker impersonates you to your cellular carrier to redirect your text messages) and SS7 telecom network eavesdropping.
   </p>
 
-  <h3 class="font-display text-xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-3 mt-6">
+  <h3>
     Better: Time-Based One-Time Passwords (TOTP Authenticator Apps)
   </h3>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     Apps like Aegis Authenticator, Ente Auth, Google Authenticator, or 1Password generate dynamic 6-digit codes every 30 seconds using an offline cryptographic shared secret. Because TOTP tokens live entirely on your device, they cannot be intercepted via cellular network tampering.
   </p>
 
-  <h3 class="font-display text-xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-3 mt-6">
+  <h3>
     Best: FIDO2 / WebAuthn Hardware Security Keys (Phishing-Proof)
   </h3>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Physical USB/NFC hardware tokens (such as YubiKeys) use origin-bound public key cryptography. Because the authentication challenge is cryptographically bound to the exact website domain in your browser address bar, hardware keys are 100% immune to <a href="/blog/understanding-phishing-emails/" class="text-[#ea2804] hover:underline">phishing attacks</a>.
+  <p>
+    Physical USB/NFC hardware tokens (such as YubiKeys) use origin-bound public key cryptography. Because the authentication challenge is cryptographically bound to the exact website domain in your browser address bar, hardware keys are 100% immune to <a href="/blog/understanding-phishing-emails/">phishing attacks</a>.
   </p>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     3. Securing the Root: Why Your Email Is the Master Key
   </h2>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     In modern web architecture, your email address is the ultimate single point of failure. If an attacker gains unauthorized access to your primary email inbox, they can click "Forgot Password" on your bank, Apple ID, crypto wallet, and cloud storage, resetting the passwords and locking you out completely.
   </p>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     To protect the root of your digital identity, implement <strong>Email Segmentation</strong>:
   </p>
 
-  <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-4">
+  <ul>
     <li>
       <strong>Lock down your primary email:</strong> Use a dedicated hardware key or TOTP 2FA, generate an ultra-strong 25+ character passphrase, and never use this address on untrusted websites.
     </li>
@@ -134,98 +134,98 @@ import ContentLayout from '../../layouts/ContentLayout.astro';
       <strong>Keep security answers deceptive:</strong> When setting up recovery security questions ("What was your mother's maiden name?"), do not enter truthful answers that can be researched on social media. Instead, generate random passwords (e.g., <code>BlueSky#9841</code>) and store them inside your password manager under the entry's custom fields.
     </li>
     <li>
-      <strong>Use disposable emails for non-critical services:</strong> For software trials, e-book downloads, one-time discount coupons, and public forums, use <a href="/" class="text-[#ea2804] hover:underline">TempoEmails</a>. This ensures your real email is never stored in databases that might later be breached.
+      <strong>Use disposable emails for non-critical services:</strong> For software trials, e-book downloads, one-time discount coupons, and public forums, use <a href="/">TempoEmails</a>. This ensures your real email is never stored in databases that might later be breached.
     </li>
   </ul>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     4. Proactive Account Audits & Breach Awareness
   </h2>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     Security is not a set-it-and-forget-it milestone; it is an ongoing practice. Execute these three proactive audits regularly:
   </p>
 
-  <h3 class="font-display text-xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-3 mt-6">
+  <h3>
     Check Data Breach Repositories
   </h3>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Visit Troy Hunt's renowned service <a href="https://haveibeenpwned.com" target="_blank" rel="noopener noreferrer" class="text-[#ea2804] hover:underline">Have I Been Pwned</a> and enter your primary and secondary email addresses. If an account has appeared in a recent breach, immediately change the password on that service and verify that 2FA is enabled.
+  <p>
+    Visit Troy Hunt's renowned service <a href="https://haveibeenpwned.com" target="_blank" rel="noopener noreferrer">Have I Been Pwned</a> and enter your primary and secondary email addresses. If an account has appeared in a recent breach, immediately change the password on that service and verify that 2FA is enabled.
   </p>
 
-  <h3 class="font-display text-xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-3 mt-6">
+  <h3>
     Audit Connected Third-Party Apps (OAuth)
   </h3>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     When you click "Sign in with Google" or "Sign in with Apple", you grant third-party applications specific API permissions to your account. Over time, abandoned games and defunct apps accumulate silent access tokens. Navigate to your Google / Apple Account Security settings, view all connected third-party integrations, and revoke access for any app you no longer actively use.
   </p>
 
-  <h3 class="font-display text-xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-3 mt-6">
+  <h3>
     Review Active Sessions and Login Alerts
   </h3>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     Most major platforms allow you to view active logged-in devices. If you see an unrecognized device or login location, use the "Log Out All Other Sessions" button and change your password immediately.
   </p>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     5. The Strategic Role of Disposable Email in Account Defense
   </h2>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     One of the most powerful and underutilized cybersecurity tactics is reducing your overall attack surface. Every time you register an account with a permanent email address, you create an entry in a corporate database that you cannot control, update, or delete.
   </p>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Using <a href="/" class="text-[#ea2804] hover:underline">TempoEmails</a> fundamentally alters this dynamic:
+  <p>
+    Using <a href="/">TempoEmails</a> fundamentally alters this dynamic:
   </p>
 
-  <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-4">
+  <ul>
     <li>
       <strong>Zero Breach Fallout:</strong> If a low-security website where you used a temporary email suffers a breach, the stolen data is completely useless. The email address no longer exists, and no password or identity profile connects back to you.
     </li>
     <li>
-      <strong>Zero Spam and Tracking:</strong> Marketers and tracking beacons cannot follow you across the internet. Read more about blocking trackers in our guide on <a href="/blog/what-is-email-tracking/" class="text-[#ea2804] hover:underline">email tracking mechanics</a>.
+      <strong>Zero Spam and Tracking:</strong> Marketers and tracking beacons cannot follow you across the internet. Read more about blocking trackers in our guide on <a href="/blog/what-is-email-tracking/">email tracking mechanics</a>.
     </li>
     <li>
-      <strong>Effortless Testing & OTPs:</strong> Get instant verification codes for one-off trials without polluting your primary inbox. Check our guide on <a href="/blog/how-to-avoid-spam/" class="text-[#ea2804] hover:underline">avoiding spam emails</a>.
+      <strong>Effortless Testing & OTPs:</strong> Get instant verification codes for one-off trials without polluting your primary inbox. Check our guide on <a href="/blog/how-to-avoid-spam/">avoiding spam emails</a>.
     </li>
   </ul>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     Your Complete Online Account Security Checklist
   </h2>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     Follow this step-by-step checklist to lock down your accounts today:
   </p>
 
-  <ol class="list-decimal pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-4">
+  <ol>
     <li>Install and migrate all credentials to an audited password manager (Bitwarden or 1Password).</li>
     <li>Generate unique 16+ character passwords for every single active account.</li>
     <li>Enable TOTP or Hardware Key 2FA on all email, banking, social, and cloud accounts.</li>
     <li>Safely store 2FA emergency backup codes in an encrypted, offline location.</li>
     <li>Replace truthful security question answers with randomized passphrases.</li>
     <li>Check your primary email on HaveIBeenPwned and remediate compromised services.</li>
-    <li>Use <a href="/" class="text-[#ea2804] hover:underline">TempoEmails</a> for all low-trust, temporary, and one-off online registrations.</li>
-    <li>Learn how to identify social engineering and fraudulent emails with our guide on <a href="/blog/understanding-phishing-emails/" class="text-[#ea2804] hover:underline">recognizing phishing emails</a>.</li>
+    <li>Use <a href="/">TempoEmails</a> for all low-trust, temporary, and one-off online registrations.</li>
+    <li>Learn how to identify social engineering and fraudulent emails with our guide on <a href="/blog/understanding-phishing-emails/">recognizing phishing emails</a>.</li>
   </ol>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Building robust online security doesn't mean disconnecting from modern digital convenience. By combining strong cryptography, multi-factor authentication, and smart identity tools like TempoEmails, you can explore the web with total confidence and uncompromised privacy. For more information about our strict data handling standards, visit our <a href="/privacy-policy/" class="text-[#ea2804] hover:underline">Privacy Policy</a>.
+  <p>
+    Building robust online security doesn't mean disconnecting from modern digital convenience. By combining strong cryptography, multi-factor authentication, and smart identity tools like TempoEmails, you can explore the web with total confidence and uncompromised privacy. For more information about our strict data handling standards, visit our <a href="/privacy-policy/">Privacy Policy</a>.
   </p>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     Sources & Further Reading
   </h2>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    This guide follows current industry baselines, not forum folklore. For the underlying standards, see the <a href="https://pages.nist.gov/800-63-3/sp800-63b.html" target="_blank" rel="noopener noreferrer" class="text-[#ea2804] hover:underline">NIST SP 800-63B authentication guidelines</a>, the <a href="https://www.cisa.gov/secure-our-world/turn-mfa" target="_blank" rel="noopener noreferrer" class="text-[#ea2804] hover:underline">CISA multi-factor authentication guidance</a>, and Troy Hunt's <a href="https://haveibeenpwned.com" target="_blank" rel="noopener noreferrer" class="text-[#ea2804] hover:underline">Have I Been Pwned</a> breach repository. Reviewed and updated by the TempoEmails Editorial Team in September 2026.
+  <p>
+    This guide follows current industry baselines, not forum folklore. For the underlying standards, see the <a href="https://pages.nist.gov/800-63-3/sp800-63b.html" target="_blank" rel="noopener noreferrer">NIST SP 800-63B authentication guidelines</a>, the <a href="https://www.cisa.gov/secure-our-world/turn-mfa" target="_blank" rel="noopener noreferrer">CISA multi-factor authentication guidance</a>, and Troy Hunt's <a href="https://haveibeenpwned.com" target="_blank" rel="noopener noreferrer">Have I Been Pwned</a> breach repository. Reviewed and updated by the TempoEmails Editorial Team in September 2026.
   </p>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    Keep going: learn how invisible beacons profile your inbox in our <a href="/blog/what-is-email-tracking/" class="text-[#ea2804] hover:underline">email tracking explainer</a>, how to keep junk out permanently in <a href="/blog/how-to-avoid-spam/" class="text-[#ea2804] hover:underline">how to avoid spam emails</a>, and how attackers weaponize urgency in <a href="/blog/understanding-phishing-emails/" class="text-[#ea2804] hover:underline">recognizing phishing emails</a>.
+  <p>
+    Keep going: learn how invisible beacons profile your inbox in our <a href="/blog/what-is-email-tracking/">email tracking explainer</a>, how to keep junk out permanently in <a href="/blog/how-to-avoid-spam/">how to avoid spam emails</a>, and how attackers weaponize urgency in <a href="/blog/understanding-phishing-emails/">recognizing phishing emails</a>.
   </p>
 </ContentLayout>

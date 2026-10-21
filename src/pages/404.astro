@@ -17,55 +17,43 @@ const privacyUrl = getLocalizedPath('/privacy-policy/', currentLocale);
   locale={currentLocale}
   noindex={true}
 >
-  <section class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 text-center space-y-6">
-    <!-- 404 Badge -->
-    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-pill text-xs font-semibold shadow-xs">
-      <span class="text-[#ea2804] font-mono font-bold">404</span>
-      <span class="text-[#8d8d8d] dark:text-zinc-500">•</span>
-      <span class="text-[#575757] dark:text-zinc-300">{t.common.pageNotFoundBadge}</span>
-    </div>
+  <section class="px-5 sm:px-8 py-16 sm:py-28">
+    <div class="max-w-2xl mx-auto text-center">
+      <!-- An "expired" message card -->
+      <div class="relative mx-auto w-full max-w-xs animate-rise-in" aria-hidden="true">
+        <div class="absolute inset-x-8 -top-3 h-full rounded-3xl surface-inset rotate-[-4deg]"></div>
+        <div class="relative surface-raised rounded-3xl p-5 text-start rotate-[2deg]">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-ink/6 grid place-items-center font-mono text-sm font-semibold text-muted">404</span>
+            <div class="flex-1 space-y-2">
+              <span class="block h-2.5 w-2/3 rounded-full bg-ink/12"></span>
+              <span class="block h-2 w-full rounded-full bg-ink/7"></span>
+            </div>
+          </div>
+          <div class="mt-4 h-2 rounded-full bg-ink/6 overflow-hidden">
+            <span class="block h-full w-full bg-gradient-to-r from-brand to-brand-glow origin-left scale-x-0"></span>
+          </div>
+          <p class="mt-3 font-mono text-xs text-subtle">00:00 · {t.common.pageExpired}</p>
+        </div>
+      </div>
 
-    <!-- Headline -->
-    <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#202020] dark:text-[#fcfcfc] tracking-tight leading-tight">
-      {t.common.pageNotFoundTitle}{' '}
-      <span class="bg-gradient-to-r from-[#ea2804] via-[#ff6a3d] to-[#ea2804] bg-clip-text text-transparent">
-        {t.common.pageExpired}
-      </span>
-    </h1>
+      <p class="mt-14 eyebrow justify-center before:hidden">404 · {t.common.pageNotFoundBadge}</p>
+      <h1 class="mt-4 font-display font-bold text-ink tracking-[-0.045em] leading-[1] text-[clamp(2.5rem,1.6rem+4vw,4.5rem)]">
+        {t.common.pageNotFoundTitle} <span class="text-gradient">{t.common.pageExpired}</span>
+      </h1>
+      <p class="mt-6 text-lg text-muted leading-relaxed max-w-md mx-auto">{t.common.pageNotFoundDesc}</p>
 
-    <!-- Description -->
-    <p class="text-base sm:text-lg text-[#575757] dark:text-zinc-300 max-w-md mx-auto leading-relaxed">
-      {t.common.pageNotFoundDesc}
-    </p>
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href={homeUrl} class="btn btn-primary btn-lg w-full sm:w-auto">{t.common.goToHomepage}</a>
+        <a href={blogUrl} class="btn btn-secondary btn-lg w-full sm:w-auto">{t.common.readOurBlog}</a>
+      </div>
 
-    <!-- Action Buttons -->
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
-      <a
-        href={homeUrl}
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold bg-gradient-to-r from-[#ea2804] to-[#ff6a3d] text-white shadow-lg shadow-[#ea2804]/25 hover:shadow-xl hover:shadow-[#ea2804]/30 transition-all"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-        </svg>
-        {t.common.goToHomepage}
-      </a>
-      <a
-        href={blogUrl}
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold bg-white/80 dark:bg-zinc-800/80 border border-black/10 dark:border-white/10 text-[#202020] dark:text-[#fcfcfc] hover:bg-white dark:hover:bg-zinc-700 transition-colors"
-      >
-        {t.common.readOurBlog}
-      </a>
-    </div>
-
-    <!-- Quick Links -->
-    <div class="pt-8 flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-[#8d8d8d] dark:text-zinc-500">
-      <a href={aboutUrl} class="hover:text-[#ea2804] transition-colors">{t.nav.about}</a>
-      <span>•</span>
-      <a href={contactUrl} class="hover:text-[#ea2804] transition-colors">{t.nav.contact}</a>
-      <span>•</span>
-      <a href={privacyUrl} class="hover:text-[#ea2804] transition-colors">{t.footer.privacyPolicy}</a>
-      <span>•</span>
-      <a href={blogUrl} class="hover:text-[#ea2804] transition-colors">{t.nav.blog}</a>
+      <nav class="mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted" aria-label="Helpful links">
+        <a href={aboutUrl} class="hover:text-ink transition-colors">{t.nav.about}</a>
+        <a href={contactUrl} class="hover:text-ink transition-colors">{t.nav.contact}</a>
+        <a href={privacyUrl} class="hover:text-ink transition-colors">{t.footer.privacyPolicy}</a>
+        <a href={blogUrl} class="hover:text-ink transition-colors">{t.nav.blog}</a>
+      </nav>
     </div>
   </section>
 </Layout>

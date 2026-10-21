@@ -42,45 +42,42 @@ const aboutPageSchema = {
   keywords="about tempoemails, free temp mail service, disposable temporary email provider, 10 minute mail mission, anonymous burner email, privacy first email"
 >
   <script type="application/ld+json" set:html={JSON.stringify(aboutPageSchema)} />
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     {about.lead}
   </p>
 
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     {about.story}
   </p>
 
-  <blockquote class="border-l-4 border-[#ea2804] pl-4 italic text-[#575757] dark:text-zinc-400 mb-6">
+  <blockquote>
     {about.quote}
   </blockquote>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     {about.whyHeading}
   </h2>
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     {about.whyP1}
   </p>
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
+  <p>
     {about.whyP2}
   </p>
 
-  <div class="space-y-4 mb-6">
+  <div class="grid sm:grid-cols-2 gap-3 my-8!">
     {about.features.map((f) => (
-      <div class="p-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-        <h3 class="font-display text-lg font-bold text-[#202020] dark:text-[#fcfcfc] mb-1">
-          {f.icon} {f.title}
-        </h3>
-        <p class="text-sm text-[#575757] dark:text-zinc-400">
-          {f.desc}
-        </p>
+      <div class="surface rounded-2xl p-5">
+        <span class="icon-tile text-xl mb-4" aria-hidden="true">{f.icon}</span>
+        <h3 class="font-display text-lg font-semibold tracking-tight text-ink">{f.title}</h3>
+        <p class="mt-1.5 text-sm text-muted leading-relaxed">{f.desc}</p>
       </div>
     ))}
   </div>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     {about.principlesHeading}
   </h2>
-  <ul class="list-disc pl-6 space-y-2 text-base text-[#575757] dark:text-zinc-300 mb-6">
+  <ul>
     {about.principles.map((p) => (
       <li>
         <strong>{p.label}:</strong> {p.desc}
@@ -88,10 +85,10 @@ const aboutPageSchema = {
     ))}
   </ul>
 
-  <h2 class="font-display text-2xl font-bold text-[#202020] dark:text-[#fcfcfc] mb-4 mt-8">
+  <h2>
     {about.questionsHeading}
   </h2>
-  <p class="text-base text-[#575757] dark:text-zinc-300 leading-relaxed mb-4">
-    {about.questionsLead} <a href={contactUrl} class="text-[#ea2804] hover:underline font-semibold">{about.contactPageLink}</a> {currentLocale === 'en' ? 'or drop us an email at' : '—'} <a href={`mailto:${SITE_CONFIG.emails.contact}`} class="text-[#ea2804] hover:underline font-semibold">{SITE_CONFIG.emails.contact}</a>.
+  <p>
+    {about.questionsLead} <a href={contactUrl}>{about.contactPageLink}</a> {currentLocale === 'en' ? 'or drop us an email at' : '—'} <a href={`mailto:${SITE_CONFIG.emails.contact}`}>{SITE_CONFIG.emails.contact}</a>.
   </p>
 </ContentLayout>

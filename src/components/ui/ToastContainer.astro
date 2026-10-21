@@ -3,7 +3,7 @@
 
 <div
   id="toast-container"
-  class="fixed bottom-4 sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 flex flex-col gap-2 pointer-events-none sm:max-w-sm"
+  class="fixed bottom-4 sm:bottom-6 inset-x-4 sm:inset-x-auto sm:end-6 z-[55] flex flex-col items-center sm:items-end gap-2 pointer-events-none sm:max-w-sm"
   aria-live="polite"
 >
 </div>
@@ -30,16 +30,15 @@
 
       const toast = document.createElement('div');
       toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
-      toast.className = `pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0 flex items-center gap-2.5 sm:gap-3 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-medium shadow-xl backdrop-blur-xl border ${
-        type === 'error'
-          ? 'bg-rose-500/90 text-white border-rose-400'
-          : 'bg-[#202020]/90 dark:bg-zinc-800/90 text-white border-white/20'
-      }`;
+      // Always-dark pill in both themes; errors carry a red icon rather than
+      // a red fill so the toast never shouts.
+      toast.className =
+        'pointer-events-auto transition-all duration-300 ease-out translate-y-2 opacity-0 flex items-center gap-3 ps-3.5 pe-2 py-2.5 rounded-2xl text-sm font-medium text-[#f5f2ed] bg-[#1f1c19]/95 ring-1 ring-white/10 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)] backdrop-blur-xl max-w-full';
 
       const icon =
         type === 'error'
-          ? '<svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
-          : '<svg class="w-4 h-4 text-[#ea2804] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+          ? '<svg class="w-[18px] h-[18px] text-[#ff6b6b] shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>'
+          : '<svg class="w-[18px] h-[18px] text-[#3fbf86] shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>';
 
       const iconWrapper = document.createElement('span');
       iconWrapper.className = 'shrink-0 inline-flex';
@@ -47,14 +46,14 @@
       iconWrapper.innerHTML = icon;
 
       const messageSpan = document.createElement('span');
-      messageSpan.className = 'flex-1 break-all';
+      messageSpan.className = 'flex-1 min-w-0 break-words';
       // SECURITY: messages may embed user-influenced data (email addresses, OTP codes).
       // Use textContent — never interpolate into innerHTML.
       messageSpan.textContent = message;
 
       const dismissBtn = document.createElement('button');
       dismissBtn.type = 'button';
-      dismissBtn.className = 'shrink-0 rounded-full p-1 opacity-70 hover:opacity-100 transition-opacity';
+      dismissBtn.className = 'shrink-0 grid place-items-center w-7 h-7 rounded-full opacity-60 hover:opacity-100 hover:bg-white/10 transition';
       dismissBtn.setAttribute('aria-label', dismissLabel);
       const dismissIcon = document.createElement('span');
       dismissIcon.className = 'inline-flex';

@@ -1,0 +1,191 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import MailboxManager from '../app/MailboxManager.astro';
+import OtpShowcase from './OtpShowcase.astro';
+import UseCases from './UseCases.astro';
+import Features from './Features.astro';
+import HowItWorks from './HowItWorks.astro';
+import Faq from './Faq.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { useTranslation, getLocalizedPath } from '../../i18n/utils';
+import { getBlogArticles } from '../../i18n/blog-data';
+import { stripLeadingEmoji } from '../../lib/utils/text';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslation(locale);
+
+// Featured guides: deep links from the highest-authority page (homepage) to
+// the guides Google crawled but declined to index. This cuts crawl depth from
+// 2 clicks (home → blog index → article) to 1 and passes PageRank with
+// keyword-rich anchors. Every locale homepage links its localized guide URLs.
+const featuredSlugs = [
+  'online-account-security-guide',
+  'what-is-email-tracking',
+  'how-to-avoid-spam',
+];
+const allArticles = getBlogArticles(locale);
+const featuredArticles = featuredSlugs
+  .map((s) => allArticles.find((a) => a.slug.includes(s)))
+  .filter((a): a is NonNullable<typeof a> => Boolean(a));
+
+function getCategoryLabel(cat: string) {
+  if (cat === 'Privacy') return t.common.privacy;
+  if (cat === 'Security') return t.common.security;
+  if (cat === 'Guides') return t.common.guide;
+  if (cat === 'Technology') return t.common.architecture;
+  return cat;
+}
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  inLanguage: locale,
+  mainEntity: [1, 2, 3, 4, 5, 6].map((n) => ({
+    '@type': 'Question',
+    name: t.faq[`q${n}` as keyof typeof t.faq],
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: t.faq[`a${n}` as keyof typeof t.faq],
+    },
+  })),
+};
+
+// Services people most often verify with a burner address (named in the FAQ).
+const services = ['Discord', 'ChatGPT', 'Telegram', 'Steam', 'Reddit', 'Midjourney', 'Twitch', 'Epic Games', 'Claude'];
+const chips = t.hero.chips || [];
+---
+
+<Layout title={t.meta.title} description={t.meta.description} keywords={t.meta.keywords} locale={locale} isApp={true}>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <!-- Hero -->
+  <section class="relative px-5 sm:px-8 pt-12 sm:pt-20 lg:pt-24 pb-10 sm:pb-14 text-center">
+    <div class="max-w-5xl mx-auto">
+      <a
+        href="#mailbox-manager-section"
+        class="chip h-8 ps-2.5 pe-3.5 text-[13px] hover:border-line-strong transition-colors animate-rise-in"
+      >
+        <span class="relative flex w-2 h-2" aria-hidden="true">
+          <span class="absolute inset-0 rounded-full bg-success animate-ping opacity-60"></span>
+          <span class="relative w-2 h-2 rounded-full bg-success"></span>
+        </span>
+        {stripLeadingEmoji(t.hero.badge)}
+      </a>
+
+      <h1
+        class="mt-7 font-display font-bold text-ink text-[clamp(2.5rem,1.5rem+4.4vw,4.9rem)] leading-[0.98] tracking-[-0.045em] animate-rise-in [animation-delay:80ms]"
+      >
+        {t.hero.titleLine1}
+        <br />
+        <span class="text-gradient">{t.hero.titleLine2}</span>
+      </h1>
+
+      <p class="hidden sm:block mt-6 text-lg text-muted leading-relaxed max-w-xl mx-auto animate-rise-in [animation-delay:160ms]">
+        {t.hero.subtitle}
+      </p>
+
+      <ul class="mt-7 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-ink-2 animate-rise-in [animation-delay:240ms]">
+        {chips.map((chip) => (
+          <li class="inline-flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+            {chip}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- The product: live temp-mail app -->
+  <!-- No entrance animation here: a lingering transform would turn this
+       section into the containing block for the app's fixed-position dialogs. -->
+  <section id="mailbox-manager-section" class="px-3 sm:px-6 lg:px-8" aria-label={t.inboxList.title}>
+    <MailboxManager locale={locale} />
+  </section>
+
+  <!-- Works with -->
+  <section class="pt-16 sm:pt-24" aria-label={t.hero.worksWith}>
+    <p class="text-center text-sm text-subtle mb-6">{t.hero.worksWith}</p>
+    <div class="marquee-mask overflow-hidden group" dir="ltr">
+      <div class="flex w-max animate-marquee group-hover:[animation-play-state:paused]">
+        {[0, 1].map((copy) => (
+          <ul class="flex items-center gap-12 sm:gap-16 pe-12 sm:pe-16" aria-hidden={copy === 1 ? 'true' : undefined}>
+            {services.map((name) => (
+              <li class="font-display text-2xl sm:text-3xl font-semibold tracking-tight text-ink/30 whitespace-nowrap">{name}</li>
+            ))}
+          </ul>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <OtpShowcase locale={locale} />
+  <Features locale={locale} />
+  <UseCases locale={locale} />
+  <HowItWorks locale={locale} />
+
+  <!-- Featured guides: one click from home -->
+  <section class="px-5 sm:px-8 py-16 sm:py-24" aria-label="Featured privacy guides">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+        <SectionHeading eyebrow={t.common.blog} title={t.pages.blog.heading} />
+        <a href={getLocalizedPath('/blog/', locale)} class="btn btn-secondary shrink-0 self-start sm:self-auto" data-reveal>
+          {t.common.allArticles.replace(/^[←→]\s*/, '')}
+        </a>
+      </div>
+
+      <div class="mt-12 grid gap-4 md:grid-cols-3">
+        {featuredArticles.map((article, i) => (
+          <a
+            href={getLocalizedPath(article.slug, locale)}
+            class="group surface card-hover rounded-3xl p-2 flex flex-col"
+            data-reveal
+            style={`--reveal-delay: ${i}`}
+          >
+            <div class="relative h-40 rounded-[1.25rem] overflow-hidden bg-canvas-2" aria-hidden="true">
+              <div class="absolute inset-0 bg-[radial-gradient(90%_120%_at_100%_0%,color-mix(in_srgb,var(--brand)_22%,transparent),transparent_60%)] transition-transform duration-700 group-hover:scale-110"></div>
+              <span class="absolute bottom-3 start-4 font-display text-7xl font-bold tracking-tighter text-ink/10">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <div class="p-4 pt-5 flex-1 flex flex-col">
+              <div class="flex items-center gap-2 text-xs text-subtle">
+                <span class="font-medium text-accent-text">{getCategoryLabel(article.category)}</span>
+                <span aria-hidden="true">·</span>
+                <time datetime={article.date}>
+                  {new Date(article.date).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' })}
+                </time>
+              </div>
+              <h3 class="mt-2.5 font-display text-lg font-semibold tracking-tight leading-snug text-ink group-hover:text-accent-text transition-colors">
+                {article.title}
+              </h3>
+              <span class="mt-auto pt-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink-2">
+                {t.common.readArticle}
+                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Faq locale={locale} />
+
+  <!-- Closing call to action -->
+  <section class="px-3 sm:px-8 pt-8">
+    <div class="relative max-w-6xl mx-auto overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-[#16120f] text-[#f5f2ed] px-6 py-16 sm:py-24 text-center" data-reveal>
+      <div class="absolute inset-0 bg-[radial-gradient(60%_80%_at_50%_120%,rgba(234,40,4,0.55),transparent_70%)]" aria-hidden="true"></div>
+      <div class="relative">
+        <h2 class="font-display font-bold tracking-[-0.04em] leading-[1.02] text-[clamp(2rem,1.2rem+3.5vw,4rem)] max-w-2xl mx-auto">{t.cta.title}</h2>
+        <p class="mt-5 text-base sm:text-lg text-[#f5f2ed]/65 max-w-md mx-auto">{t.cta.subtitle}</p>
+        <a href="#mailbox-manager-section" class="btn btn-primary btn-lg mt-9">
+          {t.cta.button}
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

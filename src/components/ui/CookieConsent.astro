@@ -14,37 +14,29 @@ const privacyUrl = getLocalizedPath('/privacy-policy/', currentLocale);
 
 <div
   id="cookie-consent-banner"
-  class="fixed bottom-0 left-0 right-0 z-40 p-4 hidden"
+  class="fixed bottom-3 inset-x-3 sm:bottom-6 sm:start-6 sm:end-auto z-40 sm:max-w-sm hidden animate-rise-in"
   role="region"
   aria-label={t.cookieConsent.title}
 >
-  <div class="max-w-4xl mx-auto glass-card rounded-2xl border border-black/10 dark:border-white/10 p-5 sm:p-6 shadow-2xl backdrop-blur-xl bg-white/95 dark:bg-zinc-900/95">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-      <div class="flex-1 space-y-1">
-        <h3 class="font-display text-sm font-bold text-[#202020] dark:text-[#fcfcfc]">
-          {t.cookieConsent.title}
-        </h3>
-        <p class="text-xs text-[#575757] dark:text-zinc-400 leading-relaxed">
+  <div class="surface-raised rounded-3xl p-5">
+    <div class="flex items-start gap-3">
+      <span class="icon-tile w-9! h-9! rounded-xl! shrink-0" aria-hidden="true">
+        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path>
+          <path d="M8.5 8.5v.01M16 15.5v.01M12 12v.01M11 17v.01M7 14v.01"></path>
+        </svg>
+      </span>
+      <div class="min-w-0">
+        <h3 class="font-display text-base font-semibold text-ink">{t.cookieConsent.title}</h3>
+        <p class="text-[13px] text-muted leading-relaxed mt-1">
           {t.cookieConsent.desc}
-          <a href={privacyUrl} class="text-[#ea2804] hover:underline font-semibold">{t.cookieConsent.privacyPolicy}</a>.
+          <a href={privacyUrl} class="text-accent-text font-medium underline underline-offset-2 decoration-accent-text/30 hover:decoration-current">{t.cookieConsent.privacyPolicy}</a>.
         </p>
       </div>
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto shrink-0">
-        <button
-          id="cookie-reject-btn"
-          type="button"
-          class="w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-full text-xs font-semibold bg-transparent border border-black/10 dark:border-white/10 text-[#575757] dark:text-zinc-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer text-center"
-        >
-          {t.cookieConsent.essentialOnly}
-        </button>
-        <button
-          id="cookie-accept-btn"
-          type="button"
-          class="w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-[#ea2804] to-[#ff6a3d] text-white shadow-md shadow-[#ea2804]/25 hover:shadow-lg hover:shadow-[#ea2804]/30 transition-all cursor-pointer text-center"
-        >
-          {t.cookieConsent.acceptAll}
-        </button>
-      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2 mt-4">
+      <button id="cookie-reject-btn" type="button" class="btn btn-secondary btn-sm">{t.cookieConsent.essentialOnly}</button>
+      <button id="cookie-accept-btn" type="button" class="btn btn-primary btn-sm">{t.cookieConsent.acceptAll}</button>
     </div>
   </div>
 </div>
