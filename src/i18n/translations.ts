@@ -353,7 +353,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "badge": "Instant Temp Mail & 10 Minute Burner Inbox",
       "titleLine1": "Free Temp Mail.",
       "titleLine2": "Disposable Email in Seconds.",
-      "subtitle": "Generate an instant disposable temporary email address. Receive signup verification codes, OTPs, and activation links with zero spam, zero logs, and no registration."
+      "subtitle": "Generate an instant disposable temporary email address. Receive signup verification codes, OTPs, and activation links."
     },
     "addressBar": {
       "tempEmailLabel": "Temporary Email",
