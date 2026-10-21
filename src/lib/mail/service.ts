@@ -49,8 +49,11 @@ export class MailService {
     // Get all available live domains across providers
     const allDomains = await this.getAvailableDomains();
 
-    // Filter active domains and optionally exclude the previous domain for visible rotation
-    let pool = allDomains.filter((d) => d.isActive);
+    // Filter active domains and optionally exclude the previous domain for visible rotation.
+    // getAvailableDomains() returns the mock domains (all `isActive`) when every
+    // provider is down; they must not count as live, or the whole provider
+    // chain below runs a second time before landing on the mock inbox anyway.
+    let pool = allDomains.filter((d) => d.isActive && d.provider !== 'mock');
     if (pool.length === 0) {
       const account = await MockClient.createAccount();
       StorageManager.setCurrentAccount(account);

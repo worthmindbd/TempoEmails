@@ -67,10 +67,16 @@ const { locale = 'en' } = Astro.props;
     private isPolling: boolean = false;
     private pendingFetch: boolean = false;
     private fetchGen: number = 0;
+    // Separate from fetchGen: every 10s poll bumps fetchGen, which used to
+    // discard any message detail still loading and leave the reader blank.
+    private selectToken: number = 0;
     private destroyed: boolean = false;
     private availableDomains: MailDomain[] = [];
-    private sseSource: EventSource | null = null;
     private addressDisplayBackup: string | null = null;
+    // Signature of the last rendered list, so polls that bring nothing new do
+    // not rebuild (and re-animate) every row.
+    private lastListKey: string | null = null;
+    private renderedIds = new Set<string>();
     // Addresses already warned about being unreadable, so polling every 10s
     // does not repeat the toast.
     private accessWarned = new Set<string>();
@@ -93,25 +99,43 @@ const { locale = 'en' } = Astro.props;
     private handleUnload = () => {
       this.destroyed = true;
       if (this.timerInterval) clearInterval(this.timerInterval);
-      if (this.sseSource) {
-        this.sseSource.close();
-        this.sseSource = null;
-      }
     };
 
+    /**
+     * Closes the reader and returns to the empty state. Called whenever the
+     * active inbox changes — otherwise the previous inbox's email stayed open
+     * beside the new inbox's list.
+     */
+    clearMessageDetail() {
+      this.selectToken++;
+      this.selectedMessage = null;
+      document.getElementById('email-detail-empty')?.classList.remove('hidden');
+      document.getElementById('email-detail-content')?.classList.add('hidden');
+      const loading = document.getElementById('email-detail-loading');
+      loading?.classList.add('hidden', 'flex-col');
+      loading?.classList.remove('flex');
+      this.showListPane();
+    }
+
+    /** Mobile shows one pane at a time; this brings the inbox list back. */
+    private showListPane() {
+      document.getElementById('inbox-list-pane')?.classList.remove('hidden');
+      const emailDetailPane = document.getElementById('email-detail-pane');
+      emailDetailPane?.classList.add('hidden');
+      emailDetailPane?.classList.remove('block');
+    }
+
+    /** Returns whether a mailbox was loaded, so callers only toast on success. */
     async loadInitialMailbox(
       forceNew: boolean = false,
       preferredProvider?: 'mailtm' | 'inboxes' | 'tempmaillol' | 'guerrilla',
       excludeDomain?: string
-    ) {
+    ): Promise<boolean> {
       this.fetchGen++;
       this.showAddressLoading(true);
-      if (this.sseSource) {
-        this.sseSource.close();
-        this.sseSource = null;
-      }
       try {
         this.account = await MailService.getOrCreateAccount(forceNew, preferredProvider, excludeDomain);
+        this.clearMessageDetail();
         this.updateAddressDisplay();
 
         // Warn clearly if every live provider is unreachable and the app fell
@@ -133,8 +157,11 @@ const { locale = 'en' } = Astro.props;
         this.messages = StorageManager.getCachedMessages(this.account.address);
         this.renderMessageList();
 
-        this.connectRealtimeStream();
+        // New mail arrives through the 10s poll. Mail.tm's Mercure stream is
+        // not used: it rejects cross-origin browsers (CORS) and needs a bearer
+        // token EventSource cannot send, so it only leaked the visitor's IP.
         await this.fetchMessages(true);
+        return true;
       } catch (err) {
         console.error('Failed to init mailbox:', err);
         const i18n = (window as any).__TEMPO_I18N__;
@@ -143,40 +170,9 @@ const { locale = 'en' } = Astro.props;
             detail: { message: i18n?.toasts?.initFailed || 'Failed to initialize mailbox. Please try refreshing.', type: 'error' },
           })
         );
+        return false;
       } finally {
         this.showAddressLoading(false);
-      }
-    }
-
-    connectRealtimeStream() {
-      if (!this.account || this.account.provider !== 'mailtm' || !this.account.id) return;
-      if (typeof window === 'undefined' || typeof EventSource === 'undefined') return;
-
-      try {
-        if (this.sseSource) {
-          this.sseSource.close();
-        }
-        // mail.gw accounts never get events from the mail.tm hub — skip SSE
-        // and rely on polling instead of opening a dead, IP-leaking connection.
-        const apiBase = this.account.apiBase || '/api/mail/mailtm';
-        if (!apiBase.endsWith('/mailtm')) {
-          this.sseSource = null;
-          return;
-        }
-        const sseUrl = `https://mercure.mail.tm/.well-known/mercure?topic=/accounts/${this.account.id}`;
-        this.sseSource = new EventSource(sseUrl);
-
-        this.sseSource.onmessage = () => {
-          this.fetchMessages();
-        };
-
-        this.sseSource.onerror = () => {
-          // If SSE drops, fallback timer handles polling automatically
-          this.sseSource?.close();
-          this.sseSource = null;
-        };
-      } catch {
-        // Fallback polling active
       }
     }
 
@@ -195,7 +191,18 @@ const { locale = 'en' } = Astro.props;
 
       select.innerHTML = '';
 
-      if (this.availableDomains.length === 0) {
+      // Only providers that genuinely support user-chosen usernames + domains
+      // are offered here. TempMail.lol assigns its own random address, and the
+      // simulated (mock) domains cannot receive real email at all.
+      // `isActive` also filters out the Inboxes.com fallback domains, which are
+      // only placeholders for when their API is down.
+      const liveDomains = this.availableDomains.filter((d) => d.isActive);
+      const mailtmDomains = liveDomains.filter((d) => d.provider === 'mailtm');
+      const inboxesDomains = liveDomains.filter((d) => d.provider === 'inboxes');
+      const guerrillaDomains = liveDomains.filter((d) => d.provider === 'guerrilla');
+
+      // Also covers the all-providers-down case, where only mock domains come back.
+      if (mailtmDomains.length + inboxesDomains.length + guerrillaDomains.length === 0) {
         const i18n = (window as any).__TEMPO_I18N__;
         const opt = document.createElement('option');
         opt.value = '';
@@ -207,19 +214,10 @@ const { locale = 'en' } = Astro.props;
         return;
       }
 
-      // Only providers that genuinely support user-chosen usernames + domains
-      // are offered here. TempMail.lol assigns its own random address, and the
-      // simulated (mock) domains cannot receive real email at all.
-      // `isActive` also filters out the Inboxes.com fallback domains, which are
-      // only placeholders for when their API is down.
-      const liveDomains = this.availableDomains.filter((d) => d.isActive);
-      const mailtmDomains = liveDomains.filter((d) => d.provider === 'mailtm');
-      const inboxesDomains = liveDomains.filter((d) => d.provider === 'inboxes');
-      const guerrillaDomains = liveDomains.filter((d) => d.provider === 'guerrilla');
-
+      // Brand names only: these labels are shown in every locale.
       if (mailtmDomains.length > 0) {
         const group = document.createElement('optgroup');
-        group.label = '⭐ Mail.tm & Mail.gw (Private / Authenticated)';
+        group.label = 'Mail.tm & Mail.gw';
         mailtmDomains.forEach((d) => {
           const opt = document.createElement('option');
           opt.value = d.domain;
@@ -232,7 +230,7 @@ const { locale = 'en' } = Astro.props;
 
       if (inboxesDomains.length > 0) {
         const group = document.createElement('optgroup');
-        group.label = '🚀 Inboxes Network (GetNada, AirMail, Bear, etc.)';
+        group.label = 'Inboxes.com';
         inboxesDomains.forEach((d) => {
           const opt = document.createElement('option');
           opt.value = d.domain;
@@ -245,7 +243,7 @@ const { locale = 'en' } = Astro.props;
 
       if (guerrillaDomains.length > 0) {
         const group = document.createElement('optgroup');
-        group.label = '🛡️ Guerrilla Mail';
+        group.label = 'Guerrilla Mail';
         guerrillaDomains.forEach((d) => {
           const opt = document.createElement('option');
           opt.value = d.domain;
@@ -277,7 +275,7 @@ const { locale = 'en' } = Astro.props;
         if (labels[prov]) {
           providerBadge.textContent = labels[prov];
           providerBadge.className = `${base} cursor-pointer hover:border-line-strong hover:text-ink`;
-          providerBadge.title = 'Click to switch provider';
+          providerBadge.title = (window as any).__TEMPO_I18N__?.addressBar?.switchProviderTooltip || 'Click to switch provider';
         } else {
           // Simulated inbox: flag it in the accent colour, not clickable.
           providerBadge.textContent = 'Mock';
@@ -395,13 +393,33 @@ const { locale = 'en' } = Astro.props;
         emptyState.classList.remove('hidden');
         listContainer.classList.add('hidden');
         listContainer.innerHTML = '';
+        this.lastListKey = null;
+        this.renderedIds.clear();
         return;
       }
 
       emptyState.classList.add('hidden');
       listContainer.classList.remove('hidden');
+
+      const listKey = JSON.stringify([
+        this.account?.address,
+        this.selectedMessage?.id,
+        this.messages.map((m) => [m.id, m.seen, m.subject, m.intro, m.extractedOtp]),
+      ]);
+      if (listKey === this.lastListKey) {
+        // Nothing changed — only refresh the relative timestamps.
+        listContainer.querySelectorAll<HTMLElement>('[data-created-at]').forEach((el) => {
+          el.textContent = formatRelativeTime(el.dataset.createdAt || '');
+        });
+        return;
+      }
+      this.lastListKey = listKey;
+
       const scroller = document.getElementById('messages-container');
       const savedScrollTop = scroller ? scroller.scrollTop : 0;
+      const focusedId = (document.activeElement as HTMLElement | null)?.closest<HTMLElement>('#inbox-items-list [data-message-id]')?.dataset.messageId;
+      const previousIds = this.renderedIds;
+      this.renderedIds = new Set(this.messages.map((m) => m.id));
       listContainer.innerHTML = '';
 
       this.messages.forEach((msg) => {
@@ -416,9 +434,11 @@ const { locale = 'en' } = Astro.props;
         const noSubjectText = i18n?.emailDetail?.noSubject || '(No Subject)';
         const clickToViewText = i18n?.inboxList?.clickToView || 'Click to view email details...';
 
-        item.className = `animate-rise-in relative flex items-start gap-3 p-3 rounded-2xl cursor-pointer transition-colors ${
+        // Only rows that just arrived animate in.
+        item.className = `${previousIds.has(msg.id) ? '' : 'animate-rise-in '}relative flex items-start gap-3 p-3 rounded-2xl cursor-pointer transition-colors ${
           isSelected ? 'bg-accent/8 ring-1 ring-accent/20' : 'hover:bg-ink/4'
         }`;
+        item.dataset.messageId = msg.id;
         item.setAttribute('role', 'button');
         item.tabIndex = 0;
         if (isSelected) item.setAttribute('aria-current', 'true');
@@ -451,6 +471,7 @@ const { locale = 'en' } = Astro.props;
         const timeSpan = document.createElement('span');
         timeSpan.className = 'text-[11px] text-subtle font-mono shrink-0';
         timeSpan.textContent = formatRelativeTime(msg.createdAt);
+        timeSpan.dataset.createdAt = msg.createdAt;
 
         topRow.append(senderSpan, timeSpan);
 
@@ -489,6 +510,7 @@ const { locale = 'en' } = Astro.props;
         });
 
         listContainer.appendChild(item);
+        if (focusedId === msg.id) item.focus({ preventScroll: true });
       });
 
       if (scroller) scroller.scrollTop = savedScrollTop;
@@ -496,7 +518,8 @@ const { locale = 'en' } = Astro.props;
 
     async selectMessage(messageId: string) {
       if (!this.account) return;
-      const selectGen = this.fetchGen;
+      const token = ++this.selectToken;
+      const accountAddress = this.account.address;
 
       const empty = document.getElementById('email-detail-empty');
       const loading = document.getElementById('email-detail-loading');
@@ -528,7 +551,9 @@ const { locale = 'en' } = Astro.props;
 
       try {
         const loaded = await MailService.getMessageDetail(this.account, messageId);
-        if (selectGen !== this.fetchGen) return;
+        // Superseded by a newer click or an inbox switch: that path owns the
+        // pane now. Background polls no longer cancel this load.
+        if (token !== this.selectToken || this.account?.address !== accountAddress) return;
         this.selectedMessage = loaded;
         this.renderMessageDetail();
         // Update messages list to reflect seen state
@@ -536,18 +561,18 @@ const { locale = 'en' } = Astro.props;
         this.renderMessageList();
       } catch (err) {
         console.error('Failed to load message detail:', err);
+        if (token !== this.selectToken) return;
         const i18n = (window as any).__TEMPO_I18N__;
-        // Restore the empty state: without this the pane stayed blank (both the
-        // placeholder and the content pane were hidden before the fetch).
-        if (empty) empty.classList.remove('hidden');
-        if (content) content.classList.add('hidden');
+        // Restore the empty state (and the list on mobile, where the back
+        // button lives inside the hidden content pane).
+        this.clearMessageDetail();
         window.dispatchEvent(
           new CustomEvent('tempomail:toast', {
             detail: { message: i18n?.toasts?.loadMessageFailed || 'Failed to load message content.', type: 'error' },
           })
         );
       } finally {
-        if (loading) {
+        if (loading && token === this.selectToken) {
           loading.classList.add('hidden', 'flex-col');
           loading.classList.remove('flex');
         }
@@ -667,25 +692,25 @@ const { locale = 'en' } = Astro.props;
 
     async deleteCurrentSelectedMessage() {
       if (!this.account || !this.selectedMessage) return;
+      const account = this.account;
       const msgId = this.selectedMessage.id;
-      await MailService.deleteMessage(this.account, msgId);
-      this.selectedMessage = null;
-      
-      const empty = document.getElementById('email-detail-empty');
-      const content = document.getElementById('email-detail-content');
-      if (empty) empty.classList.remove('hidden');
-      if (content) content.classList.add('hidden');
+      const i18n = (window as any).__TEMPO_I18N__;
+      const ok = await (window as any).showConfirmDialog({
+        title: i18n?.confirmModal?.deleteMessageTitle || 'Delete Message',
+        description: i18n?.confirmModal?.deleteMessageDesc || 'Are you sure you want to permanently delete this message?',
+        confirmText: i18n?.confirmModal?.confirm || 'Delete',
+        cancelText: i18n?.confirmModal?.cancel || 'Cancel',
+        variant: 'danger',
+        iconType: 'trash',
+      });
+      // The user may have opened another message or inbox while the dialog was up.
+      if (!ok || this.account !== account || this.selectedMessage?.id !== msgId) return;
 
-      // On mobile return to list
-      if (window.innerWidth < 768) {
-        const inboxListPane = document.getElementById('inbox-list-pane');
-        const emailDetailPane = document.getElementById('email-detail-pane');
-        if (inboxListPane) inboxListPane.classList.remove('hidden');
-        if (emailDetailPane) emailDetailPane.classList.add('hidden');
-      }
+      // Never throws: a failed remote delete still removes the local copy.
+      await MailService.deleteMessage(account, msgId);
+      this.clearMessageDetail();
 
       await this.fetchMessages();
-      const i18n = (window as any).__TEMPO_I18N__;
       window.dispatchEvent(
         new CustomEvent('tempomail:toast', {
           detail: { message: i18n?.toasts?.messageDeleted || 'Message deleted', type: 'success' },
@@ -696,17 +721,21 @@ const { locale = 'en' } = Astro.props;
     downloadCurrentEmail() {
       if (!this.selectedMessage) return;
       const msg = this.selectedMessage;
+      const subject = msg.subject || '';
       const senderName = msg.from?.name || msg.from?.address || 'unknown';
       const senderAddress = msg.from?.address || '';
       const recipients = Array.isArray(msg.to) ? msg.to : [];
       const recipientText = recipients.map((r) => r?.address).filter(Boolean).join(', ');
       const body = msg.text || (Array.isArray(msg.html) ? msg.html.join('\n') : '');
-      const rawContent = `From: ${senderName} <${senderAddress}>\nTo: ${recipientText}\nDate: ${msg.createdAt}\nSubject: ${msg.subject}\n\n${body}`;
+      const rawContent = `From: ${senderName} <${senderAddress}>\nTo: ${recipientText}\nDate: ${msg.createdAt}\nSubject: ${subject}\n\n${body}`;
       const blob = new Blob([rawContent], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${msg.subject.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'email'}.txt`;
+      // Keep letters/digits from any script (CJK, Cyrillic, Arabic subjects
+      // used to become a name made only of underscores).
+      const baseName = subject.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '_').replace(/^_+|_+$/g, '').slice(0, 80);
+      a.download = `${baseName || 'email'}.txt`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -837,7 +866,7 @@ const { locale = 'en' } = Astro.props;
       if (!preview) return;
 
       const prefix = input?.value?.trim() || 'yourname';
-      const liveDomain = this.availableDomains.find((d) => d.isActive)?.domain;
+      const liveDomain = this.availableDomains.find((d) => d.isActive && d.provider !== 'mock')?.domain;
       const domain = select?.value || liveDomain || SITE_CONFIG.domain;
       preview.textContent = `${prefix}@${domain}`;
     }
@@ -890,9 +919,9 @@ const { locale = 'en' } = Astro.props;
 
           const deleteBtn = document.createElement('button');
           deleteBtn.type = 'button';
-          deleteBtn.className = 'btn btn-ghost w-8 h-8 p-0 hover:text-[#c81e3a]!';
-          deleteBtn.title = i18n?.historyDrawer?.clearAll || 'Delete from history';
-          deleteBtn.setAttribute('aria-label', i18n?.historyDrawer?.clearAll || 'Delete from history');
+          deleteBtn.className = 'btn btn-ghost w-8 h-8 p-0 hover:text-danger!';
+          deleteBtn.title = i18n?.historyDrawer?.removeInbox || 'Remove from history';
+          deleteBtn.setAttribute('aria-label', i18n?.historyDrawer?.removeInbox || 'Remove from history');
           deleteBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>';
 
           actions.appendChild(deleteBtn);
@@ -994,14 +1023,13 @@ const { locale = 'en' } = Astro.props;
       this.fetchGen++;
       this.account = targetAccount;
       StorageManager.setCurrentAccount(targetAccount);
-      this.selectedMessage = null;
+      this.clearMessageDetail();
       this.updateAddressDisplay();
 
       // Immediately render locally stored messages for this switched inbox
       this.messages = StorageManager.getCachedMessages(targetAccount.address);
       this.renderMessageList();
 
-      this.connectRealtimeStream();
       this.fetchMessages();
       const i18n = (window as any).__TEMPO_I18N__;
       const switchedMsg = (i18n?.toasts?.switchedTo || 'Switched to {address}').replace('{address}', targetAccount.address);
@@ -1056,8 +1084,7 @@ const { locale = 'en' } = Astro.props;
           variant: 'primary',
           iconType: 'random',
         });
-        if (ok) {
-          await this.loadInitialMailbox(true, undefined, currentDomain);
+        if (ok && (await this.loadInitialMailbox(true, undefined, currentDomain))) {
           window.dispatchEvent(
             new CustomEvent('tempomail:toast', {
               detail: { message: i18n?.toasts?.generatedNew || 'Generated fresh temporary inbox with new domain!', type: 'success' },
@@ -1077,19 +1104,30 @@ const { locale = 'en' } = Astro.props;
           variant: 'danger',
           iconType: 'trash',
         });
-        if (ok) {
-          if (this.account) {
-            this.account = await MailService.deleteCurrentAccount(this.account);
-            this.updateAddressDisplay();
-            this.connectRealtimeStream();
-            this.selectedMessage = null;
-            await this.fetchMessages();
-            window.dispatchEvent(
-              new CustomEvent('tempomail:toast', {
-                detail: { message: i18n?.toasts?.mailboxDeleted || 'Mailbox deleted and fresh address generated!', type: 'success' },
-              })
-            );
-          }
+        if (!ok || !this.account) return;
+        this.fetchGen++;
+        this.showAddressLoading(true);
+        try {
+          this.account = await MailService.deleteCurrentAccount(this.account);
+          this.clearMessageDetail();
+          this.updateAddressDisplay();
+          this.messages = StorageManager.getCachedMessages(this.account.address);
+          this.renderMessageList();
+          await this.fetchMessages();
+          window.dispatchEvent(
+            new CustomEvent('tempomail:toast', {
+              detail: { message: i18n?.toasts?.mailboxDeleted || 'Mailbox deleted and fresh address generated!', type: 'success' },
+            })
+          );
+        } catch (err) {
+          console.error('Failed to replace deleted mailbox:', err);
+          window.dispatchEvent(
+            new CustomEvent('tempomail:toast', {
+              detail: { message: i18n?.toasts?.initFailed || 'Failed to initialize mailbox. Please try refreshing.', type: 'error' },
+            })
+          );
+        } finally {
+          this.showAddressLoading(false);
         }
       });
 
@@ -1134,16 +1172,18 @@ const { locale = 'en' } = Astro.props;
         this.showAddressLoading(true);
         this.closeCustomModal();
         try {
+          this.fetchGen++;
           this.account = await MailService.createCustomAccount(prefix, domain, providerHint);
+          this.clearMessageDetail();
           this.updateAddressDisplay();
-          this.connectRealtimeStream();
-          this.selectedMessage = null;
+          this.messages = StorageManager.getCachedMessages(this.account.address);
+          this.renderMessageList();
           await this.fetchMessages();
           const i18n = (window as any).__TEMPO_I18N__;
           const customCreatedTpl = i18n?.toasts?.customCreated || 'Created custom inbox: {address}';
           window.dispatchEvent(
             new CustomEvent('tempomail:toast', {
-              detail: { message: customCreatedTpl.replace('{address}', `${this.account.address} (${this.account.provider.toUpperCase()})`), type: 'success' },
+              detail: { message: customCreatedTpl.replace('{address}', this.account.address), type: 'success' },
             })
           );
         } catch (err: any) {
@@ -1172,8 +1212,15 @@ const { locale = 'en' } = Astro.props;
         const curIdx = provs.indexOf(this.account?.provider as any);
         const nextProvider = provs[(curIdx + 1) % provs.length] || 'mailtm';
         const i18n = (window as any).__TEMPO_I18N__;
-        await this.loadInitialMailbox(true, nextProvider);
-        const actual = (this.account?.provider || nextProvider).toUpperCase();
+        if (!(await this.loadInitialMailbox(true, nextProvider))) return;
+        const providerNames: Record<string, string> = {
+          mailtm: 'Mail.tm',
+          inboxes: 'Inboxes.com',
+          tempmaillol: 'TempMail.lol',
+          guerrilla: 'Guerrilla Mail',
+          mock: 'Mock',
+        };
+        const actual = providerNames[this.account?.provider || nextProvider] || nextProvider;
         const provSwitchedTpl = i18n?.toasts?.providerSwitched || 'Switched active provider to {provider}';
         window.dispatchEvent(
           new CustomEvent('tempomail:toast', {
@@ -1199,10 +1246,11 @@ const { locale = 'en' } = Astro.props;
           variant: 'danger',
           iconType: 'trash',
         });
-        if (ok) {
-          StorageManager.clearAllSavedAccounts();
-          await this.loadInitialMailbox(true);
-          this.closeHistoryModal();
+        if (!ok) return;
+        StorageManager.clearAllSavedAccounts();
+        const loaded = await this.loadInitialMailbox(true);
+        this.closeHistoryModal();
+        if (loaded) {
           window.dispatchEvent(
             new CustomEvent('tempomail:toast', {
               detail: { message: i18n?.toasts?.historyCleared || 'All saved inboxes cleared from memory.', type: 'success' },
@@ -1293,15 +1341,7 @@ const { locale = 'en' } = Astro.props;
       });
 
       // 11. Mobile back button
-      document.getElementById('email-detail-back-btn')?.addEventListener('click', () => {
-        const inboxListPane = document.getElementById('inbox-list-pane');
-        const emailDetailPane = document.getElementById('email-detail-pane');
-        if (inboxListPane) inboxListPane.classList.remove('hidden');
-        if (emailDetailPane) {
-          emailDetailPane.classList.add('hidden');
-          emailDetailPane.classList.remove('block');
-        }
-      });
+      document.getElementById('email-detail-back-btn')?.addEventListener('click', () => this.showListPane());
 
       // Global Escape closes any open app modal (QR / custom / history).
       document.addEventListener('keydown', (e) => {
