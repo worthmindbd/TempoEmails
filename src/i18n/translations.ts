@@ -48,6 +48,12 @@ export interface TranslationSchema {
     changeTooltip: string;
     deleteTooltip: string;
     accessTooltip: string;
+    refreshLabel: string;
+    customLabel: string;
+    qrLabel: string;
+    accessLabel: string;
+    changeLabel: string;
+    deleteLabel: string;
   };
   inboxList: {
     title: string;
@@ -357,7 +363,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrTooltip": "Show QR Code for mobile",
       "changeTooltip": "Generate a new random email",
       "deleteTooltip": "Delete this mailbox",
-      "accessTooltip": "Inbox login & password"
+      "accessTooltip": "Inbox login & password",
+      "refreshLabel": "Refresh",
+      "customLabel": "Custom",
+      "qrLabel": "QR Code",
+      "accessLabel": "Access",
+      "changeLabel": "New Email",
+      "deleteLabel": "Delete"
     },
     "inboxList": {
       "title": "Inbox",
@@ -739,7 +751,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrTooltip": "Ver Código QR para móvil",
       "changeTooltip": "Generar nuevo correo aleatorio",
       "deleteTooltip": "Eliminar este buzón",
-      "accessTooltip": "Acceso y contraseña del buzón"
+      "accessTooltip": "Acceso y contraseña del buzón",
+      "refreshLabel": "Actualizar",
+      "customLabel": "Personalizar",
+      "qrLabel": "Código QR",
+      "accessLabel": "Acceso",
+      "changeLabel": "Nuevo correo",
+      "deleteLabel": "Eliminar"
     },
     "inboxList": {
       "title": "Bandeja de Entrada",
@@ -1121,7 +1139,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrTooltip": "Mostrar QR Code para celular",
       "changeTooltip": "Gerar novo email aleatório",
       "deleteTooltip": "Excluir esta caixa de entrada",
-      "accessTooltip": "Acesso e senha da caixa de entrada"
+      "accessTooltip": "Acesso e senha da caixa de entrada",
+      "refreshLabel": "Atualizar",
+      "customLabel": "Personalizar",
+      "qrLabel": "Código QR",
+      "accessLabel": "Acesso",
+      "changeLabel": "Novo email",
+      "deleteLabel": "Excluir"
     },
     "inboxList": {
       "title": "Caixa de Entrada",
@@ -1503,7 +1527,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrTooltip": "Afficher le QR Code pour mobile",
       "changeTooltip": "Générer un nouvel email aléatoire",
       "deleteTooltip": "Supprimer cette boîte",
-      "accessTooltip": "Identifiants de la boîte de réception"
+      "accessTooltip": "Identifiants de la boîte de réception",
+      "refreshLabel": "Actualiser",
+      "customLabel": "Personnaliser",
+      "qrLabel": "Code QR",
+      "accessLabel": "Accès",
+      "changeLabel": "Nouvel email",
+      "deleteLabel": "Supprimer"
     },
     "inboxList": {
       "title": "Boîte de réception",
@@ -1885,7 +1915,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrTooltip": "QR-Code für Smartphone anzeigen",
       "changeTooltip": "Neue Zufallsadresse generieren",
       "deleteTooltip": "Dieses Postfach löschen",
-      "accessTooltip": "Postfach-Login & Passwort"
+      "accessTooltip": "Postfach-Login & Passwort",
+      "refreshLabel": "Neu laden",
+      "customLabel": "Anpassen",
+      "qrLabel": "QR-Code",
+      "accessLabel": "Zugang",
+      "changeLabel": "Neue Adresse",
+      "deleteLabel": "Löschen"
     },
     "inboxList": {
       "title": "Posteingang",
@@ -2267,7 +2303,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrTooltip": "Показать QR-код для телефона",
       "changeTooltip": "Сгенерировать новый адрес",
       "deleteTooltip": "Удалить этот ящик",
-      "accessTooltip": "Логин и пароль ящика"
+      "accessTooltip": "Логин и пароль ящика",
+      "refreshLabel": "Обновить",
+      "customLabel": "Свой логин",
+      "qrLabel": "QR-код",
+      "accessLabel": "Доступ",
+      "changeLabel": "Новый адрес",
+      "deleteLabel": "Удалить"
     },
     "inboxList": {
       "title": "Входящие",
@@ -2649,7 +2691,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrTooltip": "显示手机端二维码",
       "changeTooltip": "更换随机新邮箱",
       "deleteTooltip": "删除此邮箱",
-      "accessTooltip": "邮箱登录信息与密码"
+      "accessTooltip": "邮箱登录信息与密码",
+      "refreshLabel": "刷新",
+      "customLabel": "自定义",
+      "qrLabel": "二维码",
+      "accessLabel": "密码",
+      "changeLabel": "换一个",
+      "deleteLabel": "删除"
     },
     "inboxList": {
       "title": "收件箱",
@@ -3031,7 +3079,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrTooltip": "スマホ用QRコードを表示",
       "changeTooltip": "新しいランダムアドレスを作成",
       "deleteTooltip": "このメールボックスを削除",
-      "accessTooltip": "受信箱のログイン情報とパスワード"
+      "accessTooltip": "受信箱のログイン情報とパスワード",
+      "refreshLabel": "更新",
+      "customLabel": "カスタム",
+      "qrLabel": "QRコード",
+      "accessLabel": "パスワード",
+      "changeLabel": "再生成",
+      "deleteLabel": "削除"
     },
     "inboxList": {
       "title": "受信トレイ",
@@ -3413,7 +3467,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrTooltip": "إظهار رمز QR للهاتف",
       "changeTooltip": "توليد بريد عشوائي جديد",
       "deleteTooltip": "حذف هذا الصندوق",
-      "accessTooltip": "بيانات الدخول وكلمة مرور صندوق البريد"
+      "accessTooltip": "بيانات الدخول وكلمة مرور صندوق البريد",
+      "refreshLabel": "تحديث",
+      "customLabel": "اسم مخصص",
+      "qrLabel": "رمز QR",
+      "accessLabel": "الدخول",
+      "changeLabel": "بريد جديد",
+      "deleteLabel": "حذف"
     },
     "inboxList": {
       "title": "صندوق الوارد",
@@ -3795,7 +3855,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrTooltip": "Tampilkan QR Code untuk HP",
       "changeTooltip": "Buat alamat acak baru",
       "deleteTooltip": "Hapus kotak masuk ini",
-      "accessTooltip": "Login & kata sandi kotak masuk"
+      "accessTooltip": "Login & kata sandi kotak masuk",
+      "refreshLabel": "Perbarui",
+      "customLabel": "Kustom",
+      "qrLabel": "Kode QR",
+      "accessLabel": "Sandi",
+      "changeLabel": "Email Baru",
+      "deleteLabel": "Hapus"
     },
     "inboxList": {
       "title": "Kotak Masuk",
