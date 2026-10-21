@@ -74,6 +74,8 @@ function formatDate(dateStr: string, loc: string) {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    // Dates are UTC midnight; formatting in the build machine's zone shifted them a day.
+    timeZone: 'UTC',
   });
 }
 

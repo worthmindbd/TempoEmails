@@ -54,6 +54,7 @@ export interface TranslationSchema {
     accessLabel: string;
     changeLabel: string;
     deleteLabel: string;
+    switchProviderTooltip: string;
   };
   inboxList: {
     title: string;
@@ -130,6 +131,7 @@ export interface TranslationSchema {
     emptyTitle: string;
     emptyDesc: string;
     clearAll: string;
+    removeInbox: string;
     confirmClearTitle: string;
     confirmClearDesc: string;
   };
@@ -369,7 +371,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrLabel": "QR Code",
       "accessLabel": "Access",
       "changeLabel": "New Email",
-      "deleteLabel": "Delete"
+      "deleteLabel": "Delete",
+      "switchProviderTooltip": "Click to switch provider"
     },
     "inboxList": {
       "title": "Inbox",
@@ -396,7 +399,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copyOtp": "Copy Code",
       "copiedOtp": "Copied!",
       "verifyLink": "Link:",
-      "openLink": "Open Link ↗",
+      "openLink": "Open Link",
       "toLabel": "To:",
       "noSubject": "(No Subject)",
       "defaultSender": "Sender",
@@ -446,6 +449,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "emptyTitle": "No saved inboxes",
       "emptyDesc": "When you create or switch temporary inboxes, your recent addresses will appear here.",
       "clearAll": "Clear All History",
+      "removeInbox": "Remove from history",
       "confirmClearTitle": "Clear All History",
       "confirmClearDesc": "Are you sure you want to erase all saved inbox addresses from browser storage?"
     },
@@ -471,12 +475,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "soundMuted": "🔕 Sound notifications muted",
       "initFailed": "Failed to initialize mailbox. Please try refreshing.",
       "messageDeleted": "Message deleted",
-      "switchedTo": "Switched to",
+      "switchedTo": "Switched to {address}",
       "generatedNew": "Generated fresh temporary inbox with new domain!",
       "mailboxDeleted": "Mailbox deleted and fresh address generated!",
-      "customCreated": "Created custom inbox",
+      "customCreated": "Created custom inbox: {address}",
       "customFailed": "Failed to create inbox. Please try a different username.",
-      "providerSwitched": "Switched active provider to",
+      "providerSwitched": "Switched active provider to {provider}",
       "historyCleared": "All saved inboxes cleared from memory.",
       "copiedToClipboard": "Copied to clipboard!",
       "copyFailed": "Failed to copy to clipboard",
@@ -757,7 +761,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrLabel": "Código QR",
       "accessLabel": "Acceso",
       "changeLabel": "Nuevo correo",
-      "deleteLabel": "Eliminar"
+      "deleteLabel": "Eliminar",
+      "switchProviderTooltip": "Haz clic para cambiar de proveedor"
     },
     "inboxList": {
       "title": "Bandeja de Entrada",
@@ -784,7 +789,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copyOtp": "Copiar Código",
       "copiedOtp": "¡Copiado!",
       "verifyLink": "Enlace:",
-      "openLink": "Abrir Enlace ↗",
+      "openLink": "Abrir Enlace",
       "toLabel": "Para:",
       "noSubject": "(Sin Asunto)",
       "defaultSender": "Remitente",
@@ -834,6 +839,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "emptyTitle": "Sin buzones guardados",
       "emptyDesc": "Cuando crees o cambies de buzón temporal, tus direcciones recientes aparecerán aquí.",
       "clearAll": "Borrar Todo el Historial",
+      "removeInbox": "Quitar del historial",
       "confirmClearTitle": "Borrar Todo el Historial",
       "confirmClearDesc": "¿Estás seguro de que deseas eliminar todas las direcciones guardadas del navegador?"
     },
@@ -859,12 +865,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "soundMuted": "🔕 Notificaciones silenciadas",
       "initFailed": "Error al inicializar el buzón. Por favor, recarga.",
       "messageDeleted": "Mensaje eliminado",
-      "switchedTo": "Cambiado a",
+      "switchedTo": "Cambiado a {address}",
       "generatedNew": "¡Nuevo correo temporal generado con éxito!",
       "mailboxDeleted": "¡Buzón eliminado y nueva dirección creada!",
-      "customCreated": "Buzón personalizado creado con éxito",
+      "customCreated": "Buzón personalizado creado: {address}",
       "customFailed": "Error al crear el buzón. Prueba con otro nombre de usuario.",
-      "providerSwitched": "Proveedor activo cambiado a",
+      "providerSwitched": "Proveedor activo cambiado a {provider}",
       "historyCleared": "Historial de buzones borrado.",
       "copiedToClipboard": "¡Copiado al portapapeles!",
       "copyFailed": "Error al copiar al portapapeles",
@@ -1145,7 +1151,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrLabel": "Código QR",
       "accessLabel": "Acesso",
       "changeLabel": "Novo email",
-      "deleteLabel": "Excluir"
+      "deleteLabel": "Excluir",
+      "switchProviderTooltip": "Clique para trocar de provedor"
     },
     "inboxList": {
       "title": "Caixa de Entrada",
@@ -1172,7 +1179,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copyOtp": "Copiar Código",
       "copiedOtp": "Copiado!",
       "verifyLink": "Link:",
-      "openLink": "Abrir Link ↗",
+      "openLink": "Abrir Link",
       "toLabel": "Para:",
       "noSubject": "(Sem Assunto)",
       "defaultSender": "Remetente",
@@ -1222,6 +1229,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "emptyTitle": "Nenhum email salvo",
       "emptyDesc": "Quando você criar ou alternar caixas de entrada temporárias, seus endereços aparecerão aqui.",
       "clearAll": "Limpar Todo Histórico",
+      "removeInbox": "Remover do histórico",
       "confirmClearTitle": "Limpar Histórico",
       "confirmClearDesc": "Tem certeza de que deseja apagar todos os endereços salvos da memória local?"
     },
@@ -1247,12 +1255,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "soundMuted": "🔕 Notificações sonoras silenciadas",
       "initFailed": "Falha ao iniciar caixa postal. Recarregue a página.",
       "messageDeleted": "Mensagem excluída",
-      "switchedTo": "Alternado para",
+      "switchedTo": "Alternado para {address}",
       "generatedNew": "Novo email temporário gerado com sucesso!",
       "mailboxDeleted": "Caixa de entrada excluída e novo email gerado!",
-      "customCreated": "Email personalizado criado com sucesso",
+      "customCreated": "Email personalizado criado: {address}",
       "customFailed": "Falha ao criar email. Tente outro nome de usuário.",
-      "providerSwitched": "Provedor ativo alternado para",
+      "providerSwitched": "Provedor ativo alternado para {provider}",
       "historyCleared": "Histórico de emails apagado com sucesso.",
       "copiedToClipboard": "Copiado para a área de transferência!",
       "copyFailed": "Falha ao copiar",
@@ -1533,7 +1541,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrLabel": "Code QR",
       "accessLabel": "Accès",
       "changeLabel": "Nouvel email",
-      "deleteLabel": "Supprimer"
+      "deleteLabel": "Supprimer",
+      "switchProviderTooltip": "Cliquez pour changer de fournisseur"
     },
     "inboxList": {
       "title": "Boîte de réception",
@@ -1560,7 +1569,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copyOtp": "Copier le Code",
       "copiedOtp": "Copié !",
       "verifyLink": "Lien :",
-      "openLink": "Ouvrir le lien ↗",
+      "openLink": "Ouvrir le lien",
       "toLabel": "À :",
       "noSubject": "(Sans objet)",
       "defaultSender": "Expéditeur",
@@ -1610,6 +1619,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "emptyTitle": "Aucune boîte enregistrée",
       "emptyDesc": "Vos adresses récentes apparaîtront ici dès que vous créerez ou changerez de boîte.",
       "clearAll": "Effacer l’historique",
+      "removeInbox": "Retirer de l’historique",
       "confirmClearTitle": "Effacer l’historique",
       "confirmClearDesc": "Voulez-vous vraiment supprimer toutes les adresses enregistrées dans le navigateur ?"
     },
@@ -1635,12 +1645,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "soundMuted": "🔕 Notifications sonores désactivées",
       "initFailed": "Échec de l’initialisation. Veuillez actualiser.",
       "messageDeleted": "Message supprimé",
-      "switchedTo": "Basculé sur",
+      "switchedTo": "Basculé sur {address}",
       "generatedNew": "Nouvelle adresse temporaire générée !",
       "mailboxDeleted": "Boîte supprimée et nouvelle adresse créée !",
-      "customCreated": "Boîte personnalisée créée avec succès",
+      "customCreated": "Boîte personnalisée créée : {address}",
       "customFailed": "Échec de la création. Essayez un autre identifiant.",
-      "providerSwitched": "Fournisseur actif basculé sur",
+      "providerSwitched": "Fournisseur actif basculé sur {provider}",
       "historyCleared": "Historique des boîtes effacé.",
       "copiedToClipboard": "Copié dans le presse-papiers !",
       "copyFailed": "Échec de la copie",
@@ -1921,7 +1931,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrLabel": "QR-Code",
       "accessLabel": "Zugang",
       "changeLabel": "Neue Adresse",
-      "deleteLabel": "Löschen"
+      "deleteLabel": "Löschen",
+      "switchProviderTooltip": "Klicken, um den Provider zu wechseln"
     },
     "inboxList": {
       "title": "Posteingang",
@@ -1948,7 +1959,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copyOtp": "Code Kopieren",
       "copiedOtp": "Kopiert!",
       "verifyLink": "Link:",
-      "openLink": "Link öffnen ↗",
+      "openLink": "Link öffnen",
       "toLabel": "An:",
       "noSubject": "(Kein Betreff)",
       "defaultSender": "Absender",
@@ -1998,6 +2009,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "emptyTitle": "Keine Postfächer gespeichert",
       "emptyDesc": "Wenn du Adressen erstellst oder wechselst, erscheinen sie hier in deinem Verlauf.",
       "clearAll": "Verlauf Löschen",
+      "removeInbox": "Aus dem Verlauf entfernen",
       "confirmClearTitle": "Verlauf Löschen",
       "confirmClearDesc": "Möchtest du wirklich alle gespeicherten Adressen aus dem Browser entfernen?"
     },
@@ -2023,12 +2035,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "soundMuted": "🔕 Benachrichtigungston stummgeschaltet",
       "initFailed": "Postfach konnte nicht initialisiert werden. Bitte neu laden.",
       "messageDeleted": "Nachricht gelöscht",
-      "switchedTo": "Gewechselt zu",
+      "switchedTo": "Gewechselt zu {address}",
       "generatedNew": "Neues temporäres Postfach generiert!",
       "mailboxDeleted": "Postfach gelöscht und neue Adresse erstellt!",
-      "customCreated": "Wunsch-Postfach erfolgreich erstellt",
+      "customCreated": "Wunsch-Postfach erstellt: {address}",
       "customFailed": "Erstellung fehlgeschlagen. Bitte anderen Namen wählen.",
-      "providerSwitched": "Aktiver Mail-Provider gewechselt zu",
+      "providerSwitched": "Aktiver Mail-Provider gewechselt zu {provider}",
       "historyCleared": "Verlauf gelöscht.",
       "copiedToClipboard": "In Zwischenablage kopiert!",
       "copyFailed": "Kopieren fehlgeschlagen",
@@ -2309,7 +2321,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrLabel": "QR-код",
       "accessLabel": "Доступ",
       "changeLabel": "Новый адрес",
-      "deleteLabel": "Удалить"
+      "deleteLabel": "Удалить",
+      "switchProviderTooltip": "Нажмите, чтобы сменить провайдера"
     },
     "inboxList": {
       "title": "Входящие",
@@ -2336,7 +2349,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copyOtp": "Скопировать Код",
       "copiedOtp": "Скопировано!",
       "verifyLink": "Ссылка:",
-      "openLink": "Открыть ссылку ↗",
+      "openLink": "Открыть ссылку",
       "toLabel": "Кому:",
       "noSubject": "(Без темы)",
       "defaultSender": "Отправитель",
@@ -2386,6 +2399,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "emptyTitle": "Нет сохраненных ящиков",
       "emptyDesc": "При создании или смене временных ящиков ваши адреса появятся в этом списке.",
       "clearAll": "Очистить Историю",
+      "removeInbox": "Удалить из истории",
       "confirmClearTitle": "Очистить Историю",
       "confirmClearDesc": "Вы уверены, что хотите удалить все сохраненные адреса из памяти браузера?"
     },
@@ -2411,12 +2425,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "soundMuted": "🔕 Звуковые уведомления выключены",
       "initFailed": "Не удалось инициализировать почту. Пожалуйста, обновите страницу.",
       "messageDeleted": "Письмо удалено",
-      "switchedTo": "Переключено на",
+      "switchedTo": "Переключено на {address}",
       "generatedNew": "Сгенерирован новый временный ящик!",
       "mailboxDeleted": "Ящик удален и создан новый адрес!",
-      "customCreated": "Пользовательский ящик успешно создан",
+      "customCreated": "Пользовательский ящик создан: {address}",
       "customFailed": "Ошибка создания. Попробуйте другой логин.",
-      "providerSwitched": "Активный провайдер изменен на",
+      "providerSwitched": "Активный провайдер изменен на {provider}",
       "historyCleared": "История ящиков очищена.",
       "copiedToClipboard": "Скопировано в буфер обмена!",
       "copyFailed": "Не удалось скопировать",
@@ -2697,7 +2711,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrLabel": "二维码",
       "accessLabel": "密码",
       "changeLabel": "换一个",
-      "deleteLabel": "删除"
+      "deleteLabel": "删除",
+      "switchProviderTooltip": "点击切换邮件服务"
     },
     "inboxList": {
       "title": "收件箱",
@@ -2724,7 +2739,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copyOtp": "复制验证码",
       "copiedOtp": "已复制！",
       "verifyLink": "激活链接：",
-      "openLink": "打开链接 ↗",
+      "openLink": "打开链接",
       "toLabel": "收件人:",
       "noSubject": "(无主题)",
       "defaultSender": "发件人",
@@ -2774,6 +2789,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "emptyTitle": "暂无历史邮箱",
       "emptyDesc": "当您创建或切换临时邮箱时，历史记录会自动保存在这里。",
       "clearAll": "清空所有历史",
+      "removeInbox": "从历史中移除",
       "confirmClearTitle": "清空历史记录",
       "confirmClearDesc": "确定要清除保存在本地浏览器中的所有历史临时邮箱吗？"
     },
@@ -2799,12 +2815,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "soundMuted": "🔕 已静音邮件提示音",
       "initFailed": "邮箱初始化失败，请尝试刷新页面。",
       "messageDeleted": "邮件已删除",
-      "switchedTo": "已切换至",
+      "switchedTo": "已切换至 {address}",
       "generatedNew": "成功生成全新临时邮箱！",
       "mailboxDeleted": "旧邮箱已销毁，新邮箱已就绪！",
-      "customCreated": "自定义邮箱创建成功",
+      "customCreated": "自定义邮箱已创建：{address}",
       "customFailed": "创建失败，请尝试更换其他用户名。",
-      "providerSwitched": "活动邮件服务已切换至",
+      "providerSwitched": "活动邮件服务已切换至 {provider}",
       "historyCleared": "历史邮箱记录已全部清空。",
       "copiedToClipboard": "已成功复制到剪贴板！",
       "copyFailed": "复制失败",
@@ -3085,7 +3101,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrLabel": "QRコード",
       "accessLabel": "パスワード",
       "changeLabel": "再生成",
-      "deleteLabel": "削除"
+      "deleteLabel": "削除",
+      "switchProviderTooltip": "クリックしてプロバイダを切り替え"
     },
     "inboxList": {
       "title": "受信トレイ",
@@ -3112,7 +3129,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copyOtp": "コードをコピー",
       "copiedOtp": "コピー完了！",
       "verifyLink": "リンク：",
-      "openLink": "リンクを開く ↗",
+      "openLink": "リンクを開く",
       "toLabel": "宛先:",
       "noSubject": "(件名なし)",
       "defaultSender": "差出人",
@@ -3162,6 +3179,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "emptyTitle": "履歴はありません",
       "emptyDesc": "アドレスを作成または切り替えると、ここに履歴が表示されます。",
       "clearAll": "履歴を全消去",
+      "removeInbox": "履歴から削除",
       "confirmClearTitle": "履歴の消去",
       "confirmClearDesc": "ブラウザに保存されているすべてのアドレス履歴を削除してもよろしいですか？"
     },
@@ -3187,12 +3205,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "soundMuted": "🔕 通知音をオフにしました",
       "initFailed": "初期化に失敗しました。ページを再読み込みしてください。",
       "messageDeleted": "メールを削除しました",
-      "switchedTo": "切り替えました:",
+      "switchedTo": "切り替えました: {address}",
       "generatedNew": "新しい捨てメアドを作成しました！",
       "mailboxDeleted": "アドレスを破棄し、新しいアドレスを作成しました！",
-      "customCreated": "カスタムアドレスを作成しました",
+      "customCreated": "カスタムアドレスを作成しました: {address}",
       "customFailed": "作成に失敗しました。別のユーザー名をお試しください。",
-      "providerSwitched": "プロバイダを切り替えました:",
+      "providerSwitched": "プロバイダを切り替えました: {provider}",
       "historyCleared": "アドレス履歴を削除しました。",
       "copiedToClipboard": "クリップボードにコピーしました！",
       "copyFailed": "コピーに失敗しました",
@@ -3473,7 +3491,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrLabel": "رمز QR",
       "accessLabel": "الدخول",
       "changeLabel": "بريد جديد",
-      "deleteLabel": "حذف"
+      "deleteLabel": "حذف",
+      "switchProviderTooltip": "انقر لتبديل مزود الخدمة"
     },
     "inboxList": {
       "title": "صندوق الوارد",
@@ -3500,7 +3519,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copyOtp": "نسخ الرمز",
       "copiedOtp": "تم النسخ!",
       "verifyLink": "الرابط:",
-      "openLink": "فتح الرابط ↗",
+      "openLink": "فتح الرابط",
       "toLabel": "إلى:",
       "noSubject": "(بدون موضوع)",
       "defaultSender": "المرسل",
@@ -3550,6 +3569,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "emptyTitle": "لا توجد صناديق سابقة",
       "emptyDesc": "عند إنشاء أو تبديل الصناديق المؤقتة، ستظهر عناوينك السابقة هنا.",
       "clearAll": "مسح كل السجل",
+      "removeInbox": "إزالة من السجل",
       "confirmClearTitle": "مسح السجل",
       "confirmClearDesc": "هل أنت متأكد من رغبتك في حذف جميع العناوين السابقة من المتصفح؟"
     },
@@ -3575,12 +3595,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "soundMuted": "🔕 تم كتم التنبيهات الصوتية",
       "initFailed": "فشل تهيئة البريد. يرجى تحديث الصفحة.",
       "messageDeleted": "تم حذف الرسالة",
-      "switchedTo": "تم التبديل إلى",
+      "switchedTo": "تم التبديل إلى {address}",
       "generatedNew": "تم إنشاء بريد مؤقت جديد بنجاح!",
       "mailboxDeleted": "تم حذف الصندوق وإنشاء عنوان جديد!",
-      "customCreated": "تم إنشاء البريد المخصص بنجاح",
+      "customCreated": "تم إنشاء البريد المخصص: {address}",
       "customFailed": "فشل الإنشاء. يرجى تجربة اسم مستخدم آخر.",
-      "providerSwitched": "تم تغيير مزود الخدمة إلى",
+      "providerSwitched": "تم تغيير مزود الخدمة إلى {provider}",
       "historyCleared": "تم مسح سجل الصناديق.",
       "copiedToClipboard": "تم النسخ إلى الحافظة!",
       "copyFailed": "فشل النسخ",
@@ -3861,7 +3881,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "qrLabel": "Kode QR",
       "accessLabel": "Sandi",
       "changeLabel": "Email Baru",
-      "deleteLabel": "Hapus"
+      "deleteLabel": "Hapus",
+      "switchProviderTooltip": "Klik untuk mengganti penyedia"
     },
     "inboxList": {
       "title": "Kotak Masuk",
@@ -3888,7 +3909,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "copyOtp": "Salin Kode",
       "copiedOtp": "Tersalin!",
       "verifyLink": "Tautan:",
-      "openLink": "Buka Tautan ↗",
+      "openLink": "Buka Tautan",
       "toLabel": "Kepada:",
       "noSubject": "(Tanpa Subjek)",
       "defaultSender": "Pengirim",
@@ -3938,6 +3959,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "emptyTitle": "Belum ada riwayat",
       "emptyDesc": "Saat Anda membuat atau mengganti email sementara, alamat Anda akan muncul di sini.",
       "clearAll": "Hapus Semua Riwayat",
+      "removeInbox": "Hapus dari riwayat",
       "confirmClearTitle": "Hapus Riwayat",
       "confirmClearDesc": "Apakah Anda yakin ingin menghapus semua riwayat alamat email dari browser?"
     },
@@ -3963,12 +3985,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "soundMuted": "🔕 Suara notifikasi dibisukan",
       "initFailed": "Gagal memuat kotak masuk. Silakan muat ulang halaman.",
       "messageDeleted": "Pesan berhasil dihapus",
-      "switchedTo": "Beralih ke",
+      "switchedTo": "Beralih ke {address}",
       "generatedNew": "Email sementara baru berhasil dibuat!",
       "mailboxDeleted": "Kotak masuk dihapus dan alamat baru telah dibuat!",
-      "customCreated": "Email kustom berhasil dibuat",
+      "customCreated": "Email kustom dibuat: {address}",
       "customFailed": "Gagal membuat email. Silakan coba username lain.",
-      "providerSwitched": "Penyedia email aktif diubah ke",
+      "providerSwitched": "Penyedia email aktif diubah ke {provider}",
       "historyCleared": "Semua riwayat email berhasil dibersihkan.",
       "copiedToClipboard": "Disalin ke papan klip!",
       "copyFailed": "Gagal menyalin",

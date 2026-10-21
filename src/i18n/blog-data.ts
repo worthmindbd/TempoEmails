@@ -1081,8 +1081,11 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
   ],
 };
 
+/** Newest first — the data above is in authoring order, not date order. */
 export function getBlogArticles(locale: Locale): BlogArticleData[] {
-  return BLOG_ARTICLES[locale] || BLOG_ARTICLES.en;
+  const articles = BLOG_ARTICLES[locale] || BLOG_ARTICLES.en;
+  // ISO dates compare correctly as strings; sort a copy to keep the source intact.
+  return [...articles].sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export function getBlogArticleBySlug(slug: string, locale: Locale): BlogArticleData | undefined {

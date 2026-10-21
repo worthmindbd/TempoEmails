@@ -94,7 +94,7 @@ const navLinks = [
       <button
         id="mobile-menu-toggle"
         type="button"
-        class="md:hidden btn btn-ghost w-9 h-9 p-0"
+        class="lg:hidden btn btn-ghost w-9 h-9 p-0"
         aria-label={t.a11y.toggleMenu}
         aria-expanded="false"
         aria-controls="mobile-nav-drawer"
@@ -109,10 +109,11 @@ const navLinks = [
     </div>
   </div>
 
-  <!-- Mobile navigation drawer -->
+  <!-- Mobile/tablet navigation drawer: stays available until lg, because the
+       inline nav drops About/Contact (`link.wide`) below that width. -->
   <div
     id="mobile-nav-drawer"
-    class="hidden md:hidden mx-auto max-w-6xl mt-2 surface-raised rounded-3xl p-2 animate-rise-in"
+    class="hidden lg:hidden mx-auto max-w-6xl mt-2 surface-raised rounded-3xl p-2 animate-rise-in"
   >
     <nav class="grid grid-cols-2 gap-1" aria-label="Mobile">
       {navLinks.map((link) => (

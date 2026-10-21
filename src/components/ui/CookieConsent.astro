@@ -12,14 +12,16 @@ const t = useTranslation(currentLocale);
 const privacyUrl = getLocalizedPath('/privacy-policy/', currentLocale);
 ---
 
+<!-- Card on small screens; on lg+ a slim centred bar at the very bottom, so it
+     no longer sits on top of the mailbox's Copy / Refresh actions. -->
 <div
   id="cookie-consent-banner"
-  class="fixed bottom-3 inset-x-3 sm:bottom-6 sm:start-6 sm:end-auto z-40 sm:max-w-sm hidden animate-rise-in"
+  class="fixed bottom-3 inset-x-3 sm:bottom-6 sm:start-6 sm:end-auto z-40 sm:max-w-sm lg:bottom-4 lg:inset-x-0 lg:mx-auto lg:max-w-3xl hidden animate-rise-in"
   role="region"
   aria-label={t.cookieConsent.title}
 >
-  <div class="surface-raised rounded-3xl p-5">
-    <div class="flex items-start gap-3">
+  <div class="surface-raised rounded-3xl p-5 lg:py-3.5 lg:flex lg:items-center lg:gap-6">
+    <div class="flex items-start gap-3 lg:items-center lg:flex-1">
       <span class="icon-tile w-9! h-9! rounded-xl! shrink-0" aria-hidden="true">
         <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path>
@@ -27,14 +29,13 @@ const privacyUrl = getLocalizedPath('/privacy-policy/', currentLocale);
         </svg>
       </span>
       <div class="min-w-0">
-        <h3 class="font-display text-base font-semibold text-ink">{t.cookieConsent.title}</h3>
-        <p class="text-[13px] text-muted leading-relaxed mt-1">
-          {t.cookieConsent.desc}
-          <a href={privacyUrl} class="text-accent-text font-medium underline underline-offset-2 decoration-accent-text/30 hover:decoration-current">{t.cookieConsent.privacyPolicy}</a>.
+        <h3 class="font-display text-base font-semibold text-ink lg:sr-only">{t.cookieConsent.title}</h3>
+        <p class="text-[13px] text-muted leading-relaxed mt-1 lg:mt-0">
+          {t.cookieConsent.desc}{' '}<a href={privacyUrl} class="text-accent-text font-medium underline underline-offset-2 decoration-accent-text/30 hover:decoration-current">{t.cookieConsent.privacyPolicy}</a>.
         </p>
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-2 mt-4">
+    <div class="grid grid-cols-2 gap-2 mt-4 lg:mt-0 lg:shrink-0">
       <button id="cookie-reject-btn" type="button" class="btn btn-secondary btn-sm">{t.cookieConsent.essentialOnly}</button>
       <button id="cookie-accept-btn" type="button" class="btn btn-primary btn-sm">{t.cookieConsent.acceptAll}</button>
     </div>

@@ -104,6 +104,10 @@ export function getClientI18nPayload(locale: Locale) {
     relativeTime: t.relativeTime,
     historyDrawer: t.historyDrawer,
     accessModal: t.accessModal,
+    // MailboxManager reads `customModal.domainsFailed` and `qrModal.unavailable`
+    // at runtime; without these they always fell back to English.
+    customModal: t.customModal,
+    qrModal: t.qrModal,
     common: t.common,
     a11y: t.a11y,
   };

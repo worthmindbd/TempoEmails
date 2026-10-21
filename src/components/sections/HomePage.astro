@@ -155,7 +155,7 @@ const chips = t.hero.chips || [];
                 <span class="font-medium text-accent-text">{getCategoryLabel(article.category)}</span>
                 <span aria-hidden="true">·</span>
                 <time datetime={article.date}>
-                  {new Date(article.date).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' })}
+                  {new Date(article.date).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })}
                 </time>
               </div>
               <h3 class="mt-2.5 font-display text-lg font-semibold tracking-tight leading-snug text-ink group-hover:text-accent-text transition-colors">
