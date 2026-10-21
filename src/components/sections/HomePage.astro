@@ -9,7 +9,6 @@ import Faq from './Faq.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 import { useTranslation, getLocalizedPath } from '../../i18n/utils';
 import { getBlogArticles } from '../../i18n/blog-data';
-import { stripLeadingEmoji } from '../../lib/utils/text';
 import type { Locale } from '../../i18n/languages';
 
 interface Props {
@@ -57,7 +56,6 @@ const faqSchema = {
 
 // Services people most often verify with a burner address (named in the FAQ).
 const services = ['Discord', 'ChatGPT', 'Telegram', 'Steam', 'Reddit', 'Midjourney', 'Twitch', 'Epic Games', 'Claude'];
-const chips = t.hero.chips || [];
 ---
 
 <Layout title={t.meta.title} description={t.meta.description} keywords={t.meta.keywords} locale={locale} isApp={true}>
@@ -66,19 +64,8 @@ const chips = t.hero.chips || [];
   <!-- Hero -->
   <section class="relative px-5 sm:px-8 pt-12 sm:pt-20 lg:pt-24 pb-10 sm:pb-14 text-center">
     <div class="max-w-5xl mx-auto">
-      <a
-        href="#mailbox-manager-section"
-        class="chip h-8 ps-2.5 pe-3.5 text-[13px] hover:border-line-strong transition-colors animate-rise-in"
-      >
-        <span class="relative flex w-2 h-2" aria-hidden="true">
-          <span class="absolute inset-0 rounded-full bg-success animate-ping opacity-60"></span>
-          <span class="relative w-2 h-2 rounded-full bg-success"></span>
-        </span>
-        {stripLeadingEmoji(t.hero.badge)}
-      </a>
-
       <h1
-        class="mt-7 font-display font-bold text-ink text-[clamp(2.5rem,1.5rem+4.4vw,4.9rem)] leading-[0.98] tracking-[-0.045em] animate-rise-in [animation-delay:80ms]"
+        class="font-display font-bold text-ink text-[clamp(2.5rem,1.5rem+4.4vw,4.9rem)] leading-[0.98] tracking-[-0.045em] animate-rise-in [animation-delay:80ms]"
       >
         {t.hero.titleLine1}
         <br />
@@ -88,15 +75,6 @@ const chips = t.hero.chips || [];
       <p class="hidden sm:block mt-6 text-lg text-muted leading-relaxed max-w-xl mx-auto animate-rise-in [animation-delay:160ms]">
         {t.hero.subtitle}
       </p>
-
-      <ul class="mt-7 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-ink-2 animate-rise-in [animation-delay:240ms]">
-        {chips.map((chip) => (
-          <li class="inline-flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-            {chip}
-          </li>
-        ))}
-      </ul>
     </div>
   </section>
 
