@@ -60,14 +60,33 @@ const SECURITY_HEADERS = {
 };
 
 // Applied to documents only (HTML): images/JSON/XML keep the lighter set above.
+// GA4 and AdSense load only after cookie consent, but once loaded they need
+// these origins: GA4 beacons go over fetch/sendBeacon (connect-src) and every
+// ad renders in a cross-origin iframe (frame-src). With the previous
+// `connect-src 'self'` / `frame-src 'none'` analytics recorded nothing and no
+// ad could render. The email reader is a sandboxed `srcdoc` iframe, which
+// frame-src does not govern.
+const GOOGLE_ADS_ORIGINS = [
+  'https://pagead2.googlesyndication.com',
+  'https://*.googlesyndication.com',
+  'https://*.doubleclick.net',
+  'https://*.adtrafficquality.google',
+  'https://www.google.com',
+];
 const CSP_VALUE = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com",
+  ["script-src 'self' 'unsafe-inline' https://www.googletagmanager.com", ...GOOGLE_ADS_ORIGINS].join(' '),
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: https:",
-  "connect-src 'self' https://mercure.mail.tm",
-  "frame-src 'none'",
+  [
+    "connect-src 'self'",
+    'https://*.google-analytics.com',
+    'https://*.analytics.google.com',
+    'https://*.googletagmanager.com',
+    ...GOOGLE_ADS_ORIGINS,
+  ].join(' '),
+  ['frame-src', ...GOOGLE_ADS_ORIGINS].join(' '),
   "object-src 'none'",
   "base-uri 'self'",
   'form-action \'none\'',
@@ -164,6 +183,14 @@ async function handleServerRequest(req, res) {
     if (fs.existsSync(dirIndex) && fs.statSync(dirIndex).isFile()) {
       cleanPathname = withoutIndex;
     }
+  }
+
+  // Legacy /sitemap.xml: @astrojs/sitemap publishes /sitemap-index.xml. The old
+  // shim answered with a sitemap index pointing at that index, and nested
+  // indexes are not valid for crawlers. Folding the alias in here keeps the
+  // redirect inside the same single canonicalising hop.
+  if (cleanPathname === '/sitemap.xml') {
+    cleanPathname = '/sitemap-index.xml';
   }
 
   let safePath = path.normalize(cleanPathname).replace(/^(\.\.[\/\\])+/, '');

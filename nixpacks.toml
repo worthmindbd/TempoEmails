@@ -3,6 +3,10 @@
 NODE_ENV = "production"
 NPM_CONFIG_PRODUCTION = "false"
 NIXPACKS_PATH = ""
+# Dokploy always puts Traefik in front of server.mjs. Without this the
+# /api/mail rate limiter sees only Traefik's IP and throttles the whole site
+# as one client. Override with TRUST_PROXY=2 if Cloudflare proxies in front.
+TRUST_PROXY = "1"
 
 [phases.setup]
 nixPkgs = ["nodejs_22"]

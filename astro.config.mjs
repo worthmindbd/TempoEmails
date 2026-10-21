@@ -12,8 +12,8 @@ import { BLOG_ARTICLES } from './src/i18n/blog-data.ts';
  *
  * There is deliberately NO `configurePreviewServer` hook — Astro 7 strips user
  * Vite plugins when it creates the preview server (see
- * astro/dist/core/preview/static-preview-server.js), and a static build never
- * runs `src/middleware.ts`. `astro preview` therefore cannot serve `/api/mail`;
+ * astro/dist/core/preview/static-preview-server.js), and a static build has no
+ * server runtime. `astro preview` therefore cannot serve `/api/mail`;
  * use `npm start` (server.mjs) to exercise the built output with the proxy.
  *
  * Typed with JSDoc rather than `import type` — Astro's config loader imports

@@ -7,7 +7,7 @@
  * same-origin endpoint `/api/mail/<provider>/...` that forwards requests to a
  * strict allowlist of upstream provider APIs. It is mounted by:
  *   - server.mjs (production Node server)
- *   - the Vite dev/preview middleware in astro.config.mjs
+ *   - the `astro dev` Vite middleware in astro.config.mjs
  *
  * SECURITY: Only allowlisted upstreams are reachable — this is not an open proxy.
  */
@@ -25,15 +25,33 @@ const rateLimitHits = new Map();
  * `X-Forwarded-For` is client-controllable: honouring it unconditionally let
  * anyone bypass the limiter by rotating the header on every request (verified:
  * 70 requests, all 200). Only trust it when an operator explicitly declares
- * that a proxy in front of this server sets/overwrites it.
+ * how many proxies they run in front of this server.
+ *
+ * TRUST_PROXY = number of trusted hops (`1`/`true` = one, e.g. Traefik alone;
+ * `2` = Cloudflare -> Traefik). Each proxy *appends* the address it saw, so the
+ * real client is that many entries from the right. The leftmost entry is
+ * whatever the client sent and must never be used.
+ *
+ * Behind a proxy without TRUST_PROXY every visitor shares the proxy's socket
+ * address — and therefore one rate-limit bucket for the whole site.
  */
-const TRUST_PROXY = ['1', 'true', 'yes', 'on'].includes(
-  String(process.env.TRUST_PROXY || '').toLowerCase()
-);
+const TRUSTED_PROXY_HOPS = (() => {
+  const raw = String(process.env.TRUST_PROXY || '').trim().toLowerCase();
+  if (['true', 'yes', 'on'].includes(raw)) return 1;
+  const hops = parseInt(raw, 10);
+  return Number.isFinite(hops) && hops > 0 ? hops : 0;
+})();
 
 function resolveClientIp(req) {
-  if (TRUST_PROXY) {
-    const forwarded = (req.headers['x-forwarded-for'] || '').toString().split(',')[0].trim();
+  if (TRUSTED_PROXY_HOPS > 0) {
+    const chain = (req.headers['x-forwarded-for'] || '')
+      .toString()
+      .split(',')
+      .map((part) => part.trim())
+      .filter(Boolean);
+    // A chain shorter than the declared hops means a proxy was bypassed or
+    // misconfigured; the oldest entry is the best remaining guess.
+    const forwarded = chain[Math.max(0, chain.length - TRUSTED_PROXY_HOPS)];
     if (forwarded) return forwarded;
   }
   return req.socket?.remoteAddress || 'unknown';
@@ -88,8 +106,7 @@ const PROXY_SECURITY_HEADERS = {
 
 /**
  * Resolves a proxy path (`/<provider>/<rest>`) to its upstream URL.
- * Shared between the production server handler and the dev-only Astro
- * middleware (src/middleware.ts).
+ * Used by `handleMailProxy`, which both server.mjs and the dev Vite plugin mount.
  */
 export function resolveMailProxy(pathWithQuery) {
   const url = new URL(pathWithQuery, 'http://localhost');
@@ -103,8 +120,7 @@ export function resolveMailProxy(pathWithQuery) {
 
 /**
  * Builds upstream request headers for a provider, given the incoming headers.
- * Shared by the production server handler, the dev-only Astro middleware
- * (src/middleware.ts) and `handleMailProxy` so the two proxies cannot drift.
+ * Only this minimal allowlist of headers is ever forwarded upstream.
  *
  * @param {string} provider
  * @param {Record<string, string | string[] | undefined>} [incomingHeaders]
@@ -195,8 +211,8 @@ export async function handleMailProxy(req, res, pathWithQuery) {
     }
   }
 
-  // Only forward a minimal, safe set of headers (same builder the dev
-  // middleware uses — do not duplicate the allowlist here).
+  // Only forward a minimal, safe set of headers (do not duplicate the
+  // allowlist here).
   const headers = buildUpstreamHeaders(provider, req.headers);
 
   const controller = new AbortController();
