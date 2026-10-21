@@ -74,8 +74,11 @@ export class TempMailLolClient {
         {},
         FETCH_TIMEOUT_MS
       );
-      if (!res.ok) throw new Error('Failed to fetch messages from tempmail.lol');
-      data = await res.json();
+      // An expired inbox (free tier: ~1 hour) answers `{ emails: [], expired:
+      // true }` — sometimes with a 404 — and can never be reopened.
+      data = await res.json().catch(() => null);
+      if (data?.expired) throw new Error('EXPIRED');
+      if (!res.ok || !data) throw new Error('Failed to fetch messages from tempmail.lol');
     } catch (err) {
       // Rethrow so MailService can fall back to the localStorage cache
       console.warn('TempMail.lol getMessages error:', err);

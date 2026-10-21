@@ -5,6 +5,7 @@ import EmailDetail from './EmailDetail.astro';
 import QrCodeModal from './QrCodeModal.astro';
 import CustomInboxModal from './CustomInboxModal.astro';
 import InboxHistoryDrawer from './InboxHistoryDrawer.astro';
+import InboxAccessModal from './InboxAccessModal.astro';
 import ConfirmModal from '../ui/ConfirmModal.astro';
 import type { Locale } from '../../i18n/languages';
 
@@ -41,11 +42,12 @@ const { locale = 'en' } = Astro.props;
   <QrCodeModal locale={locale} />
   <CustomInboxModal locale={locale} />
   <InboxHistoryDrawer locale={locale} />
+  <InboxAccessModal locale={locale} />
   <ConfirmModal locale={locale} />
 </div>
 
 <script>
-  import { MailService } from '../../lib/mail/service';
+  import { MailService, MailboxAccessError } from '../../lib/mail/service';
   import { StorageManager } from '../../lib/utils/storage';
   import { copyToClipboard } from '../../lib/utils/clipboard';
   import { formatRelativeTime, formatFullDateTime } from '../../lib/utils/date-formatter';
@@ -69,6 +71,9 @@ const { locale = 'en' } = Astro.props;
     private availableDomains: MailDomain[] = [];
     private sseSource: EventSource | null = null;
     private addressDisplayBackup: string | null = null;
+    // Addresses already warned about being unreadable, so polling every 10s
+    // does not repeat the toast.
+    private accessWarned = new Set<string>();
 
     async init() {
       this.bindEvents();
@@ -328,6 +333,7 @@ const { locale = 'en' } = Astro.props;
         if (gen !== this.fetchGen || !this.account || this.account.address !== accountAddress) return;
         this.messages = StorageManager.getCachedMessages(accountAddress);
         this.renderMessageList();
+        if (err instanceof MailboxAccessError) this.warnAccessLost(accountAddress, err.reason);
       } finally {
         this.isPolling = false;
         if (refreshIcon) refreshIcon.classList.remove('animate-spin');
@@ -776,7 +782,7 @@ const { locale = 'en' } = Astro.props;
         content.classList.add('scale-95');
         // ConfirmModal manages its own lock; include it so closing one dialog
         // never unlocks page scrolling while another is still open.
-        const anyOpen = ['qr-modal', 'custom-modal', 'history-modal', 'confirm-modal'].some((id) => {
+        const anyOpen = ['qr-modal', 'custom-modal', 'history-modal', 'access-modal', 'confirm-modal'].some((id) => {
           const m = document.getElementById(id);
           return m && !m.classList.contains('pointer-events-none');
         });
@@ -914,6 +920,74 @@ const { locale = 'en' } = Astro.props;
 
     closeHistoryModal() {
       this.setModalOpen('history-modal', 'history-modal-content', false);
+    }
+
+    warnAccessLost(address: string, reason: 'auth' | 'expired') {
+      const key = address.toLowerCase();
+      if (this.accessWarned.has(key)) return;
+      this.accessWarned.add(key);
+      const i18n = (window as any).__TEMPO_I18N__;
+      const template =
+        reason === 'auth'
+          ? i18n?.toasts?.inboxAuthLost || '{address} no longer accepts its password — the provider may have deleted it.'
+          : i18n?.toasts?.inboxExpired || '{address} has expired. Generate a new address to keep receiving mail.';
+      window.dispatchEvent(
+        new CustomEvent('tempomail:toast', {
+          detail: { message: template.replace('{address}', address), type: 'error', duration: 7000 },
+        })
+      );
+    }
+
+    /**
+     * Only Mail.tm / Mail.gw inboxes have a password. Other providers get a
+     * note saying why there is nothing to save.
+     */
+    openAccessModal() {
+      if (!this.account) return;
+      const i18n = (window as any).__TEMPO_I18N__;
+      const credentials = document.getElementById('access-credentials');
+      const noPassword = document.getElementById('access-no-password');
+      const address = document.getElementById('access-address');
+      const password = document.getElementById('access-password') as HTMLInputElement | null;
+      const hasPassword = this.account.provider === 'mailtm' && !!this.account.password;
+
+      credentials?.classList.toggle('hidden', !hasPassword);
+      noPassword?.classList.toggle('hidden', hasPassword);
+      if (hasPassword) {
+        if (address) address.textContent = this.account.address;
+        if (password) password.value = this.account.password || '';
+        this.setPasswordVisible(false);
+      } else if (noPassword) {
+        const provider = this.account.provider;
+        noPassword.textContent =
+          provider === 'tempmaillol'
+            ? i18n?.accessModal?.noPasswordExpiring || 'TempMail.lol inboxes have no password and expire after about an hour.'
+            : provider === 'mock'
+              ? i18n?.accessModal?.noPasswordMock || 'This simulated inbox has no password.'
+              : (i18n?.accessModal?.noPasswordPublic || '{provider} inboxes have no password: anyone who knows the address can open them.').replace(
+                  '{provider}',
+                  provider === 'guerrilla' ? 'Guerrilla Mail' : 'Inboxes.com'
+                );
+      }
+
+      this.setModalOpen('access-modal', 'access-modal-content', true, hasPassword ? '#access-copy-login' : '#access-login-address');
+    }
+
+    closeAccessModal() {
+      this.setPasswordVisible(false);
+      this.setModalOpen('access-modal', 'access-modal-content', false);
+    }
+
+    private setPasswordVisible(visible: boolean) {
+      const password = document.getElementById('access-password') as HTMLInputElement | null;
+      const toggle = document.getElementById('access-toggle-password');
+      if (password) password.type = visible ? 'text' : 'password';
+      if (toggle) {
+        const label = (visible ? toggle.dataset.hideLabel : toggle.dataset.showLabel) || '';
+        toggle.setAttribute('aria-pressed', String(visible));
+        toggle.title = label;
+        toggle.setAttribute('aria-label', label);
+      }
     }
 
     switchInbox(targetAccount: MailAccount) {
@@ -1137,6 +1211,72 @@ const { locale = 'en' } = Astro.props;
         }
       });
 
+      // 8b. Inbox login (show password / open an existing inbox)
+      document.getElementById('access-btn')?.addEventListener('click', () => this.openAccessModal());
+      document.getElementById('access-modal-close')?.addEventListener('click', () => this.closeAccessModal());
+      document.getElementById('access-modal')?.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('access-modal')) this.closeAccessModal();
+      });
+      document.getElementById('access-toggle-password')?.addEventListener('click', () => {
+        const password = document.getElementById('access-password') as HTMLInputElement | null;
+        this.setPasswordVisible(password?.type === 'password');
+      });
+      document.getElementById('access-copy-address')?.addEventListener('click', () => {
+        if (!this.account) return;
+        const i18n = (window as any).__TEMPO_I18N__;
+        const tpl = i18n?.common?.copyEmailToast || i18n?.toasts?.copiedToClipboard || 'Copied {email} to clipboard!';
+        copyToClipboard(this.account.address, tpl.replace('{email}', this.account.address));
+      });
+      document.getElementById('access-copy-password')?.addEventListener('click', () => {
+        if (!this.account?.password) return;
+        const i18n = (window as any).__TEMPO_I18N__;
+        copyToClipboard(this.account.password, i18n?.toasts?.passwordCopied || 'Password copied');
+      });
+      document.getElementById('access-copy-login')?.addEventListener('click', () => {
+        if (!this.account?.password) return;
+        const i18n = (window as any).__TEMPO_I18N__;
+        copyToClipboard(
+          `${this.account.address}\n${this.account.password}`,
+          i18n?.toasts?.loginCopied || 'Address and password copied'
+        );
+      });
+
+      document.getElementById('access-login-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const addressInput = document.getElementById('access-login-address') as HTMLInputElement;
+        const passwordInput = document.getElementById('access-login-password') as HTMLInputElement;
+        const submit = document.getElementById('access-login-submit') as HTMLButtonElement | null;
+        const address = addressInput?.value?.trim();
+        const password = passwordInput?.value || '';
+        if (!address || !password) return;
+
+        const i18n = (window as any).__TEMPO_I18N__;
+        if (submit) submit.disabled = true;
+        try {
+          const account = await MailService.loginAccount(address, password);
+          this.accessWarned.delete(account.address.toLowerCase());
+          addressInput.value = '';
+          passwordInput.value = '';
+          this.closeAccessModal();
+          this.switchInbox(account);
+        } catch (err: any) {
+          console.warn('Inbox login failed:', err);
+          window.dispatchEvent(
+            new CustomEvent('tempomail:toast', {
+              detail: {
+                message:
+                  err?.message === 'UNAUTHORIZED'
+                    ? i18n?.toasts?.loginFailed || 'Wrong address or password.'
+                    : i18n?.toasts?.loginUnavailable || "Couldn't reach the mail provider. Try again in a moment.",
+                type: 'error',
+              },
+            })
+          );
+        } finally {
+          if (submit) submit.disabled = false;
+        }
+      });
+
       // 9. Message detail view controls
       document.getElementById('tab-html-btn')?.addEventListener('click', () => this.switchViewTab('html'));
       document.getElementById('tab-text-btn')?.addEventListener('click', () => this.switchViewTab('text'));
@@ -1166,13 +1306,14 @@ const { locale = 'en' } = Astro.props;
       // Global Escape closes any open app modal (QR / custom / history).
       document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
-        const openId = ['qr-modal', 'custom-modal', 'history-modal'].find((id) => {
+        const openId = ['qr-modal', 'custom-modal', 'history-modal', 'access-modal'].find((id) => {
           const m = document.getElementById(id);
           return m && !m.classList.contains('pointer-events-none');
         });
         if (openId === 'qr-modal') this.closeQrModal();
         else if (openId === 'custom-modal') this.closeCustomModal();
         else if (openId === 'history-modal') this.closeHistoryModal();
+        else if (openId === 'access-modal') this.closeAccessModal();
       });
 
       // Focus traps for the dialogs ConfirmModal does not own.
@@ -1180,6 +1321,7 @@ const { locale = 'en' } = Astro.props;
         ['qr-modal-content', 'qr-modal'],
         ['custom-modal-content', 'custom-modal'],
         ['history-modal-content', 'history-modal'],
+        ['access-modal-content', 'access-modal'],
       ];
       trappedModals.forEach(([contentId, modalId]) => {
         document.getElementById(contentId)?.addEventListener('keydown', (e) => {

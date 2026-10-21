@@ -80,10 +80,32 @@ export class GuerrillaMailClient {
     };
   }
 
+  /**
+   * Guerrilla has no password: a session (sid_token) dies after ~18 minutes of
+   * inactivity, and any new session can re-bind an address by its username.
+   * Returns the fresh sid_token for the same address.
+   */
+  static async resumeSession(address: string): Promise<string> {
+    const user = address.split('@')[0];
+    const res = await fetchWithTimeout(
+      `${GUERRILLA_API}?f=set_email_user&email_user=${encodeURIComponent(user)}&lang=en`,
+      {},
+      FETCH_TIMEOUT_MS
+    );
+    if (!res.ok) throw new Error('Failed to resume Guerrilla Mail session');
+    const data = await res.json();
+    // All Guerrilla domains deliver to the same mailbox, so only the username
+    // has to match.
+    if (!data.sid_token || String(data.email_addr || '').split('@')[0] !== user) {
+      throw new Error('Guerrilla Mail did not restore the requested address');
+    }
+    return data.sid_token;
+  }
+
   static async getMessages(token?: string, address?: string): Promise<MailMessage[]> {
     const sid = token;
     if (!sid) {
-      throw new Error('Guerrilla Mail session expired — please create a new inbox.');
+      throw new Error('SESSION_EXPIRED');
     }
 
     try {
@@ -94,7 +116,13 @@ export class GuerrillaMailClient {
       );
       if (!res.ok) throw new Error('Failed to fetch Guerrilla Mail messages');
       const data = await res.json();
-      const list = data.list || [];
+      // An expired session answers 200 with `{ error: "Please call
+      // get_email_address or set_email_user first" }` and no list — not an
+      // empty inbox.
+      if (data.error || !Array.isArray(data.list)) {
+        throw new Error('SESSION_EXPIRED');
+      }
+      const list = data.list;
 
       return list.map((m: any) => {
         const subject = m.mail_subject || '(No Subject)';

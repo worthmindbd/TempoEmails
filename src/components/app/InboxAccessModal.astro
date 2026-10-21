@@ -1,0 +1,115 @@
+---
+import DialogHeader from '../ui/DialogHeader.astro';
+import { useTranslation } from '../../i18n/utils';
+import type { Locale } from '../../i18n/languages';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = useTranslation(locale);
+
+const field =
+  'w-full h-12 px-4 rounded-xl bg-surface border border-line-strong text-[15px] font-mono text-ink placeholder:text-subtle transition-shadow focus:outline-none focus:border-accent/60 focus:ring-4 focus:ring-accent/12';
+const rowBtn = 'btn btn-ghost w-9 h-9 p-0 shrink-0';
+---
+
+<div
+  id="access-modal"
+  class="dialog-overlay opacity-0 pointer-events-none"
+  role="dialog"
+  aria-hidden="true"
+  inert
+  aria-modal="true"
+  aria-labelledby="access-modal-title"
+>
+  <div id="access-modal-content" class="dialog-panel max-w-md scale-95">
+    <DialogHeader id="access-modal-title" closeId="access-modal-close" title={t.accessModal.title} closeLabel={t.common.close} />
+
+    <!-- Current inbox login (Mail.tm / Mail.gw only — the providers with a password) -->
+    <div id="access-credentials" class="hidden">
+      <p class="text-sm text-muted mb-4">{t.accessModal.credentialsDesc}</p>
+      <div class="rounded-xl surface-inset divide-y divide-line">
+        <div class="flex items-center gap-2 ps-4 pe-1.5 py-2">
+          <div class="min-w-0 flex-1">
+            <div class="text-xs text-subtle">{t.accessModal.addressLabel}</div>
+            <div id="access-address" class="font-mono text-sm text-ink truncate"></div>
+          </div>
+          <button type="button" id="access-copy-address" class={rowBtn} title={t.addressBar.copyAddress} aria-label={t.addressBar.copyAddress}>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2.5"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="flex items-center gap-2 ps-4 pe-1.5 py-2">
+          <div class="min-w-0 flex-1">
+            <div class="text-xs text-subtle">{t.accessModal.passwordLabel}</div>
+            <input
+              id="access-password"
+              type="password"
+              readonly
+              aria-label={t.accessModal.passwordLabel}
+              class="w-full bg-transparent font-mono text-sm text-ink truncate focus:outline-none"
+            />
+          </div>
+          <button
+            type="button"
+            id="access-toggle-password"
+            class={rowBtn}
+            title={t.accessModal.showPassword}
+            aria-label={t.accessModal.showPassword}
+            aria-pressed="false"
+            data-show-label={t.accessModal.showPassword}
+            data-hide-label={t.accessModal.hidePassword}
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+          <button type="button" id="access-copy-password" class={rowBtn} title={t.accessModal.copyPassword} aria-label={t.accessModal.copyPassword}>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2.5"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <button type="button" id="access-copy-login" class="btn btn-secondary w-full mt-3">{t.accessModal.copyLogin}</button>
+    </div>
+
+    <!-- Providers without a password -->
+    <p id="access-no-password" class="hidden rounded-xl surface-inset px-4 py-3 text-sm text-muted"></p>
+
+    <!-- Open an existing inbox -->
+    <form id="access-login-form" class="mt-5 pt-5 border-t hairline space-y-3">
+      <div>
+        <h4 class="font-display text-base font-semibold text-ink">{t.accessModal.loginTitle}</h4>
+        <p class="text-sm text-muted mt-0.5">{t.accessModal.loginDesc}</p>
+      </div>
+      <input
+        type="email"
+        id="access-login-address"
+        required
+        autocomplete="username"
+        autocapitalize="off"
+        spellcheck="false"
+        placeholder="name@domain.com"
+        aria-label={t.accessModal.addressLabel}
+        class={field}
+      />
+      <input
+        type="password"
+        id="access-login-password"
+        required
+        autocomplete="current-password"
+        placeholder={t.accessModal.passwordLabel}
+        aria-label={t.accessModal.passwordLabel}
+        class={field}
+      />
+      <button type="submit" id="access-login-submit" class="btn btn-primary w-full">{t.accessModal.loginButton}</button>
+    </form>
+  </div>
+</div>

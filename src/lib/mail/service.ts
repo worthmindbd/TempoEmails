@@ -8,6 +8,18 @@ import { StorageManager } from '../utils/storage';
 import { soundNotifier } from '../utils/sound';
 import { escapeHtml } from '../utils/sanitize';
 
+/**
+ * The inbox can no longer be read and retrying will not help: `auth` — the
+ * provider rejects the saved password (account deleted, or none was saved);
+ * `expired` — the provider ended the inbox's lifetime.
+ */
+export class MailboxAccessError extends Error {
+  constructor(readonly reason: 'auth' | 'expired') {
+    super(reason === 'auth' ? 'Mailbox credentials rejected' : 'Mailbox expired');
+    this.name = 'MailboxAccessError';
+  }
+}
+
 export class MailService {
   /**
    * Initializes or restores the user's active temporary mailbox
@@ -223,6 +235,30 @@ export class MailService {
   }
 
   /**
+   * Reopens an existing Mail.tm / Mail.gw inbox from its address + password —
+   * the only providers with a password. Throws `UNAUTHORIZED` on bad
+   * credentials.
+   */
+  static async loginAccount(address: string, password: string): Promise<MailAccount> {
+    const account = await MailTmClient.loginExisting(address, password);
+    StorageManager.setCurrentAccount(account);
+    return account;
+  }
+
+  /**
+   * Persists a renewed token without hijacking the active inbox: a poll for
+   * inbox A can finish after the user has already switched to inbox B.
+   */
+  private static persistRenewedAccount(account: MailAccount): void {
+    const current = StorageManager.getCurrentAccount();
+    if (current && current.address.toLowerCase() === account.address.toLowerCase()) {
+      StorageManager.setCurrentAccount(account);
+    } else {
+      StorageManager.addSavedAccount(account);
+    }
+  }
+
+  /**
    * Fetches messages for an account.
    * Merges incoming remote messages with locally stored messages in browser localStorage,
    * guaranteeing that received emails are NEVER lost when the provider server purges them after a few minutes.
@@ -247,7 +283,8 @@ export class MailService {
       } else if (account.provider === 'tempmaillol' && account.token) {
         remoteMessages = await TempMailLolClient.getMessages(account.token, account.address);
         fetchSucceeded = true;
-      } else if (account.provider === 'guerrilla' && account.token) {
+      } else if (account.provider === 'guerrilla') {
+        // A missing token is resumed below like an expired one.
         remoteMessages = await GuerrillaMailClient.getMessages(account.token, account.address);
         fetchSucceeded = true;
       } else {
@@ -256,23 +293,35 @@ export class MailService {
       }
     } catch (err: any) {
       if (err?.message === 'UNAUTHORIZED' && account.provider === 'mailtm') {
-        // Token expired — silently renew it with the stored password so the
+        // Token rejected — silently renew it with the stored password so the
         // user keeps their address (previously this silently swapped in a
         // brand-new mailbox, losing the user's address without consent).
-        if (account.password) {
-          try {
-            const freshToken = await MailTmClient.login(account.address, account.password, account.apiBase);
-            account.token = freshToken;
-            StorageManager.setCurrentAccount(account);
-            remoteMessages = await MailTmClient.getMessages(freshToken, account.apiBase);
-            fetchSucceeded = true;
-          } catch (renewErr) {
-            console.warn('Token renewal failed, using cached messages:', renewErr);
-            throw err;
-          }
-        } else {
-          throw err;
+        if (!account.password) {
+          throw new MailboxAccessError('auth');
         }
+        try {
+          const freshToken = await MailTmClient.login(account.address, account.password, account.apiBase);
+          account.token = freshToken;
+          this.persistRenewedAccount(account);
+          remoteMessages = await MailTmClient.getMessages(freshToken, account.apiBase);
+          fetchSucceeded = true;
+        } catch (renewErr: any) {
+          console.warn('Token renewal failed, using cached messages:', renewErr);
+          // A rejected password is final (the provider deleted the account);
+          // anything else is transient and the next poll retries.
+          throw renewErr?.message === 'UNAUTHORIZED' ? new MailboxAccessError('auth') : err;
+        }
+      } else if (err?.message === 'SESSION_EXPIRED' && account.provider === 'guerrilla') {
+        try {
+          account.token = await GuerrillaMailClient.resumeSession(account.address);
+          this.persistRenewedAccount(account);
+          remoteMessages = await GuerrillaMailClient.getMessages(account.token, account.address);
+          fetchSucceeded = true;
+        } catch (resumeErr) {
+          console.warn('Guerrilla session resume failed, using cached messages:', resumeErr);
+        }
+      } else if (err?.message === 'EXPIRED') {
+        throw new MailboxAccessError('expired');
       } else {
         console.warn('Remote fetch failed, falling back to local storage cache:', err);
       }

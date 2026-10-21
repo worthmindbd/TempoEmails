@@ -103,6 +103,7 @@ export function getClientI18nPayload(locale: Locale) {
     confirmModal: t.confirmModal,
     relativeTime: t.relativeTime,
     historyDrawer: t.historyDrawer,
+    accessModal: t.accessModal,
     common: t.common,
     a11y: t.a11y,
   };

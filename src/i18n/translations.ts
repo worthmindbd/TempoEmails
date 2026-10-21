@@ -47,6 +47,7 @@ export interface TranslationSchema {
     qrTooltip: string;
     changeTooltip: string;
     deleteTooltip: string;
+    accessTooltip: string;
   };
   inboxList: {
     title: string;
@@ -90,6 +91,22 @@ export interface TranslationSchema {
     preview: string;
     cancel: string;
     create: string;
+  };
+  accessModal: {
+    title: string;
+    credentialsDesc: string;
+    addressLabel: string;
+    passwordLabel: string;
+    showPassword: string;
+    hidePassword: string;
+    copyPassword: string;
+    copyLogin: string;
+    noPasswordPublic: string;
+    noPasswordExpiring: string;
+    noPasswordMock: string;
+    loginTitle: string;
+    loginDesc: string;
+    loginButton: string;
   };
   qrModal: {
     unavailable: string;
@@ -145,6 +162,12 @@ export interface TranslationSchema {
     loadMessageFailed: string;
     mockFallback: string;
     legacyInboxGone: string;
+    passwordCopied: string;
+    loginCopied: string;
+    loginFailed: string;
+    loginUnavailable: string;
+    inboxAuthLost: string;
+    inboxExpired: string;
   };
   relativeTime: {
     justNow: string;
@@ -333,7 +356,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "customTooltip": "Create custom username",
       "qrTooltip": "Show QR Code for mobile",
       "changeTooltip": "Generate a new random email",
-      "deleteTooltip": "Delete this mailbox"
+      "deleteTooltip": "Delete this mailbox",
+      "accessTooltip": "Inbox login & password"
     },
     "inboxList": {
       "title": "Inbox",
@@ -377,6 +401,22 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Cancel",
       "create": "Create Inbox",
       "domainsFailed": "Could not load domains — please try again"
+    },
+    "accessModal": {
+      "title": "Inbox login",
+      "credentialsDesc": "Save this password. With it you can open this inbox again later, in any browser or device.",
+      "addressLabel": "Email address",
+      "passwordLabel": "Password",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "copyPassword": "Copy password",
+      "copyLogin": "Copy address & password",
+      "noPasswordPublic": "{provider} inboxes have no password: anyone who knows the address can open them.",
+      "noPasswordExpiring": "TempMail.lol inboxes have no password and expire after about an hour.",
+      "noPasswordMock": "This simulated inbox has no password.",
+      "loginTitle": "Open an existing inbox",
+      "loginDesc": "Works for Mail.tm and Mail.gw addresses.",
+      "loginButton": "Open inbox"
     },
     "qrModal": {
       "title": "Mobile QR Code",
@@ -431,7 +471,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "otpCopied": "Verification code {code} copied!",
       "loadMessageFailed": "Failed to load message content.",
       "mockFallback": "All mail providers are unreachable right now — this is a simulated inbox and cannot receive real email.",
-      "legacyInboxGone": "Your old 1secmail inbox ({address}) is no longer supported — created a fresh inbox instead."
+      "legacyInboxGone": "Your old 1secmail inbox ({address}) is no longer supported — created a fresh inbox instead.",
+      "passwordCopied": "Password copied",
+      "loginCopied": "Address and password copied",
+      "loginFailed": "Wrong address or password.",
+      "loginUnavailable": "Couldn't reach the mail provider. Try again in a moment.",
+      "inboxAuthLost": "{address} no longer accepts its password — the provider may have deleted it.",
+      "inboxExpired": "{address} has expired. Generate a new address to keep receiving mail."
     },
     "relativeTime": {
       "justNow": "Just now",
@@ -692,7 +738,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "customTooltip": "Crear usuario personalizado",
       "qrTooltip": "Ver Código QR para móvil",
       "changeTooltip": "Generar nuevo correo aleatorio",
-      "deleteTooltip": "Eliminar este buzón"
+      "deleteTooltip": "Eliminar este buzón",
+      "accessTooltip": "Acceso y contraseña del buzón"
     },
     "inboxList": {
       "title": "Bandeja de Entrada",
@@ -736,6 +783,22 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Cancelar",
       "create": "Crear Buzón",
       "domainsFailed": "No se pudieron cargar los dominios; inténtalo de nuevo"
+    },
+    "accessModal": {
+      "title": "Acceso al buzón",
+      "credentialsDesc": "Guarda esta contraseña. Con ella podrás volver a abrir este buzón más tarde, en cualquier navegador o dispositivo.",
+      "addressLabel": "Correo electrónico",
+      "passwordLabel": "Contraseña",
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña",
+      "copyPassword": "Copiar contraseña",
+      "copyLogin": "Copiar dirección y contraseña",
+      "noPasswordPublic": "Los buzones de {provider} no tienen contraseña: cualquiera que conozca la dirección puede abrirlos.",
+      "noPasswordExpiring": "Los buzones de TempMail.lol no tienen contraseña y caducan en aproximadamente una hora.",
+      "noPasswordMock": "Este buzón simulado no tiene contraseña.",
+      "loginTitle": "Abrir un buzón existente",
+      "loginDesc": "Funciona con direcciones de Mail.tm y Mail.gw.",
+      "loginButton": "Abrir buzón"
     },
     "qrModal": {
       "title": "Código QR Móvil",
@@ -790,7 +853,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "otpCopied": "¡Código de verificación {code} copiado!",
       "loadMessageFailed": "Error al cargar el contenido del mensaje.",
       "mockFallback": "Todos los proveedores de correo son inaccesibles en este momento: este buzón es simulado y no puede recibir correo real.",
-      "legacyInboxGone": "Tu buzón antiguo de 1secmail ({address}) ya no es compatible: se creó un buzón nuevo."
+      "legacyInboxGone": "Tu buzón antiguo de 1secmail ({address}) ya no es compatible: se creó un buzón nuevo.",
+      "passwordCopied": "Contraseña copiada",
+      "loginCopied": "Dirección y contraseña copiadas",
+      "loginFailed": "Dirección o contraseña incorrectas.",
+      "loginUnavailable": "No se pudo contactar con el proveedor de correo. Inténtalo de nuevo en un momento.",
+      "inboxAuthLost": "{address} ya no acepta su contraseña; es posible que el proveedor lo haya eliminado.",
+      "inboxExpired": "{address} ha caducado. Genera una dirección nueva para seguir recibiendo correo."
     },
     "relativeTime": {
       "justNow": "Ahora mismo",
@@ -1051,7 +1120,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "customTooltip": "Criar nome personalizado",
       "qrTooltip": "Mostrar QR Code para celular",
       "changeTooltip": "Gerar novo email aleatório",
-      "deleteTooltip": "Excluir esta caixa de entrada"
+      "deleteTooltip": "Excluir esta caixa de entrada",
+      "accessTooltip": "Acesso e senha da caixa de entrada"
     },
     "inboxList": {
       "title": "Caixa de Entrada",
@@ -1095,6 +1165,22 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Cancelar",
       "create": "Criar Caixa",
       "domainsFailed": "Não foi possível carregar os domínios — tente novamente"
+    },
+    "accessModal": {
+      "title": "Acesso à caixa de entrada",
+      "credentialsDesc": "Guarde esta senha. Com ela você pode abrir esta caixa de entrada novamente depois, em qualquer navegador ou dispositivo.",
+      "addressLabel": "Endereço de e-mail",
+      "passwordLabel": "Senha",
+      "showPassword": "Mostrar senha",
+      "hidePassword": "Ocultar senha",
+      "copyPassword": "Copiar senha",
+      "copyLogin": "Copiar endereço e senha",
+      "noPasswordPublic": "As caixas de entrada do {provider} não têm senha: qualquer pessoa que saiba o endereço pode abri-las.",
+      "noPasswordExpiring": "As caixas de entrada do TempMail.lol não têm senha e expiram em cerca de uma hora.",
+      "noPasswordMock": "Esta caixa de entrada simulada não tem senha.",
+      "loginTitle": "Abrir uma caixa de entrada existente",
+      "loginDesc": "Funciona com endereços Mail.tm e Mail.gw.",
+      "loginButton": "Abrir caixa de entrada"
     },
     "qrModal": {
       "title": "QR Code para Celular",
@@ -1149,7 +1235,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "otpCopied": "Código de verificação {code} copiado!",
       "loadMessageFailed": "Falha ao carregar o conteúdo da mensagem.",
       "mockFallback": "Todos os provedores de e-mail estão indisponíveis no momento — esta caixa é simulada e não recebe e-mails reais.",
-      "legacyInboxGone": "Sua caixa antiga do 1secmail ({address}) não é mais compatível — criamos uma nova caixa."
+      "legacyInboxGone": "Sua caixa antiga do 1secmail ({address}) não é mais compatível — criamos uma nova caixa.",
+      "passwordCopied": "Senha copiada",
+      "loginCopied": "Endereço e senha copiados",
+      "loginFailed": "Endereço ou senha incorretos.",
+      "loginUnavailable": "Não foi possível contatar o provedor de e-mail. Tente novamente em instantes.",
+      "inboxAuthLost": "{address} não aceita mais a senha — o provedor pode tê-la excluído.",
+      "inboxExpired": "{address} expirou. Gere um novo endereço para continuar recebendo e-mails."
     },
     "relativeTime": {
       "justNow": "Agora mesmo",
@@ -1410,7 +1502,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "customTooltip": "Créer un nom d’utilisateur personnalisé",
       "qrTooltip": "Afficher le QR Code pour mobile",
       "changeTooltip": "Générer un nouvel email aléatoire",
-      "deleteTooltip": "Supprimer cette boîte"
+      "deleteTooltip": "Supprimer cette boîte",
+      "accessTooltip": "Identifiants de la boîte de réception"
     },
     "inboxList": {
       "title": "Boîte de réception",
@@ -1454,6 +1547,22 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Annuler",
       "create": "Créer la boîte",
       "domainsFailed": "Impossible de charger les domaines — veuillez réessayer"
+    },
+    "accessModal": {
+      "title": "Connexion à la boîte",
+      "credentialsDesc": "Conservez ce mot de passe. Il vous permet de rouvrir cette boîte plus tard, depuis n'importe quel navigateur ou appareil.",
+      "addressLabel": "Adresse e-mail",
+      "passwordLabel": "Mot de passe",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe",
+      "copyPassword": "Copier le mot de passe",
+      "copyLogin": "Copier l'adresse et le mot de passe",
+      "noPasswordPublic": "Les boîtes {provider} n'ont pas de mot de passe : toute personne connaissant l'adresse peut les ouvrir.",
+      "noPasswordExpiring": "Les boîtes TempMail.lol n'ont pas de mot de passe et expirent au bout d'environ une heure.",
+      "noPasswordMock": "Cette boîte simulée n'a pas de mot de passe.",
+      "loginTitle": "Ouvrir une boîte existante",
+      "loginDesc": "Fonctionne avec les adresses Mail.tm et Mail.gw.",
+      "loginButton": "Ouvrir la boîte"
     },
     "qrModal": {
       "title": "QR Code Mobile",
@@ -1508,7 +1617,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "otpCopied": "Code de vérification {code} copié !",
       "loadMessageFailed": "Impossible de charger le contenu du message.",
       "mockFallback": "Tous les fournisseurs de messagerie sont inaccessibles pour le moment — cette boîte est simulée et ne peut pas recevoir de vrais e-mails.",
-      "legacyInboxGone": "Votre ancienne boîte 1secmail ({address}) n’est plus prise en charge — une nouvelle boîte a été créée."
+      "legacyInboxGone": "Votre ancienne boîte 1secmail ({address}) n’est plus prise en charge — une nouvelle boîte a été créée.",
+      "passwordCopied": "Mot de passe copié",
+      "loginCopied": "Adresse et mot de passe copiés",
+      "loginFailed": "Adresse ou mot de passe incorrect.",
+      "loginUnavailable": "Impossible de joindre le fournisseur de messagerie. Réessayez dans un instant.",
+      "inboxAuthLost": "{address} n'accepte plus son mot de passe — le fournisseur l'a peut-être supprimée.",
+      "inboxExpired": "{address} a expiré. Générez une nouvelle adresse pour continuer à recevoir des e-mails."
     },
     "relativeTime": {
       "justNow": "À l’instant",
@@ -1769,7 +1884,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "customTooltip": "Wunschnamen erstellen",
       "qrTooltip": "QR-Code für Smartphone anzeigen",
       "changeTooltip": "Neue Zufallsadresse generieren",
-      "deleteTooltip": "Dieses Postfach löschen"
+      "deleteTooltip": "Dieses Postfach löschen",
+      "accessTooltip": "Postfach-Login & Passwort"
     },
     "inboxList": {
       "title": "Posteingang",
@@ -1813,6 +1929,22 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Abbrechen",
       "create": "Postfach Erstellen",
       "domainsFailed": "Domains konnten nicht geladen werden — bitte erneut versuchen"
+    },
+    "accessModal": {
+      "title": "Postfach-Login",
+      "credentialsDesc": "Speichere dieses Passwort. Damit kannst du dieses Postfach später in jedem Browser und auf jedem Gerät wieder öffnen.",
+      "addressLabel": "E-Mail-Adresse",
+      "passwordLabel": "Passwort",
+      "showPassword": "Passwort anzeigen",
+      "hidePassword": "Passwort verbergen",
+      "copyPassword": "Passwort kopieren",
+      "copyLogin": "Adresse & Passwort kopieren",
+      "noPasswordPublic": "{provider}-Postfächer haben kein Passwort: Jeder, der die Adresse kennt, kann sie öffnen.",
+      "noPasswordExpiring": "TempMail.lol-Postfächer haben kein Passwort und laufen nach etwa einer Stunde ab.",
+      "noPasswordMock": "Dieses simulierte Postfach hat kein Passwort.",
+      "loginTitle": "Bestehendes Postfach öffnen",
+      "loginDesc": "Funktioniert mit Mail.tm- und Mail.gw-Adressen.",
+      "loginButton": "Postfach öffnen"
     },
     "qrModal": {
       "title": "Smartphone QR-Code",
@@ -1867,7 +1999,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "otpCopied": "Bestätigungscode {code} kopiert!",
       "loadMessageFailed": "Nachrichteninhalt konnte nicht geladen werden.",
       "mockFallback": "Alle E-Mail-Anbieter sind derzeit nicht erreichbar — dieses Postfach ist simuliert und kann keine echten E-Mails empfangen.",
-      "legacyInboxGone": "Ihr altes 1secmail-Postfach ({address}) wird nicht mehr unterstützt — es wurde ein neues Postfach erstellt."
+      "legacyInboxGone": "Ihr altes 1secmail-Postfach ({address}) wird nicht mehr unterstützt — es wurde ein neues Postfach erstellt.",
+      "passwordCopied": "Passwort kopiert",
+      "loginCopied": "Adresse und Passwort kopiert",
+      "loginFailed": "Falsche Adresse oder falsches Passwort.",
+      "loginUnavailable": "Der Mail-Anbieter ist nicht erreichbar. Versuche es gleich noch einmal.",
+      "inboxAuthLost": "{address} akzeptiert das Passwort nicht mehr – der Anbieter hat das Postfach möglicherweise gelöscht.",
+      "inboxExpired": "{address} ist abgelaufen. Erstelle eine neue Adresse, um weiter E-Mails zu empfangen."
     },
     "relativeTime": {
       "justNow": "Gerade eben",
@@ -2128,7 +2266,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "customTooltip": "Создать свой логин",
       "qrTooltip": "Показать QR-код для телефона",
       "changeTooltip": "Сгенерировать новый адрес",
-      "deleteTooltip": "Удалить этот ящик"
+      "deleteTooltip": "Удалить этот ящик",
+      "accessTooltip": "Логин и пароль ящика"
     },
     "inboxList": {
       "title": "Входящие",
@@ -2172,6 +2311,22 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Отмена",
       "create": "Создать Ящик",
       "domainsFailed": "Не удалось загрузить домены — попробуйте ещё раз"
+    },
+    "accessModal": {
+      "title": "Вход в ящик",
+      "credentialsDesc": "Сохраните этот пароль. С ним вы сможете снова открыть этот ящик позже — в любом браузере и на любом устройстве.",
+      "addressLabel": "Адрес почты",
+      "passwordLabel": "Пароль",
+      "showPassword": "Показать пароль",
+      "hidePassword": "Скрыть пароль",
+      "copyPassword": "Копировать пароль",
+      "copyLogin": "Копировать адрес и пароль",
+      "noPasswordPublic": "У ящиков {provider} нет пароля: открыть их может любой, кто знает адрес.",
+      "noPasswordExpiring": "У ящиков TempMail.lol нет пароля, и они удаляются примерно через час.",
+      "noPasswordMock": "У этого демо-ящика нет пароля.",
+      "loginTitle": "Открыть существующий ящик",
+      "loginDesc": "Работает с адресами Mail.tm и Mail.gw.",
+      "loginButton": "Открыть ящик"
     },
     "qrModal": {
       "title": "QR-код для Телефона",
@@ -2226,7 +2381,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "otpCopied": "Код подтверждения {code} скопирован!",
       "loadMessageFailed": "Не удалось загрузить содержимое письма.",
       "mockFallback": "Все почтовые провайдеры сейчас недоступны — это симулированный ящик, он не может получать настоящие письма.",
-      "legacyInboxGone": "Ваш старый ящик 1secmail ({address}) больше не поддерживается — создан новый ящик."
+      "legacyInboxGone": "Ваш старый ящик 1secmail ({address}) больше не поддерживается — создан новый ящик.",
+      "passwordCopied": "Пароль скопирован",
+      "loginCopied": "Адрес и пароль скопированы",
+      "loginFailed": "Неверный адрес или пароль.",
+      "loginUnavailable": "Не удалось связаться с почтовым сервисом. Попробуйте ещё раз через минуту.",
+      "inboxAuthLost": "{address} больше не принимает пароль — возможно, сервис удалил ящик.",
+      "inboxExpired": "Срок действия {address} истёк. Создайте новый адрес, чтобы продолжать получать письма."
     },
     "relativeTime": {
       "justNow": "Только что",
@@ -2487,7 +2648,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "customTooltip": "自定义邮箱前缀",
       "qrTooltip": "显示手机端二维码",
       "changeTooltip": "更换随机新邮箱",
-      "deleteTooltip": "删除此邮箱"
+      "deleteTooltip": "删除此邮箱",
+      "accessTooltip": "邮箱登录信息与密码"
     },
     "inboxList": {
       "title": "收件箱",
@@ -2531,6 +2693,22 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "取消",
       "create": "立即创建",
       "domainsFailed": "域名加载失败 —— 请重试"
+    },
+    "accessModal": {
+      "title": "邮箱登录",
+      "credentialsDesc": "请保存此密码。之后可凭它在任何浏览器或设备上重新打开此邮箱。",
+      "addressLabel": "邮箱地址",
+      "passwordLabel": "密码",
+      "showPassword": "显示密码",
+      "hidePassword": "隐藏密码",
+      "copyPassword": "复制密码",
+      "copyLogin": "复制地址和密码",
+      "noPasswordPublic": "{provider} 邮箱没有密码：任何知道地址的人都能打开。",
+      "noPasswordExpiring": "TempMail.lol 邮箱没有密码，约一小时后过期。",
+      "noPasswordMock": "此模拟邮箱没有密码。",
+      "loginTitle": "打开已有邮箱",
+      "loginDesc": "适用于 Mail.tm 和 Mail.gw 地址。",
+      "loginButton": "打开邮箱"
     },
     "qrModal": {
       "title": "手机端二维码",
@@ -2585,7 +2763,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "otpCopied": "验证码 {code} 已复制！",
       "loadMessageFailed": "加载邮件内容失败。",
       "mockFallback": "当前所有邮件服务均不可用 —— 这是一个模拟收件箱，无法接收真实邮件。",
-      "legacyInboxGone": "你原有的 1secmail 收件箱（{address}）已不再受支持 —— 已为你创建新的收件箱。"
+      "legacyInboxGone": "你原有的 1secmail 收件箱（{address}）已不再受支持 —— 已为你创建新的收件箱。",
+      "passwordCopied": "密码已复制",
+      "loginCopied": "地址和密码已复制",
+      "loginFailed": "地址或密码错误。",
+      "loginUnavailable": "无法连接邮件服务商，请稍后重试。",
+      "inboxAuthLost": "{address} 已不再接受其密码，服务商可能已将其删除。",
+      "inboxExpired": "{address} 已过期。请生成新地址以继续接收邮件。"
     },
     "relativeTime": {
       "justNow": "刚刚",
@@ -2846,7 +3030,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "customTooltip": "カスタム名を作成",
       "qrTooltip": "スマホ用QRコードを表示",
       "changeTooltip": "新しいランダムアドレスを作成",
-      "deleteTooltip": "このメールボックスを削除"
+      "deleteTooltip": "このメールボックスを削除",
+      "accessTooltip": "受信箱のログイン情報とパスワード"
     },
     "inboxList": {
       "title": "受信トレイ",
@@ -2890,6 +3075,22 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "キャンセル",
       "create": "メールボックスを作成",
       "domainsFailed": "ドメインを読み込めませんでした。再試行してください"
+    },
+    "accessModal": {
+      "title": "受信箱ログイン",
+      "credentialsDesc": "このパスワードを保存してください。後から、どのブラウザや端末でもこの受信箱を開き直せます。",
+      "addressLabel": "メールアドレス",
+      "passwordLabel": "パスワード",
+      "showPassword": "パスワードを表示",
+      "hidePassword": "パスワードを隠す",
+      "copyPassword": "パスワードをコピー",
+      "copyLogin": "アドレスとパスワードをコピー",
+      "noPasswordPublic": "{provider} の受信箱にはパスワードがありません。アドレスを知っていれば誰でも開けます。",
+      "noPasswordExpiring": "TempMail.lol の受信箱にはパスワードがなく、約1時間で期限切れになります。",
+      "noPasswordMock": "このシミュレーション受信箱にはパスワードがありません。",
+      "loginTitle": "既存の受信箱を開く",
+      "loginDesc": "Mail.tm と Mail.gw のアドレスで使えます。",
+      "loginButton": "受信箱を開く"
     },
     "qrModal": {
       "title": "スマホ用QRコード",
@@ -2944,7 +3145,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "otpCopied": "認証コード {code} をコピーしました！",
       "loadMessageFailed": "メール内容の読み込みに失敗しました。",
       "mockFallback": "現在すべてのメールプロバイダーに接続できません。これはシミュレーション受信箱のため、実際のメールは受信できません。",
-      "legacyInboxGone": "以前の 1secmail 受信箱（{address}）はサポート対象外のため、新しい受信箱を作成しました。"
+      "legacyInboxGone": "以前の 1secmail 受信箱（{address}）はサポート対象外のため、新しい受信箱を作成しました。",
+      "passwordCopied": "パスワードをコピーしました",
+      "loginCopied": "アドレスとパスワードをコピーしました",
+      "loginFailed": "アドレスまたはパスワードが正しくありません。",
+      "loginUnavailable": "メールプロバイダーに接続できません。しばらくしてからもう一度お試しください。",
+      "inboxAuthLost": "{address} はパスワードを受け付けなくなりました。プロバイダーによって削除された可能性があります。",
+      "inboxExpired": "{address} は期限切れです。メールを受信し続けるには新しいアドレスを作成してください。"
     },
     "relativeTime": {
       "justNow": "たった今",
@@ -3205,7 +3412,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "customTooltip": "إنشاء اسم مستخدم مخصص",
       "qrTooltip": "إظهار رمز QR للهاتف",
       "changeTooltip": "توليد بريد عشوائي جديد",
-      "deleteTooltip": "حذف هذا الصندوق"
+      "deleteTooltip": "حذف هذا الصندوق",
+      "accessTooltip": "بيانات الدخول وكلمة مرور صندوق البريد"
     },
     "inboxList": {
       "title": "صندوق الوارد",
@@ -3249,6 +3457,22 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "إلغاء",
       "create": "إنشاء البريد",
       "domainsFailed": "تعذّر تحميل النطاقات — يرجى المحاولة مرة أخرى"
+    },
+    "accessModal": {
+      "title": "الدخول إلى صندوق البريد",
+      "credentialsDesc": "احفظ كلمة المرور هذه. ستتمكن بها من فتح صندوق البريد هذا لاحقًا من أي متصفح أو جهاز.",
+      "addressLabel": "عنوان البريد الإلكتروني",
+      "passwordLabel": "كلمة المرور",
+      "showPassword": "إظهار كلمة المرور",
+      "hidePassword": "إخفاء كلمة المرور",
+      "copyPassword": "نسخ كلمة المرور",
+      "copyLogin": "نسخ العنوان وكلمة المرور",
+      "noPasswordPublic": "صناديق {provider} بلا كلمة مرور: يمكن لأي شخص يعرف العنوان فتحها.",
+      "noPasswordExpiring": "صناديق TempMail.lol بلا كلمة مرور وتنتهي صلاحيتها بعد نحو ساعة.",
+      "noPasswordMock": "صندوق البريد التجريبي هذا بلا كلمة مرور.",
+      "loginTitle": "فتح صندوق بريد موجود",
+      "loginDesc": "يعمل مع عناوين Mail.tm وMail.gw.",
+      "loginButton": "فتح الصندوق"
     },
     "qrModal": {
       "title": "رمز QR للهاتف",
@@ -3303,7 +3527,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "otpCopied": "تم نسخ رمز التحقق {code}!",
       "loadMessageFailed": "فشل تحميل محتوى الرسالة.",
       "mockFallback": "جميع مزوّدي البريد غير متاحين حاليًا — هذا صندوق محاكاة ولا يمكنه استقبال رسائل حقيقية.",
-      "legacyInboxGone": "صندوق 1secmail القديم ({address}) لم يعد مدعومًا — تم إنشاء صندوق جديد."
+      "legacyInboxGone": "صندوق 1secmail القديم ({address}) لم يعد مدعومًا — تم إنشاء صندوق جديد.",
+      "passwordCopied": "تم نسخ كلمة المرور",
+      "loginCopied": "تم نسخ العنوان وكلمة المرور",
+      "loginFailed": "العنوان أو كلمة المرور غير صحيحة.",
+      "loginUnavailable": "تعذّر الوصول إلى مزوّد البريد. حاول مرة أخرى بعد قليل.",
+      "inboxAuthLost": "لم يعد {address} يقبل كلمة المرور — ربما حذفه المزوّد.",
+      "inboxExpired": "انتهت صلاحية {address}. أنشئ عنوانًا جديدًا لمواصلة استلام البريد."
     },
     "relativeTime": {
       "justNow": "الآن",
@@ -3564,7 +3794,8 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "customTooltip": "Buat nama khusus",
       "qrTooltip": "Tampilkan QR Code untuk HP",
       "changeTooltip": "Buat alamat acak baru",
-      "deleteTooltip": "Hapus kotak masuk ini"
+      "deleteTooltip": "Hapus kotak masuk ini",
+      "accessTooltip": "Login & kata sandi kotak masuk"
     },
     "inboxList": {
       "title": "Kotak Masuk",
@@ -3608,6 +3839,22 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Batal",
       "create": "Buat Email",
       "domainsFailed": "Domain tidak dapat dimuat — silakan coba lagi"
+    },
+    "accessModal": {
+      "title": "Login kotak masuk",
+      "credentialsDesc": "Simpan kata sandi ini. Dengan kata sandi ini Anda bisa membuka kotak masuk ini lagi nanti, di browser atau perangkat mana pun.",
+      "addressLabel": "Alamat email",
+      "passwordLabel": "Kata sandi",
+      "showPassword": "Tampilkan kata sandi",
+      "hidePassword": "Sembunyikan kata sandi",
+      "copyPassword": "Salin kata sandi",
+      "copyLogin": "Salin alamat & kata sandi",
+      "noPasswordPublic": "Kotak masuk {provider} tidak memiliki kata sandi: siapa pun yang tahu alamatnya bisa membukanya.",
+      "noPasswordExpiring": "Kotak masuk TempMail.lol tidak memiliki kata sandi dan kedaluwarsa setelah sekitar satu jam.",
+      "noPasswordMock": "Kotak masuk simulasi ini tidak memiliki kata sandi.",
+      "loginTitle": "Buka kotak masuk yang ada",
+      "loginDesc": "Berfungsi untuk alamat Mail.tm dan Mail.gw.",
+      "loginButton": "Buka kotak masuk"
     },
     "qrModal": {
       "title": "QR Code Ponsel",
@@ -3662,7 +3909,13 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "otpCopied": "Kode verifikasi {code} berhasil disalin!",
       "loadMessageFailed": "Gagal memuat konten pesan.",
       "mockFallback": "Semua penyedia email sedang tidak dapat diakses — kotak masuk ini adalah simulasi dan tidak dapat menerima email asli.",
-      "legacyInboxGone": "Kotak 1secmail lama Anda ({address}) tidak lagi didukung — kotak baru telah dibuat."
+      "legacyInboxGone": "Kotak 1secmail lama Anda ({address}) tidak lagi didukung — kotak baru telah dibuat.",
+      "passwordCopied": "Kata sandi disalin",
+      "loginCopied": "Alamat dan kata sandi disalin",
+      "loginFailed": "Alamat atau kata sandi salah.",
+      "loginUnavailable": "Tidak dapat menghubungi penyedia email. Coba lagi sebentar lagi.",
+      "inboxAuthLost": "{address} tidak lagi menerima kata sandinya — penyedia mungkin telah menghapusnya.",
+      "inboxExpired": "{address} telah kedaluwarsa. Buat alamat baru untuk terus menerima email."
     },
     "relativeTime": {
       "justNow": "Baru saja",

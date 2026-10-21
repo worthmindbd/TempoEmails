@@ -11,11 +11,14 @@ const FETCH_TIMEOUT_MS = 10000;
 const domainApiBase = new Map<string, string>();
 
 export class MailTmClient {
+  // The password is shown to the user as the key to reopen the inbox, so it
+  // must come from a CSPRNG, not Math.random.
   private static generateRandomString(length: number = 10): string {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const bytes = crypto.getRandomValues(new Uint8Array(length));
     let result = '';
     for (let i = 0; i < length; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
+      result += chars.charAt(bytes[i] % chars.length);
     }
     return result;
   }
@@ -122,6 +125,11 @@ export class MailTmClient {
     }
 
     const accountData = await createRes.json();
+    // The API normalises the username (it strips dots: `tempo.x` is created as
+    // `tempox`) and only the address it returns can log in. Logging in with the
+    // requested address got a 401 for every dotted username, so random Mail.tm
+    // inboxes always failed over to another provider.
+    const createdAddress = String(accountData.address || address).toLowerCase();
 
     // 2. Get JWT Token from matching API base (retry once: a 429/blip here used
     // to orphan the account and silently swap in a different address).
@@ -133,7 +141,7 @@ export class MailTmClient {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({ address, password }),
+        body: JSON.stringify({ address: createdAddress, password }),
       },
       FETCH_TIMEOUT_MS
     );
@@ -148,7 +156,7 @@ export class MailTmClient {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
-          body: JSON.stringify({ address, password }),
+          body: JSON.stringify({ address: createdAddress, password }),
         },
         FETCH_TIMEOUT_MS
       );
@@ -162,7 +170,7 @@ export class MailTmClient {
 
     return {
       id: accountData.id || tokenData.id,
-      address,
+      address: createdAddress,
       token: tokenData.token,
       password,
       apiBase,
@@ -172,8 +180,10 @@ export class MailTmClient {
   }
 
   /**
-   * Exchanges address + password for a fresh JWT. Used to silently renew an
-   * expired token instead of throwing the user's mailbox away.
+   * Exchanges address + password for a fresh JWT. Used to silently renew a
+   * rejected token instead of throwing the user's mailbox away. Throws
+   * `UNAUTHORIZED` when the provider rejects the credentials (wrong password,
+   * or the account was deleted), so callers can tell that from a network blip.
    */
   static async login(address: string, password: string, apiBaseUrl: string = PROXY_BASE): Promise<string> {
     const apiBase = this.getApiBase(apiBaseUrl);
@@ -189,6 +199,9 @@ export class MailTmClient {
       },
       FETCH_TIMEOUT_MS
     );
+    if (res.status === 401) {
+      throw new Error('UNAUTHORIZED');
+    }
     if (!res.ok) {
       throw new Error(`Failed to renew authentication token from ${apiBase}`);
     }
@@ -197,6 +210,68 @@ export class MailTmClient {
       throw new Error('Token renewal response did not contain a token');
     }
     return data.token;
+  }
+
+  /**
+   * Reopens an inbox created earlier (in another browser, or before the
+   * browser data was cleared) from its address + password. Mail.tm and Mail.gw
+   * are separate backends; the domain list says which one owns the address,
+   * and an address on a domain that has since been rotated out of the list is
+   * tried against both.
+   */
+  static async loginExisting(address: string, password: string): Promise<MailAccount> {
+    const normalized = address.trim().toLowerCase();
+    const domain = normalized.split('@')[1];
+    if (!domain || !password) {
+      throw new Error('UNAUTHORIZED');
+    }
+
+    await this.getDomains();
+    const known = this.getApiBaseForDomain(domain);
+    const bases = known ? [known] : [PROXY_BASE, PROXY_BASE_GW];
+    // The API strips dots from usernames at creation, so `john.doe@` the user
+    // asked for exists as `johndoe@`.
+    const dotless = `${normalized.split('@')[0].replace(/\./g, '')}@${domain}`;
+    const addresses = dotless === normalized ? [normalized] : [normalized, dotless];
+
+    for (const apiBase of bases) {
+      for (const candidate of addresses) {
+        let token: string;
+        try {
+          token = await this.login(candidate, password, apiBase);
+        } catch (err: any) {
+          if (err?.message === 'UNAUTHORIZED') continue;
+          throw err;
+        }
+
+        const res = await fetchWithTimeout(
+          `${apiBase}/me`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/json',
+            },
+          },
+          FETCH_TIMEOUT_MS
+        );
+        if (!res.ok) {
+          throw new Error(`Failed to load account from ${apiBase}`);
+        }
+        const me = await res.json();
+
+        return {
+          id: me.id,
+          address: me.address || candidate,
+          token,
+          password,
+          apiBase,
+          provider: 'mailtm',
+          createdAt: me.createdAt || new Date().toISOString(),
+        };
+      }
+    }
+
+    throw new Error('UNAUTHORIZED');
   }
 
   static async getMessages(token: string, apiBaseUrl: string = PROXY_BASE): Promise<MailMessage[]> {
