@@ -292,7 +292,7 @@ async function handleServerRequest(req, res) {
     // 404 fallback: prefer a localized 404 page when the path starts with a
     // supported locale prefix, otherwise use the root 404 page. Astro emits
     // both layouts (404.html and 404/index.html) depending on config.
-    const SUPPORTED_LOCALES = ['es', 'pt', 'fr', 'de', 'ru', 'zh', 'ja', 'ar', 'id'];
+    const SUPPORTED_LOCALES = ['es', 'pt', 'fr', 'de', 'ja', 'ar', 'id'];
     const pathLocale = pathname.split('/').filter(Boolean)[0];
     const localeCandidates =
       pathLocale && SUPPORTED_LOCALES.includes(pathLocale)

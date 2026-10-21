@@ -66,7 +66,7 @@ export default defineConfig({
   site: process.env.SITE_URL || 'https://tempoemails.com',
   i18n: {
     defaultLocale: 'en',
-    locales: ['en', 'es', 'pt', 'fr', 'de', 'ru', 'zh', 'ja', 'ar', 'id'],
+    locales: ['en', 'es', 'pt', 'fr', 'de', 'ja', 'ar', 'id'],
     routing: {
       prefixDefaultLocale: false,
     },
@@ -82,8 +82,6 @@ export default defineConfig({
           pt: 'pt',
           fr: 'fr',
           de: 'de',
-          ru: 'ru',
-          zh: 'zh-CN',
           ja: 'ja',
           ar: 'ar',
           id: 'id',
@@ -92,7 +90,7 @@ export default defineConfig({
       serialize(item) {
         const url = new URL(item.url);
         const pathname = url.pathname.replace(/\/$/, '');
-        const localePrefixMatch = pathname.match(/^\/(es|pt|fr|de|ru|zh|ja|ar|id)(\/.*)?$/);
+        const localePrefixMatch = pathname.match(/^\/(es|pt|fr|de|ja|ar|id)(\/.*)?$/);
         const normalizedPath = localePrefixMatch ? (localePrefixMatch[2] || '') : pathname;
 
         if (normalizedPath === '') {
