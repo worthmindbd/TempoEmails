@@ -41,7 +41,7 @@ const groups = [
 ];
 ---
 
-<footer class="relative z-10 mt-20 sm:mt-28 border-t hairline bg-canvas-2 overflow-hidden px-5 sm:px-8">
+<footer class="relative z-10 mt-20 sm:mt-28 border-t hairline bg-canvas-2 px-5 sm:px-8">
   <div class="max-w-6xl mx-auto pt-14 sm:pt-16">
     <div class="grid gap-12 lg:grid-cols-[1.2fr_2fr]">
       <div class="space-y-5 max-w-xs">
@@ -77,11 +77,15 @@ const groups = [
     </div>
   </div>
 
-  <!-- Oversized wordmark, decorative only -->
-  <div
-    class="pointer-events-none select-none font-display font-extrabold leading-[0.8] tracking-[-0.06em] text-center text-ink/[0.05] text-[clamp(3.5rem,14.5vw,12.5rem)] mt-8 -mb-[0.14em] whitespace-nowrap"
-    aria-hidden="true"
-  >
-    TempoEmails
+  <!-- Oversized wordmark, decorative only. The wrapper carries the clipping:
+       it crops the wordmark's negative-margin bleed without turning the whole
+       footer into a clip container (that used to slice the language
+       selector's drop-up panel open from the footer trigger). -->
+  <div class="overflow-hidden" aria-hidden="true">
+    <div
+      class="pointer-events-none select-none font-display font-extrabold leading-[0.8] tracking-[-0.06em] text-center text-ink/[0.05] text-[clamp(3.5rem,14.5vw,12.5rem)] mt-8 -mb-[0.14em] whitespace-nowrap"
+    >
+      TempoEmails
+    </div>
   </div>
 </footer>

@@ -201,10 +201,20 @@ p {
 
   @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     .glass {
-      background: color-mix(in srgb, var(--surface) 72%, transparent);
+      /* High enough to stay legible over dark sections (closing CTA) even
+         when the browser never composites the blur (some GPUs / remote
+         desktops / capture tools drop backdrop-filter silently). */
+      background: color-mix(in srgb, var(--surface) 86%, transparent);
       backdrop-filter: blur(18px) saturate(1.4);
       -webkit-backdrop-filter: blur(18px) saturate(1.4);
     }
+  }
+
+  /* Scrolled state: the frost is a top-of-page effect. Once content scrolls
+     underneath (especially the dark closing CTA) the pill goes fully opaque
+     so nothing bleeds through, in every rendering environment. */
+  .glass.is-solid {
+    background: var(--surface);
   }
 
   /* Buttons */

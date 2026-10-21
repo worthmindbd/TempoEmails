@@ -166,6 +166,14 @@ const navLinks = [
 
     updateSoundUI();
 
+    // Solid header once scrolled: the frosted glass is a top-of-page effect.
+    // Over dark sections a translucent pill turns muddy — and bleeds through
+    // entirely where backdrop-filter never composites.
+    const headerBar = document.getElementById('site-header-bar');
+    const syncHeaderSolid = () => headerBar?.classList.toggle('is-solid', window.scrollY > 24);
+    syncHeaderSolid();
+    window.addEventListener('scroll', syncHeaderSolid, { passive: true });
+
     soundBtn?.addEventListener('click', () => {
       soundNotifier.toggle();
       updateSoundUI();
