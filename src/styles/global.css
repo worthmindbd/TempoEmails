@@ -279,6 +279,21 @@ p {
     background: color-mix(in srgb, var(--ink) 6%, transparent);
   }
 
+  /* Quiet secondary action: softer hairline than btn-secondary, no drop
+     shadow, muted label — lets a primary button lead the group. */
+  .btn-soft {
+    background: var(--surface);
+    color: var(--ink-2);
+    border: 1px solid var(--line);
+    box-shadow: none;
+    font-weight: 500;
+  }
+  .btn-soft:hover:not(:disabled) {
+    color: var(--ink);
+    border-color: var(--line-strong);
+    background: var(--surface-2);
+  }
+
   .btn-icon {
     width: 2.5rem;
     height: 2.5rem;

@@ -9,7 +9,7 @@ interface Props {
 const { locale = 'en' } = Astro.props;
 const t = useTranslation(locale);
 
-const actionBtn = 'btn btn-sm btn-secondary w-full sm:w-auto';
+const actionBtn = 'btn btn-sm btn-soft w-full sm:w-auto';
 ---
 
 <div class="relative px-4 sm:px-6 py-4 sm:py-5 border-b hairline bg-surface-2/70">
@@ -41,8 +41,8 @@ const actionBtn = 'btn btn-sm btn-secondary w-full sm:w-auto';
     </div>
 
     <!-- Actions -->
-    <div class="flex flex-wrap items-center justify-end gap-2">
-      <button type="button" id="copy-email-btn" class="btn btn-primary w-full sm:w-auto sm:min-w-[10.5rem]" title={t.addressBar.copyAddress}>
+    <div class="flex flex-wrap items-center gap-2">
+      <button type="button" id="copy-email-btn" class="btn btn-primary w-full sm:w-auto sm:min-w-[10.5rem] sm:me-2" title={t.addressBar.copyAddress}>
         <svg id="copy-icon" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="9" y="9" width="13" height="13" rx="2.5"></rect>
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
