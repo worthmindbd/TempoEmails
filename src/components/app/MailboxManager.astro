@@ -1087,7 +1087,7 @@ const { locale = 'en' } = Astro.props;
         if (ok && (await this.loadInitialMailbox(true, undefined, currentDomain))) {
           window.dispatchEvent(
             new CustomEvent('tempomail:toast', {
-              detail: { message: i18n?.toasts?.generatedNew || 'Generated fresh temporary inbox with new domain!', type: 'success' },
+              detail: { message: i18n?.toasts?.generatedNew || 'New address created.', type: 'success' },
             })
           );
         }
@@ -1098,7 +1098,7 @@ const { locale = 'en' } = Astro.props;
         const i18n = (window as any).__TEMPO_I18N__;
         const ok = await (window as any).showConfirmDialog({
           title: i18n?.confirmModal?.deleteInboxTitle || 'Delete This Mailbox?',
-          description: i18n?.confirmModal?.deleteInboxDesc || 'Are you sure you want to delete this temporary inbox and generate a fresh one?',
+          description: i18n?.confirmModal?.deleteInboxDesc || 'This removes the address and its saved messages from this browser and creates a new one. You can only reopen it later if it has a password and you saved it.',
           confirmText: i18n?.confirmModal?.confirm || 'Delete Mailbox',
           cancelText: i18n?.confirmModal?.cancel || 'Cancel',
           variant: 'danger',
@@ -1116,7 +1116,7 @@ const { locale = 'en' } = Astro.props;
           await this.fetchMessages();
           window.dispatchEvent(
             new CustomEvent('tempomail:toast', {
-              detail: { message: i18n?.toasts?.mailboxDeleted || 'Mailbox deleted and fresh address generated!', type: 'success' },
+              detail: { message: i18n?.toasts?.mailboxDeleted || 'Inbox removed. A new address is ready.', type: 'success' },
             })
           );
         } catch (err) {
@@ -1253,7 +1253,7 @@ const { locale = 'en' } = Astro.props;
         if (loaded) {
           window.dispatchEvent(
             new CustomEvent('tempomail:toast', {
-              detail: { message: i18n?.toasts?.historyCleared || 'All saved inboxes cleared from memory.', type: 'success' },
+              detail: { message: i18n?.toasts?.historyCleared || 'Saved inboxes cleared from this browser.', type: 'success' },
             })
           );
         }

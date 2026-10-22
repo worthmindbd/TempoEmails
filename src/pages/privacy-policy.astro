@@ -19,149 +19,118 @@ const termsUrl = getLocalizedPath('/terms-of-service/', currentLocale);
   title={t.pages.privacy.title}
   description={t.pages.privacy.description}
   locale={currentLocale}
-  keywords="temp mail zero logs usa, privacy compliant temp mail us, temporary mail generator europe gdpr compliant, anonymous temporary inbox no log, encrypted throwaway email service"
+  keywords="temp mail privacy policy, disposable email data retention, temporary inbox cookies, temp mail gdpr"
 >
   <p>
-    <strong>Last Updated:</strong> August 20, 2026
+    <strong>Last Updated:</strong> October 21, 2026
   </p>
 
   <p>
-    Welcome to <strong>TempoEmails</strong> ("we", "our", "us"). We operate the temporary, disposable email service available at <strong>{SITE_CONFIG.domain}</strong> (the "Service"). Your privacy is the foundational cornerstone of our platform. TempoEmails was specifically built to provide an anonymous, hassle-free layer of protection between your personal identity and the public internet.
-  </p>
-
-  <p>
-    This Privacy Policy explains what limited information is processed when you access or use TempoEmails, how that data is utilized, how long it is retained, our practices regarding cookies and third-party advertising, and your rights under global privacy regulations including the General Data Protection Regulation (GDPR) and the California Consumer Privacy Act (CCPA/CPRA).
+    This Privacy Policy explains how <strong>TempoEmails</strong> ("we", "our", "us") handles information when you use the temporary email service at <strong>{SITE_CONFIG.domain}</strong> (the "Service"). It covers what the mail providers behind the Service store, what is kept in your browser, what our server sees, and how cookies and ads work. It also describes your rights under laws such as the GDPR and the CCPA/CPRA.
   </p>
 
   <blockquote>
-    <strong>Core Privacy Commitment:</strong> TempoEmails does not require registration, does not ask for personal credentials, and does not sell or profile your personal identity. All temporary inboxes and incoming emails are automatically and permanently purged.
+    <strong>Summary:</strong> You don't create an account with us and we don't ask who you are. Your temporary inbox is hosted by a third-party mail provider, and your messages are cached in your own browser. We don't keep a copy of your mail. Analytics and ads load only if you accept cookies.
   </blockquote>
 
-  <h2>1. Information We Do NOT Collect</h2>
-  <p>
-    Unlike traditional email service providers, we do not build user profiles or monetize your personal credentials. When using TempoEmails:
-  </p>
+  <h2>1. Information We Don't Ask For</h2>
   <ul>
-    <li>We <strong>never</strong> ask for your real name, home address, physical location, or phone number.</li>
-    <li>We <strong>never</strong> require you to provide a primary personal or business email address to use our service.</li>
-    <li>We <strong>never</strong> require passwords or account creation for standard disposable mailboxes.</li>
-    <li>We <strong>never</strong> collect credit card numbers, billing information, or payment credentials.</li>
-    <li>We <strong>never</strong> collect government identifiers, social security numbers, or biometric data.</li>
+    <li>We don't ask for your name, address, phone number or location.</li>
+    <li>We don't ask for your personal or work email address.</li>
+    <li>We don't ask you to create an account or choose a password. (Some providers generate a password for the inbox; see section 2.)</li>
+    <li>We don't take payments, so we never see card or billing details.</li>
   </ul>
 
-  <h2>2. Information We Process and How We Use It</h2>
+  <h2>2. How the Service Works</h2>
   <p>
-    To deliver incoming emails to your browser in real time and protect our infrastructure from automated abuse, we process a minimal set of operational technical data:
+    TempoEmails doesn't run its own mail servers. When you open the site, it creates an inbox at one of several public temporary email providers: <strong>Mail.tm</strong>, <strong>Mail.gw</strong>, <strong>Inboxes</strong>, <strong>TempMail.lol</strong> or <strong>Guerrilla Mail</strong>. Email sent to your address is received and stored by that provider, under its own privacy policy and retention rules.
   </p>
-
-  <h3>A. Disposable Inboxes and Received Messages</h3>
   <p>
-    When you generate a temporary email address or receive an incoming message, our mail routing systems receive the raw email payload (sender address, recipient address, timestamp, subject line, headers, text/HTML content, and any attached files). This content is temporarily stored in our encrypted ephemeral database solely for the purpose of rendering it in your web browser interface.
+    Your browser talks to the provider through a relay on our server (<code>/api/mail/</code>), because most providers don't accept requests from other websites directly. The relay forwards requests only to these providers and passes the responses back. It doesn't save message contents.
   </p>
-
-  <h3>B. Local Browser Storage (localStorage)</h3>
   <p>
-    TempoEmails utilizes modern browser storage technologies (such as <code>localStorage</code> and <code>sessionStorage</code>) exclusively on your local client device. This data includes:
+    How private an inbox is depends on the provider:
   </p>
   <ul>
-    <li>Your currently active temporary email address and mailbox access token.</li>
-    <li>Your UI preferences (e.g., Light / Dark mode toggle, audio alert settings).</li>
-    <li>A local cache of recently viewed messages to allow fast navigation without unnecessary network requests.</li>
+    <li><strong>Mail.tm and Mail.gw</strong> inboxes are protected by a randomly generated password, shown under "Access". Anyone who has the address and password can open the inbox.</li>
+    <li><strong>Inboxes, Guerrilla Mail and TempMail.lol</strong> inboxes have no password. Anyone who knows or guesses the address can read the mail sent to it.</li>
   </ul>
-  <p>
-    This client-side data remains entirely on your machine and can be cleared instantly by clicking the "Delete Inbox" button on TempoEmails or by clearing your browser's site data.
-  </p>
 
-  <h3>C. Ephemeral Server Logs and Rate Limiting</h3>
+  <h2>3. What Is Stored in Your Browser</h2>
   <p>
-    When your browser interacts with our servers, standard web server logs temporarily record metadata such as your IP address, browser user-agent string, referring URL, and request timestamps. We use this data strictly for:
+    The Service keeps the following in your browser's <code>localStorage</code>, on your device only:
   </p>
   <ul>
-    <li>Mitigating Distributed Denial of Service (DDoS) attacks and malicious API flooding.</li>
-    <li>Preventing automated bot abuse and unauthorized bulk generation of mailboxes.</li>
-    <li>Diagnosing server errors, optimizing load distribution, and monitoring infrastructure health.</li>
+    <li>Your current address and the credentials needed to read it (an access token, and the password for Mail.tm and Mail.gw inboxes).</li>
+    <li>Up to 25 recently used addresses, so you can switch back to them.</li>
+    <li>A cache of messages you've received, so they stay readable after the provider deletes them.</li>
+    <li>Settings such as dark mode, sound notifications and your cookie choice.</li>
   </ul>
   <p>
-    Server log entries are maintained on rotating, short-term buffers and are automatically wiped on a regular schedule.
+    Deleting an inbox in TempoEmails removes it and its cached messages from your browser. Clearing your browser's site data for {SITE_CONFIG.domain} removes everything listed above. Anyone with access to your browser profile can see this data.
   </p>
 
-  <h2>3. Data Retention and Automatic Deletion</h2>
+  <h2>4. What Our Server Sees</h2>
   <p>
-    TempoEmails is built from the ground up as a strictly transient service. We enforce rigorous automated data expiration schedules:
+    Like any website, our server receives your IP address, browser user agent and the pages and relay requests you make. We use your IP address to rate-limit the mail relay so it can't be used to create inboxes in bulk. The hosting platform may keep standard access and error logs for a short period to keep the site running and secure. We don't use this information to identify you or build a profile of you.
   </p>
-  <ol>
-    <li><strong>Incoming Email Expiration:</strong> All received emails, message bodies, metadata, and attachments are automatically and irreversibly deleted from our servers after a defined lifespan (typically between 1 hour and 24 hours from arrival).</li>
-    <li><strong>Inbox Deactivation:</strong> Temporary inboxes that remain inactive or expire are reclaimed and purged from our routing tables.</li>
-    <li><strong>Manual Instant Purge:</strong> When you click "Delete Inbox" or "Change Address", your active session is severed immediately, local storage is cleared, and associated messages are queued for immediate deletion.</li>
-    <li><strong>No Cold Storage or Backups:</strong> We do not create long-term archives or archival tape backups of disposable email contents. Once an email is purged, it cannot be recovered by any party, including our engineering team.</li>
-  </ol>
-
-  <h2>4. Cookies and Advertising Technologies</h2>
   <p>
-    To keep TempoEmails 100% free and accessible to users worldwide without charging subscription fees, we display online advertisements provided by third-party advertising partners, including <strong>Google AdSense</strong>.
+    When the relay contacts a provider, the provider sees our server's address, not yours.
   </p>
 
-  <h3>A. Google AdSense & DoubleClick Cookies</h3>
+  <h2>5. How Long Mail Is Kept</h2>
+  <ul>
+    <li><strong>At the provider:</strong> each provider decides how long it keeps inboxes and messages. TempMail.lol inboxes expire after about an hour; Guerrilla Mail deletes messages after about an hour; other providers may keep mail longer or delete an inbox at any time.</li>
+    <li><strong>In your browser:</strong> cached messages stay until you delete the inbox, clear your history or clear your browser data. The cache keeps at most the 100 most recent messages per address.</li>
+    <li><strong>On our server:</strong> we don't store messages.</li>
+  </ul>
   <p>
-    Google and other third-party vendors use cookies to serve ads based on your prior visits to TempoEmails or other websites across the internet:
+    Deleting an inbox in TempoEmails doesn't delete it at the provider. Deleting a single message also asks the provider to delete it where the provider supports that.
+  </p>
+
+  <h2>6. Cookies, Analytics and Advertising</h2>
+  <p>
+    When you first visit, we ask for your cookie choice. If you choose "Essential Only", we don't load analytics or ads. If you choose "Accept All", we load:
   </p>
   <ul>
-    <li>Google's use of advertising cookies enables it and its partners to serve personalized ads to you based on your visits to our site and other destinations across the web.</li>
-    <li>You may opt out of personalized advertising by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>.</li>
-    <li>Alternatively, you can opt out of third-party vendor use of cookies for personalized advertising by visiting <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">AboutAds.info</a> or <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener noreferrer">Your Online Choices</a> (for European visitors).</li>
+    <li><strong>Google Analytics</strong>, to count visits and see which pages are used.</li>
+    <li><strong>Google AdSense</strong>, which shows ads that help keep the Service free. Google and its partners use cookies to show ads based on your visits to this and other websites.</li>
   </ul>
-
-  <h3>B. Managing Cookies in Your Browser</h3>
   <p>
-    Most web browsers allow you to manage cookie preferences through their configuration menus. You can configure your browser to reject third-party cookies, clear cookies upon browser exit, or notify you when a cookie is placed. Note that disabling essential functional storage may impact the continuity of your temporary inbox sessions.
+    You can opt out of personalized advertising at <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>, <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">AboutAds.info</a> or <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener noreferrer">Your Online Choices</a> (for visitors in Europe). You can also block or delete cookies in your browser settings.
   </p>
 
-  <h2>5. Third-Party Services and Infrastructure</h2>
+  <h2>7. Security</h2>
   <p>
-    We partner with reputable infrastructure providers to operate our high-availability global network:
-  </p>
-  <ul>
-    <li><strong>Email Routing & API Providers:</strong> We integrate with upstream mail routing gateways and high-throughput temporary email API endpoints to receive and parse incoming SMTP traffic.</li>
-    <li><strong>Content Delivery Networks & Security:</strong> We utilize CDNs (such as Cloudflare) to deliver static assets rapidly, terminate SSL/TLS connections securely, and shield our services from malicious cyberattacks.</li>
-    <li><strong>Web Analytics:</strong> We may use privacy-first, anonymized analytics frameworks to monitor aggregate site traffic, device types, and page load speeds without storing personally identifiable information.</li>
-  </ul>
-
-  <h2>6. Security Precautions and Disclaimers</h2>
-  <p>
-    We employ industry-standard administrative, technical, and physical security measures to safeguard data processed through TempoEmails. All communication between your browser and our servers is secured using modern Transport Layer Security (TLS 1.3/HTTPS).
+    All traffic between your browser and our server uses HTTPS. Email HTML is cleaned before it's displayed: scripts are removed, tracking pixels are stripped, and the message is shown in a sandboxed frame. Other images in an email load from the sender's servers, which can see your IP address, just as with any email client that shows images.
   </p>
   <blockquote>
-    <strong>Important Notice:</strong> Temporary email addresses are public and disposable in nature. Because mailbox access does not require individual password authentication, anyone who knows or guesses an identical address string could theoretically view incoming messages for that address while active. <strong>Do not use TempoEmails for banking, sensitive personal correspondence, legal communications, or high-value permanent accounts.</strong>
+    <strong>Important:</strong> temporary inboxes aren't private mailboxes. Some can be read by anyone who knows the address, and all of them can disappear without notice. <strong>Don't use TempoEmails for banking, legal or medical matters, work, or any account you need to keep or recover.</strong>
   </blockquote>
 
-  <h2>7. Children's Privacy (COPPA Compliance)</h2>
+  <h2>8. Children</h2>
   <p>
-    Protecting the privacy of young children is critically important. TempoEmails is not designed for, marketed to, or directed at children under the age of 13 (or under 16 for residents of the European Economic Area). We do not knowingly collect, solicit, or maintain personal information from children. If we become aware that personal information of a child has inadvertently reached our systems, we take prompt steps to permanently delete the data.
+    TempoEmails isn't meant for children under 13 (or under 16 in the European Economic Area). We don't knowingly collect personal information from children. If you believe a child's information has reached us, contact us and we'll delete it.
   </p>
 
-  <h2>8. Your Global Privacy Rights (GDPR, CCPA/CPRA)</h2>
+  <h2>9. Your Rights</h2>
+  <h3>A. European Economic Area and UK (GDPR / UK GDPR)</h3>
   <p>
-    Depending on your jurisdiction, you may hold specific statutory rights regarding personal data:
+    You have the right to access, correct, restrict or delete personal data we hold about you, and to object to its processing. Because we don't have accounts and don't store messages, we usually hold nothing that can be linked to you. Messages held by a mail provider are covered by that provider's policy, and data in your browser is under your control.
+  </p>
+  <h3>B. California (CCPA / CPRA)</h3>
+  <p>
+    You have the right to know what personal information is collected, to ask for its deletion, and to opt out of its "sale" or "sharing" for cross-context behavioral advertising. We don't sell personal information. To opt out of advertising cookies, choose "Essential Only" in the cookie banner or use the opt-out links in section 6.
   </p>
 
-  <h3>A. European Economic Area & UK (GDPR / UK GDPR)</h3>
+  <h2>10. Changes to This Policy</h2>
   <p>
-    If you reside in the EEA or UK, you have the right to access, rectify, restrict, or request the erasure of any personal data we hold. However, because TempoEmails does not maintain persistent accounts, identifiable records, or user-indexed profiles, we generally cannot match arbitrary requests to temporary messages once they have expired from our short-term cache.
+    We may update this policy when the Service, its providers or the law change. The date at the top shows when it was last updated.
   </p>
 
-  <h3>B. California Residents (CCPA / CPRA)</h3>
+  <h2>11. Contact Us</h2>
   <p>
-    California residents have the right to know what personal information is collected, request its deletion, and opt out of the "sale" or "sharing" of personal information for cross-context behavioral advertising. We do not sell personal data for monetary consideration. To opt out of advertising cookies, please consult our cookie settings and the third-party opt-out mechanisms listed in Section 4.
-  </p>
-
-  <h2>9. Changes to This Privacy Policy</h2>
-  <p>
-    We reserve the right to revise this Privacy Policy at any time to reflect updates in our technology, operational practices, legal mandates, or advertising network requirements. When revisions occur, the updated date at the top of this page will be modified. Continued use of TempoEmails following any posted modifications constitutes your acceptance of the updated policy.
-  </p>
-
-  <h2>10. Contact Us</h2>
-  <p>
-    If you have any questions, concerns, or inquiries regarding this Privacy Policy or our data handling practices, please contact our privacy team:
+    Questions about this policy or your data:
   </p>
   <ul>
     <li><strong>Email:</strong> <a href={`mailto:${SITE_CONFIG.emails.contact}`}>{SITE_CONFIG.emails.contact}</a></li>

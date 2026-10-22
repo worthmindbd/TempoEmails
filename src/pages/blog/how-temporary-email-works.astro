@@ -4,182 +4,143 @@ import ContentLayout from '../../layouts/ContentLayout.astro';
 
 <ContentLayout
   title="How Temporary Email Works Behind the Scenes"
-  description="Explore how disposable temporary email works behind the scenes: MX record routing, real-time message ingestion, OTP extraction, and zero-log architecture."
+  description="How disposable email works: how providers receive mail for addresses nobody registered, how TempoEmails connects to them, and what happens to your messages."
   publishDate="2026-08-10"
+  updatedDate="2026-10-21"
   category="Technology"
   keywords="how temporary email works, disposable email architecture, temp mail smtp routing, catch all email server"
 >
   <p>
-    When you open <a href="/">TempoEmails</a>, you are immediately greeted with a fully functional, globally routable email address. There are no registration forms to fill out, no passwords to create, and no verification steps required. Seconds later, when an external website sends an activation link or OTP verification code to that address, the message appears in your browser in real time. After a short period, the inbox and its messages vanish without leaving a trace.
-  </p>
-
-  <p>
-    To the end user, the entire process feels effortless and instantaneous. But under the hood, a complex orchestration of Internet protocols, DNS routing, high-throughput mail transfer agents (MTAs), ephemeral caching layers, and zero-log privacy architectures work in harmony.
-  </p>
-
-  <p>
-    In this technical deep-dive, we will explore the engineering mechanics of disposable temporary email systems—from the initial SMTP handshake to real-time client polling and automated message destruction.
+    When you open <a href="/">TempoEmails</a>, an email address is already waiting for you. You didn't fill in a form or choose a password, yet a minute later a confirmation code sent to that address shows up on the page. This article explains how that works: what the mail providers do, what TempoEmails does on top of them, and where your messages are kept.
   </p>
 
   <h2>
-    1. The Foundation: DNS and MX Record Routing
+    1. How a Provider Receives Mail for Any Address
   </h2>
 
   <p>
-    To understand how a disposable email service receives messages for millions of dynamically generated addresses, we must examine how the internet routes email traffic according to the <strong>Simple Mail Transfer Protocol (SMTP, RFC 5321)</strong>.
-  </p>
-
-  <p>
-    When an external service (such as GitHub, Spotify, or an online forum) sends an email to <code>user_8492@tempomail-domain.com</code>, the sending Mail Transfer Agent (MTA) performs a DNS lookup for the <strong>MX (Mail Exchanger)</strong> records of the recipient's domain:
+    Email is delivered with the <strong>Simple Mail Transfer Protocol (SMTP, RFC 5321)</strong>. When a website sends a message to <code>user_8492@example-temp.com</code>, its mail server first looks up the <strong>MX (Mail Exchanger)</strong> records for <code>example-temp.com</code> to find out which server accepts mail for that domain:
   </p>
 
   <div class="bg-surface-2 border border-line rounded-xl p-4 font-mono text-xs text-ink-2 mb-4 overflow-x-auto">
-    <p class="text-subtle mb-1"># DNS MX Query Example</p>
-    <p>$ dig +short MX tempomail-domain.com</p>
-    <p class="text-accent-text">10 mail1.tempomail-domain.com.</p>
-    <p class="text-accent-text">20 mail2.tempomail-domain.com.</p>
+    <p class="text-subtle mb-1"># DNS MX lookup</p>
+    <p>$ dig +short MX example-temp.com</p>
+    <p class="text-accent-text">10 mx1.example-temp.com.</p>
+    <p class="text-accent-text">20 mx2.example-temp.com.</p>
   </div>
 
   <p>
-    The sender's mail server receives the IP address corresponding to the MX host and initiates a TCP connection on port 25 to begin the SMTP handshake:
+    It then connects to that server on port 25 and hands over the message:
   </p>
 
   <ol>
-    <li><code>HELO / EHLO sender.com</code> — Sender identifies itself.</li>
-    <li><code>MAIL FROM: &lt;noreply@service.com&gt;</code> — Sender specifies return path.</li>
-    <li><code>RCPT TO: &lt;user_8492@tempomail-domain.com&gt;</code> — Recipient address is specified.</li>
-    <li><code>DATA</code> — Message headers, MIME boundary blocks, HTML/text body, and attachments are transmitted.</li>
-    <li><code>QUIT</code> — Connection terminates.</li>
+    <li><code>EHLO sender.com</code>: the sending server introduces itself.</li>
+    <li><code>MAIL FROM: &lt;noreply@service.com&gt;</code>: the return address.</li>
+    <li><code>RCPT TO: &lt;user_8492@example-temp.com&gt;</code>: the recipient.</li>
+    <li><code>DATA</code>: the headers, body and any attachments.</li>
+    <li><code>QUIT</code>: the connection closes.</li>
   </ol>
 
   <h3>
-    Catch-All Wildcard Routing
+    Accepting Mail for Addresses Nobody Registered
   </h3>
 
   <p>
-    In a standard corporate email server (like Microsoft Exchange or Google Workspace), the SMTP daemon checks whether <code>user_8492</code> exists in its user directory database. If no matching user is found, the server rejects the message with an <code>HTTP 550 5.1.1 User unknown</code> bounce error.
+    A company mail server (Google Workspace, Microsoft 365) checks whether <code>user_8492</code> is a real mailbox and rejects the message with an SMTP <code>550 5.1.1 User unknown</code> error if it isn't.
   </p>
 
   <p>
-    A disposable email service operates as a <strong>catch-all wildcard receiver</strong>. The MTA accepts <em>any</em> incoming message regardless of what prefix is used before the <code>@</code> sign. This enables the instant generation of infinite unique email addresses without pre-allocating mailbox entries or updating database configurations.
+    A disposable email provider works differently. Depending on the provider, it either accepts mail for <em>any</em> name on its domains (a "catch-all") or lets anyone create a mailbox through a public API in a single request. Either way, an address is usable the moment it's chosen, with no registration step.
+  </p>
+
+  <h2>
+    2. Where TempoEmails Fits In
+  </h2>
+
+  <p>
+    TempoEmails doesn't run its own mail servers. It's an interface on top of several public disposable email providers:
+  </p>
+
+  <ul>
+    <li><strong>Mail.tm</strong> and <strong>Mail.gw</strong>: TempoEmails creates a real account through their API, with a random password. The password is shown under "Access", so you can reopen the inbox later in another browser.</li>
+    <li><strong>Inboxes</strong>: a catch-all service. Any name on its domains works, and the inbox has no password.</li>
+    <li><strong>TempMail.lol</strong>: creates an inbox with an access token. The inbox expires after about an hour.</li>
+    <li><strong>Guerrilla Mail</strong>: a long-running service with session-based inboxes and no password. It deletes messages after about an hour.</li>
+  </ul>
+
+  <p>
+    When the page loads, TempoEmails asks all of them which domains they currently offer and picks one at random. If creating the inbox fails, it moves on to the next provider: Mail.tm, then Inboxes, TempMail.lol and Guerrilla Mail. If none of them respond, you get a clearly labelled simulated inbox that can't receive real mail, rather than an address that silently goes nowhere.
+  </p>
+
+  <p>
+    Most providers don't accept requests from other websites' pages, so your browser talks to them through a small relay on the TempoEmails server (<code>/api/mail/</code>). The relay only forwards requests to these providers, limits how many requests one visitor can make per minute, and doesn't store messages.
+  </p>
+
+  <h2>
+    3. How New Mail Reaches Your Screen
+  </h2>
+
+  <p>
+    Mail arrives at the provider, not at TempoEmails. To find it, the page asks the provider for the message list every 10 seconds while the tab is open; a small progress bar shows the countdown. When something new appears:
+  </p>
+
+  <ul>
+    <li>
+      <strong>The full message is fetched and cached in your browser</strong> (in <code>localStorage</code>), so you can still read it if the provider deletes it a few minutes later.
+    </li>
+    <li>
+      <strong>Codes and links are picked out.</strong> TempoEmails looks for 4–8 digit codes near words like "code", "OTP" or "verification", and for https confirmation links, and shows them above the message with a copy button. Read more in our guide to <a href="/blog/understanding-otp-verification-codes/">OTP verification codes</a>.
+    </li>
+    <li>
+      <strong>The HTML is cleaned before display.</strong> Scripts, forms and other active content are removed, 1x1 tracking pixels are stripped, and the message is shown in a sandboxed frame. See <a href="/blog/what-is-email-tracking/">what email tracking is and how to block it</a>.
+    </li>
+  </ul>
+
+  <h2>
+    4. Why Some Sites Reject Disposable Addresses
+  </h2>
+
+  <p>
+    Public lists of disposable email domains exist, and some sites check signups against them. When that happens, nothing you do in the inbox will help, because the site never sends the email. What does help is switching to an address on a different domain: click "New Email" for a random one, or "Custom" to choose the name and domain yourself.
+  </p>
+
+  <h2>
+    5. Where Your Messages Are Stored
+  </h2>
+
+  <ul>
+    <li>
+      <strong>At the provider</strong>, for as long as that provider keeps them. Retention varies: TempMail.lol inboxes expire after about an hour, Guerrilla Mail deletes messages after about an hour, and other providers may delete inboxes whenever they choose.
+    </li>
+    <li>
+      <strong>In your browser</strong>, as a cache of up to 100 recent messages per address, until you delete the inbox or clear your browser data. Your last 25 addresses are kept too, so you can switch back to one.
+    </li>
+    <li>
+      <strong>Not on the TempoEmails server.</strong> The relay passes messages through without saving them.
+    </li>
+  </ul>
+
+  <p>
+    Deleting an inbox in TempoEmails removes it from your browser; it doesn't delete it at the provider. Deleting a single message also asks the provider to delete its copy, where the provider supports that.
   </p>
 
   <blockquote>
-    "Wildcard routing eliminates registration latency: the email address exists the moment someone decides to send a message to it."
+    Inboxes without a password (Inboxes, Guerrilla Mail, TempMail.lol) can be read by anyone who knows the address. Use them for throwaway signups, never for anything you'd mind a stranger reading.
   </blockquote>
 
   <h2>
-    2. Message Ingestion and Security Sanitization
+    What Temporary Email Is Good For
   </h2>
-
-  <p>
-    Once the raw MIME payload arrives at the MTA, the ingestion pipeline processes and sanitizes the content before making it available to the web interface:
-  </p>
-
-  <ul>
-    <li>
-      <strong>MIME Parsing:</strong> The raw email stream is parsed into distinct components: sender name and address, subject line, plain text body, HTML body, date headers, and attachment blobs.
-    </li>
-    <li>
-      <strong>OTP and Verification Extraction:</strong> Specialized regex parsers analyze the subject and body text to detect 4-to-8 digit verification numbers or activation links, allowing the web app to highlight OTP codes prominently for quick copying.
-    </li>
-    <li>
-      <strong>HTML Sanitization & Anti-XSS:</strong> Raw HTML emails from untrusted senders can contain dangerous cross-site scripting (XSS) payloads, obfuscated iframes, or malicious SVG tags. The sanitization engine strips all script execution vectors, ensuring zero risk to the recipient's browser.
-    </li>
-    <li>
-      <strong>Tracker Neutralization:</strong> Embedded 1x1 tracking pixels are identified and isolated. Learn more about spy pixels in our guide on <a href="/blog/what-is-email-tracking/">what email tracking is and how to block it</a>.
-    </li>
-  </ul>
-
-  <h2>
-    3. Real-Time Delivery to the Client
-  </h2>
-
-  <p>
-    How does an email that landed on a mail server half a second ago appear instantly in the user's browser?
-  </p>
-
-  <p>
-    When you visit TempoEmails, the client application generates an address token stored in your browser's local state. The frontend then establishes a high-performance communication cycle with the backend API:
-  </p>
-
-  <ul>
-    <li>
-      <strong>High-Speed In-Memory Caching:</strong> Ingested messages are held in fast in-memory key-value stores (such as Redis or ephemeral key-indexed cache tables) using the recipient address as a hashed lookup key.
-    </li>
-    <li>
-      <strong>Real-Time API Polling:</strong> The web client regularly polls the API endpoint for updates. As soon as a matching hash is found in the cache, the payload is returned in lightweight JSON format and rendered dynamically in the UI.
-    </li>
-  </ul>
-
-  <h2>
-    4. Multi-Provider Architecture and Fallback Chains
-  </h2>
-
-  <p>
-    A common challenge for temporary email systems is domain blacklisting. Some website forms attempt to block known disposable domains to force users into surrendering personal data for marketing purposes.
-  </p>
-
-  <p>
-    To overcome this and maintain 99.9% deliverability, TempoEmails employs a <strong>resilient multi-provider architecture</strong>:
-  </p>
-
-  <ul>
-    <li>
-      <strong>Domain Pool Rotation:</strong> Multiple distinct domain names with diverse TLDs and clean reputations are maintained in rotation.
-    </li>
-    <li>
-      <strong>Provider Fallback Chains:</strong> If an external network or mail gateway experiences elevated latency or downtime, the system automatically routes traffic through secondary high-availability endpoints without interrupting the user experience.
-    </li>
-    <li>
-      <strong>Custom Inboxes:</strong> Users can specify custom usernames on available domains, providing complete flexibility for automated testing and software QA workflows.
-    </li>
-  </ul>
-
-  <h2>
-    5. Privacy by Design: Ephemeral Storage and Zero Logs
-  </h2>
-
-  <p>
-    The hallmark of a trustworthy temporary email service is its commitment to data ephemerality. Unlike standard webmail providers that store your emails indefinitely for advertising analysis, TempoEmails implements a strict <strong>zero-knowledge, zero-log architecture</strong>:
-  </p>
-
-  <ul>
-    <li>
-      <strong>Automatic TTL (Time-To-Live) Expiration:</strong> Every incoming email has an automatic countdown timer. When the TTL expires, the message is permanently wiped from memory.
-    </li>
-    <li>
-      <strong>No Persistent Disk Writes:</strong> Sensitive email payloads are kept in volatile memory and never committed to long-term relational databases or persistent storage disks.
-    </li>
-    <li>
-      <strong>Zero User Tracking:</strong> We do not log IP addresses, browser fingerprints, or behavioral analytics tied to specific mailboxes.
-    </li>
-    <li>
-      <strong>Instant Manual Deletion:</strong> Users have the option to manually delete any email or flush their mailbox immediately with a single click.
-    </li>
-  </ul>
-
-  <blockquote>
-    "True privacy is not achieved through promises alone—it is achieved through cryptographic and architectural design that makes data retention technically impossible."
-  </blockquote>
-
-  <h2>
-    Why Ephemeral Email Is Vital for the Modern Internet
-  </h2>
-
-  <p>
-    Temporary email technology solves three critical modern challenges:
-  </p>
 
   <ol>
     <li>
-      <strong>Inbox Cleanliness:</strong> Prevents your permanent inbox from becoming a dumping ground for promotional clutter. Learn practical tips in our guide on <a href="/blog/how-to-avoid-spam/">how to avoid spam emails</a>.
+      <strong>Keeping your main inbox clean:</strong> follow-up newsletters and promotions go to an address you can abandon. More tips in our guide on <a href="/blog/how-to-avoid-spam/">how to avoid spam emails</a>.
     </li>
     <li>
-      <strong>Cybersecurity Defense:</strong> Shrinks your digital attack surface against credential leaks and <a href="/blog/understanding-phishing-emails/">phishing attacks</a>.
+      <strong>Limiting exposure:</strong> fewer companies hold your real address, so fewer breaches and <a href="/blog/understanding-phishing-emails/">phishing campaigns</a> can reach it.
     </li>
     <li>
-      <strong>Developer and QA Productivity:</strong> Developers can test automated email confirmation flows, password reset logic, and webhook deliveries across hundreds of unique test mailboxes in seconds.
+      <strong>Testing:</strong> developers can sign up to their own app with several addresses to check confirmation and password-reset emails.
     </li>
   </ol>
 
@@ -188,10 +149,10 @@ import ContentLayout from '../../layouts/ContentLayout.astro';
   </h2>
 
   <p>
-    Temporary email services like <a href="/">TempoEmails</a> combine the robustness of standard internet mail protocols with modern ephemeral architecture. By leveraging wildcard MX routing, automated HTML sanitization, real-time memory caches, and zero-log privacy safeguards, TempoEmails provides a secure, friction-free shield for your everyday online privacy.
+    Disposable email works because providers accept mail for addresses nobody registered. <a href="/">TempoEmails</a> sits on top of several of those providers: it picks one, polls it every 10 seconds, highlights the code you're waiting for, and keeps a copy of your messages in your browser. The providers hold the mail; TempoEmails makes it easier to use.
   </p>
 
   <p>
-    To learn more about keeping your online accounts safe, check out our <a href="/blog/online-account-security-guide/">complete guide to online account security</a> and read our <a href="/privacy-policy/">Privacy Policy</a> to see our privacy commitments in detail.
+    For more on keeping your accounts safe, read our <a href="/blog/online-account-security-guide/">guide to online account security</a>, and see the <a href="/privacy-policy/">Privacy Policy</a> for the details of how data is handled.
   </p>
 </ContentLayout>

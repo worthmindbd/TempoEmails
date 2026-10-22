@@ -334,7 +334,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
   "en": {
     "meta": {
       "title": "Temp Mail — Free Disposable Temporary Email & Fake Email Generator",
-      "description": "Instant free temp mail and disposable temporary email address. Receive OTP verification codes, activation links, and burner email messages with zero spam and zero logs.",
+      "description": "Free temp mail with a disposable email address ready as soon as the page loads. Receive OTP verification codes and activation links without giving out your real email.",
       "keywords": "temp mail, tempmail, temporary email, disposable email, fake email, fake email generator, 10 minute mail, 10minutemail, burner email, throwaway email, trash mail, dropmail, receive otp online email, temp mail otp, temporary email for verification"
     },
     "nav": {
@@ -348,9 +348,9 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Language"
     },
     "hero": {
-      "chips": ["No sign-up","Auto OTP detection","Zero logs"],
+      "chips": ["No sign-up","OTP codes highlighted","Receive-only"],
       "worksWith": "Works with",
-      "badge": "Instant Temp Mail & 10 Minute Burner Inbox",
+      "badge": "Free temp mail, no sign-up",
       "titleLine1": "Free Temp Mail.",
       "titleLine2": "Disposable Email in Seconds.",
       "subtitle": "Generate an instant disposable temporary email address. Receive signup verification codes, OTPs, and activation links."
@@ -377,7 +377,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "inboxList": {
       "title": "Inbox",
       "emptyTitle": "Waiting for incoming emails...",
-      "emptyDesc": "Copy your temporary address above and paste it into any signup form. New messages will appear here automatically.",
+      "emptyDesc": "Copy the address above and use it in a signup form. The inbox checks for new mail every 10 seconds.",
       "autoChecking": "Auto-checking active",
       "clickToView": "Click to view email details...",
       "unreadBadge": "Unread",
@@ -407,7 +407,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "customModal": {
       "title": "Custom Email Address",
-      "desc": "Choose your preferred username and domain to create a personalized temporary inbox.",
+      "desc": "Pick a username and a domain. If a site rejects one domain, try another.",
       "usernameLabel": "Username",
       "usernamePlaceholder": "e.g. alex.signup",
       "domainLabel": "Domain",
@@ -435,15 +435,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "qrModal": {
       "title": "Mobile QR Code",
-      "desc": "Scan this code with your smartphone camera to access this disposable email instantly on mobile.",
-      "copyLink": "Copy Link",
-      "copiedLink": "Link Copied!",
+      "desc": "Scan with your phone camera to get this address onto your phone, for example to sign up in a mobile app. Mail sent to it still shows up here.",
+      "copyLink": "Copy Address",
+      "copiedLink": "Copied!",
       "close": "Close",
       "unavailable": "QR code unavailable — check your connection and try again."
     },
     "historyDrawer": {
       "title": "Recent Inboxes",
-      "desc": "Switch between previously active inboxes stored securely in your browser.",
+      "desc": "Addresses you've used recently. They're saved in this browser only.",
       "activeInbox": "Active",
       "savedStorage": "Saved in Local Storage",
       "emptyTitle": "No saved inboxes",
@@ -457,7 +457,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Cancel",
       "confirm": "Confirm",
       "deleteInboxTitle": "Delete Mailbox",
-      "deleteInboxDesc": "Are you sure you want to permanently delete this temporary email and all stored messages?",
+      "deleteInboxDesc": "This removes the address and its saved messages from this browser and creates a new one. You can only reopen it later if it has a password and you saved it.",
       "changeAddressTitle": "Change Address",
       "changeAddressDesc": "Generate a new random temporary email address? Current messages will remain in your history.",
       "deleteMessageTitle": "Delete Message",
@@ -476,12 +476,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "initFailed": "Failed to initialize mailbox. Please try refreshing.",
       "messageDeleted": "Message deleted",
       "switchedTo": "Switched to {address}",
-      "generatedNew": "Generated fresh temporary inbox with new domain!",
-      "mailboxDeleted": "Mailbox deleted and fresh address generated!",
+      "generatedNew": "New address created.",
+      "mailboxDeleted": "Inbox removed. A new address is ready.",
       "customCreated": "Created custom inbox: {address}",
       "customFailed": "Failed to create inbox. Please try a different username.",
       "providerSwitched": "Switched active provider to {provider}",
-      "historyCleared": "All saved inboxes cleared from memory.",
+      "historyCleared": "Saved inboxes cleared from this browser.",
       "copiedToClipboard": "Copied to clipboard!",
       "copyFailed": "Failed to copy to clipboard",
       "otpCopied": "Verification code {code} copied!",
@@ -505,14 +505,14 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "useCases": {
       "badge": "Popular Services",
-      "title": "Works Seamlessly Everywhere",
-      "subtitle": "Use TempoEmails for instant verification on your favorite services without sacrificing privacy.",
+      "title": "Where People Use It",
+      "subtitle": "Common signups where a throwaway address makes more sense than your real one.",
       "items": [
         {
           "category": "AI & Software Trials",
           "badge": "ChatGPT & SaaS",
           "title": "Temp Mail for ChatGPT & Free Trials",
-          "description": "Sign up for AI tools, developer APIs, and SaaS free trials without putting your primary email on perpetual promotional mailing lists.",
+          "description": "Sign up for AI tools, developer APIs and SaaS trials without putting your main address on their marketing lists.",
           "tags": [
             "ChatGPT / OpenAI",
             "Midjourney",
@@ -524,7 +524,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Gaming & Communities",
           "badge": "Discord & Steam",
           "title": "Disposable Email for Discord & Gaming",
-          "description": "Create secondary gamer profiles, join private Discord servers, verify Steam accounts, and redeem one-time game beta keys effortlessly.",
+          "description": "Make a second gaming profile, join a Discord server or claim a beta key without linking it to your main inbox.",
           "tags": [
             "Discord Verification",
             "Steam Accounts",
@@ -536,7 +536,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Social Media & Messaging",
           "badge": "Telegram & Socials",
           "title": "Burner Email for Social Media & Apps",
-          "description": "Keep your real email anonymous when signing up on social networks, forums, Telegram, Reddit, or downloading gated whitepapers and PDFs.",
+          "description": "Register on forums and community sites, or get past the email gate on a whitepaper or PDF download, without sharing your real address.",
           "tags": [
             "Telegram Signups",
             "Reddit Profiles",
@@ -548,23 +548,23 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Developer & QA Testing",
           "badge": "Email API & QA",
           "title": "Fake Email Generator for Software QA",
-          "description": "Test user registration workflows, verify transactional email delivery, check password reset pipelines, and simulate multiple users simultaneously.",
+          "description": "Test the signup, confirmation and password-reset emails your own app sends. Create several addresses to sign up as different test users.",
           "tags": [
             "Signup Flow QA",
-            "Webhook Testing",
+            "Transactional Email",
             "Auth Verification",
-            "Multi-Inbox Sim"
+            "Multiple Test Users"
           ]
         }
       ]
     },
     "otpShowcase": {
-      "badge": "Auto-Detected Verification Codes",
+      "badge": "Verification Codes",
       "title": "Receive OTP verification codes",
-      "subtitle": "TempoEmails automatically scans incoming messages to extract 4-to-8 digit OTP codes and one-time activation links the moment they arrive. Perfect for fast website registrations, app trials, and multi-platform account verification without email clutter.",
+      "subtitle": "When an email contains a 4–8 digit code or a verification link, TempoEmails shows it above the message with a copy button, so you don't have to scroll through the template to find it.",
       "tag1": "4 to 8-Digit OTPs",
-      "tag2": "1-Click Magic Links",
-      "tag3": "Instant Clipboard Copy",
+      "tag2": "Verification Links",
+      "tag3": "One-Click Copy",
       "previewBadge": "Inbox Preview",
       "previewDetected": "Auto-Detected",
       "previewCode": "Verification Code",
@@ -574,73 +574,73 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "previewTime": "Just now"
     },
     "features": {
-      "badge": "Core Features",
-      "title": "Engineered for Maximum Speed & Total Privacy",
-      "subtitle": "Everything you need from a modern disposable email service, built with zero tracking and blazing-fast performance.",
+      "badge": "Features",
+      "title": "What the Inbox Does",
+      "subtitle": "A receive-only inbox in your browser, backed by several public temp-mail providers.",
       "items": [
         {
           "title": "Free Disposable Temp Mail Generator",
-          "description": "Protect your primary email address from newsletters, marketing data brokers, spam traps, and unwanted junk mail forever."
+          "description": "An address is created when the page loads. Use it for signups you don't want tied to your real inbox, so the newsletters and promotions that follow go somewhere you can walk away from."
         },
         {
           "title": "Automatic OTP & Code Extractor",
-          "description": "Incoming emails are automatically parsed to highlight 4-to-8 digit verification tokens, confirmation links, and OTP codes with 1-click copy."
+          "description": "Verification codes and confirmation links are picked out of each email and shown with a copy button."
         },
         {
-          "title": "100% Anonymous Email — Zero Logs",
-          "description": "No registration, no personal tracking, and no central database. When you delete or wipe your temporary mailbox, messages vanish permanently."
+          "title": "No Sign-Up Required",
+          "description": "You never create an account with us. Mail.tm and Mail.gw inboxes come with a generated password so you can reopen them later. Other providers' inboxes have no password, so anyone who knows the address can read them."
         },
         {
-          "title": "Desktop to Mobile QR Transfer",
-          "description": "Scan the instant on-screen QR code with your mobile camera to immediately open and access your burner email address on phone or tablet."
+          "title": "QR Code for Your Phone",
+          "description": "Scan the QR code to get the address onto your phone, handy for signing up in a mobile app. Mail sent to it still shows up in this browser."
         },
         {
           "title": "Live Auto-Refreshing Inbox",
-          "description": "New emails land in real-time with automatic 10-second polling and SSE push. Never sit around manually clicking refresh again."
+          "description": "The inbox checks for new mail every 10 seconds and can play a short sound when something arrives. You can also refresh by hand."
         },
         {
-          "title": "Multi-Inbox 10 Minute Mail Switcher",
-          "description": "Manage up to 8 recent burner mailboxes simultaneously from your session history drawer without losing pending verification messages."
+          "title": "Recent Inbox History",
+          "description": "Up to 25 recent addresses are kept in this browser. Switch back to one to check for a late email; messages you already received stay cached."
         }
       ]
     },
     "howItWorks": {
-      "badge": "Simple 4-Step Guide",
+      "badge": "How It Works",
       "title": "How Disposable Email Works in 4 Steps",
-      "subtitle": "From zero to verified in seconds. No complex configurations or personal details needed.",
+      "subtitle": "Nothing to install and no form to fill in.",
       "step1Title": "1. Copy Your Free Address",
-      "step1Desc": "We instantly generate an active, deliverable temporary email address ready to receive messages.",
+      "step1Desc": "An address from one of our mail providers is ready when the page loads. Copy it with one click.",
       "step2Title": "2. Use in Any Signup Form",
-      "step2Desc": "Paste the burner address into any app, game, forum, or software trial requiring verification.",
-      "step3Title": "3. Auto-Detect OTP Codes",
-      "step3Desc": "Incoming messages arrive in real-time. Our engine automatically highlights 4-8 digit OTPs and confirmation links.",
-      "step4Title": "4. Self-Destruct & Forget",
-      "step4Desc": "Close the tab or delete the inbox when done. No traces, no logs, and zero marketing spam in your real inbox."
+      "step2Desc": "Use it wherever a site asks for an email: a signup form, a free trial, a download.",
+      "step3Title": "3. Get the Code",
+      "step3Desc": "New mail shows up within about 10 seconds of reaching the provider. Codes and confirmation links are shown at the top with a copy button.",
+      "step4Title": "4. Delete or Move On",
+      "step4Desc": "Delete the inbox or make a new address when you're done. Any marketing that follows goes to the throwaway address, not your real one."
     },
     "faq": {
       "badge": "Common Questions",
       "title": "Frequently Asked Questions",
-      "subtitle": "Everything you need to know about disposable temp mail, OTP verification, and privacy.",
+      "subtitle": "Short answers about how the inbox works.",
       "q1": "What is temp mail and how does a disposable temporary email work?",
-      "a1": "Temp mail (also known as disposable email, burner email, or 10 minute mail) provides an instant temporary email address to receive incoming messages, activation links, and OTP verification codes without exposing your personal email address.",
+      "a1": "Temp mail (also called disposable or burner email) is an address you can use right away without signing up for anything. Mail sent to it shows up on this page. It's meant for signups and verification emails you don't want in your personal inbox.",
       "q2": "Can I use TempoEmails as a 10 minute mail for OTP verification codes?",
-      "a2": "Yes! TempoEmails features an intelligent OTP and verification code extractor. Incoming 4-to-8 digit verification tokens and magic confirmation links are automatically detected and highlighted with a 1-click copy button.",
+      "a2": "Yes. When an email contains a 4–8 digit code or a confirmation link, it's shown above the message with a copy button. The inbox checks for new mail every 10 seconds, so a code usually appears shortly after the site sends it.",
       "q3": "Can I use temporary email for Discord, ChatGPT, Telegram, or Steam?",
-      "a3": "Yes. TempoEmails works with platforms like Discord, ChatGPT, OpenAI, Telegram, Steam, Reddit, and various online trial services. If a service filters a specific domain, click \"Change\" or \"Custom\" to switch to an alternate active domain.",
+      "a3": "Often, yes. Some services block known disposable domains. If nothing arrives after a minute or two, click \"New Email\" or \"Custom\" to get an address on a different domain and try again.",
       "q4": "Can I send outbound emails from TempoEmails?",
-      "a4": "No. TempoEmails is strictly receive-only. Blocking outbound mail prevents spam abuses and protects our domain deliverability, ensuring your signup and verification emails arrive quickly without delay.",
+      "a4": "No. The inbox is receive-only: you can read, download and delete messages, but you can't send or reply from the address.",
       "q5": "Can I choose my own custom temp mail username and domain?",
-      "a5": "Yes. Click the \"Custom\" button in the address bar to create your own custom email username and select from our available active domains.",
-      "q6": "Is TempoEmails completely free with zero logs and no registration?",
-      "a6": "Yes. TempoEmails is 100% free with no registration, no passwords, and zero personal logs. Your messages exist in temporary memory and are deleted automatically when you close or wipe your session."
+      "a5": "Yes. Click \"Custom\", type a username and pick one of the domains currently offered by Mail.tm, Mail.gw, Inboxes or Guerrilla Mail. If the name is taken, try another.",
+      "q6": "Is it free, and who can read my messages?",
+      "a6": "It's free and there's nothing to register. Messages are held by the provider that hosts the address and cached in your browser. Mail.tm and Mail.gw inboxes are protected by a password (see \"Access\"); Inboxes, Guerrilla Mail and TempMail.lol addresses can be read by anyone who knows them. Don't use a temporary address for anything sensitive."
     },
     "cta": {
       "title": "Your inbox is already live.",
-      "subtitle": "No account, no password — just copy the address and go.",
+      "subtitle": "Nothing to sign up for. Copy the address and new mail shows up here. Mail.tm and Mail.gw inboxes also get a password, so you can reopen them later.",
       "button": "Open my inbox"
     },
     "footer": {
-      "brandDesc": "Free disposable email generator. Receive verification codes and OTPs instantly while keeping your personal inbox safe from spam.",
+      "brandDesc": "Free disposable email for signups and verification codes. Receive-only, with no account to create.",
       "quickLinks": "Quick Links",
       "instantInbox": "Instant Inbox",
       "company": "Company",
@@ -678,27 +678,27 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageNotFoundBadge": "Page Not Found",
       "pageNotFoundTitle": "Oops, this page",
       "pageExpired": "expired.",
-      "pageNotFoundDesc": "Just like a temporary email, this page has disappeared. But don't worry — your disposable inbox is still waiting for you.",
+      "pageNotFoundDesc": "This page doesn't exist, a bit like an expired temporary address. Your inbox is still on the homepage.",
       "goToHomepage": "Go to Homepage",
       "readOurBlog": "Read Our Blog",
       "translationNotice": "This article is currently displayed in English. Full translation is in progress."
     },
     "pages": {
       "about": {
-        "title": "About TempoEmails — Free Temp Mail & Disposable Email Mission",
-        "description": "Why we built TempoEmails: a fast, free temp mail and disposable temporary email service with instant OTP detection, zero logs, and complete spam protection.",
+        "title": "About TempoEmails — Free Temp Mail & Disposable Email",
+        "description": "Why we built TempoEmails: a free temp mail site that puts several public disposable-mail providers behind one inbox, with automatic OTP detection.",
         "heading": "Why We Built TempoEmails",
-        "subheading": "Clean, fast, privacy-first temporary email that just works."
+        "subheading": "A simple temporary inbox for signups you don't want in your real email."
       },
       "contact": {
         "title": "Contact TempoEmails Support & Temp Mail Assistance",
-        "description": "Get support for TempoEmails free temp mail, disposable temporary email generator, domain deliverability inquiries, developer API access, or feedback.",
+        "description": "Contact TempoEmails about bugs, delivery problems, abuse reports, partnerships or feedback.",
         "heading": "Contact TempoEmails Support",
         "subheading": "Have a question, spotted a bug, or need help? Reach out to us."
       },
       "blog": {
         "title": "Temp Mail, Privacy & Online Security Blog — TempoEmails",
-        "description": "Expert guides on free temp mail, disposable temporary email services, OTP verification codes, 10 minute mail, and digital privacy best practices.",
+        "description": "Guides on temp mail, disposable email, OTP verification codes and keeping your main inbox private.",
         "heading": "Privacy & Security Guides",
         "subheading": "Practical guides on avoiding spam, managing online accounts, and protecting your primary email address.",
         "faqHeading": "Frequently Asked Questions",
@@ -706,7 +706,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       },
       "privacy": {
         "title": "Privacy Policy — TempoEmails",
-        "description": "TempoEmails Privacy Policy: zero logs, ephemeral in-memory processing, GDPR/CCPA compliant disposable email generator with no registration required.",
+        "description": "How TempoEmails handles data: what the mail providers store, what stays in your browser, server logs, cookies and ads.",
         "heading": "Privacy Policy"
       },
       "terms": {
@@ -724,7 +724,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
   "es": {
     "meta": {
       "title": "Correo Temporal Gratis — Generador de Email Desechable y Falso",
-      "description": "Email temporal desechable y gratuito. Recibe códigos de verificación OTP, enlaces de activación y correos electrónicos al instante sin spam ni registros.",
+      "description": "Correo temporal gratis con una dirección desechable lista en cuanto carga la página. Recibe códigos OTP y enlaces de activación sin dar tu correo real.",
       "keywords": "correo temporal, email temporal, correo desechable, email desechable, correo falso, generador de correo temporal, 10 minute mail, recibir otp online, correo temporal gratis"
     },
     "nav": {
@@ -738,12 +738,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Idioma"
     },
     "hero": {
-      "chips": ["Sin registro","Detección automática de OTP","Cero registros"],
+      "chips": ["Sin registro","Códigos OTP resaltados","Solo recepción"],
       "worksWith": "Funciona con",
-      "badge": "Correo Temporal Instantáneo y Buzón Desechable",
+      "badge": "Correo temporal gratis, sin registro",
       "titleLine1": "Correo Temporal Gratis.",
       "titleLine2": "Email Desechable en Segundos.",
-      "subtitle": "Genera una dirección de correo temporal desechable al instante. Recibe códigos de verificación OTP y enlaces de activación sin spam, sin registros y con total privacidad."
+      "subtitle": "Genera al instante una dirección de correo temporal desechable. Recibe códigos de verificación OTP y enlaces de activación."
     },
     "addressBar": {
       "tempEmailLabel": "Correo Temporal",
@@ -767,7 +767,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "inboxList": {
       "title": "Bandeja de Entrada",
       "emptyTitle": "Esperando correos entrantes...",
-      "emptyDesc": "Copia tu dirección temporal de arriba y pégala en cualquier formulario de registro. Los nuevos mensajes aparecerán aquí automáticamente.",
+      "emptyDesc": "Copia la dirección de arriba y úsala en un formulario de registro. La bandeja busca correo nuevo cada 10 segundos.",
       "autoChecking": "Búsqueda automática activa",
       "clickToView": "Haga clic para ver los detalles del correo...",
       "unreadBadge": "No leído",
@@ -797,7 +797,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "customModal": {
       "title": "Correo Personalizado",
-      "desc": "Elige tu nombre de usuario y dominio preferidos para crear un buzón temporal a tu medida.",
+      "desc": "Elige un nombre de usuario y un dominio. Si un sitio rechaza un dominio, prueba con otro.",
       "usernameLabel": "Usuario",
       "usernamePlaceholder": "ej. carlos.registro",
       "domainLabel": "Dominio",
@@ -825,15 +825,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "qrModal": {
       "title": "Código QR Móvil",
-      "desc": "Escanea este código con la cámara de tu smartphone para abrir este correo temporal en tu móvil.",
-      "copyLink": "Copiar Enlace",
-      "copiedLink": "¡Enlace Copiado!",
+      "desc": "Escanéalo con la cámara del móvil para llevar esta dirección a tu teléfono, por ejemplo para registrarte en una app. El correo seguirá llegando aquí.",
+      "copyLink": "Copiar dirección",
+      "copiedLink": "¡Copiada!",
       "close": "Cerrar",
       "unavailable": "Código QR no disponible: revisa tu conexión e inténtalo de nuevo."
     },
     "historyDrawer": {
       "title": "Buzones Recientes",
-      "desc": "Cambia entre tus direcciones de correo temporales anteriores guardadas en el navegador.",
+      "desc": "Direcciones que has usado hace poco. Solo se guardan en este navegador.",
       "activeInbox": "Activo",
       "savedStorage": "Guardado Localmente",
       "emptyTitle": "Sin buzones guardados",
@@ -847,7 +847,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Cancelar",
       "confirm": "Confirmar",
       "deleteInboxTitle": "Eliminar Buzón",
-      "deleteInboxDesc": "¿Seguro que deseas eliminar permanentemente este correo temporal y todos sus mensajes?",
+      "deleteInboxDesc": "Se eliminarán la dirección y sus mensajes guardados de este navegador y se creará una nueva. Solo podrás volver a abrirla si tiene contraseña y la guardaste.",
       "changeAddressTitle": "Cambiar Dirección",
       "changeAddressDesc": "¿Generar una nueva dirección aleatoria? Los mensajes actuales permanecerán en tu historial.",
       "deleteMessageTitle": "Eliminar Mensaje",
@@ -866,12 +866,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "initFailed": "Error al inicializar el buzón. Por favor, recarga.",
       "messageDeleted": "Mensaje eliminado",
       "switchedTo": "Cambiado a {address}",
-      "generatedNew": "¡Nuevo correo temporal generado con éxito!",
-      "mailboxDeleted": "¡Buzón eliminado y nueva dirección creada!",
+      "generatedNew": "Nueva dirección creada.",
+      "mailboxDeleted": "Bandeja eliminada. Ya tienes una dirección nueva.",
       "customCreated": "Buzón personalizado creado: {address}",
       "customFailed": "Error al crear el buzón. Prueba con otro nombre de usuario.",
       "providerSwitched": "Proveedor activo cambiado a {provider}",
-      "historyCleared": "Historial de buzones borrado.",
+      "historyCleared": "Bandejas guardadas borradas de este navegador.",
       "copiedToClipboard": "¡Copiado al portapapeles!",
       "copyFailed": "Error al copiar al portapapeles",
       "otpCopied": "¡Código de verificación {code} copiado!",
@@ -895,14 +895,14 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "useCases": {
       "badge": "Servicios Populares",
-      "title": "Funciona Perfectamente en Todas Partes",
-      "subtitle": "Usa TempoEmails para verificarte al instante en tus servicios favoritos sin comprometer tu privacidad.",
+      "title": "Dónde se usa",
+      "subtitle": "Registros habituales en los que una dirección desechable tiene más sentido que la tuya.",
       "items": [
         {
           "category": "Pruebas de IA y Software",
           "badge": "ChatGPT y SaaS",
           "title": "Correo Temporal para ChatGPT y Pruebas Gratuitas",
-          "description": "Regístrese en herramientas de IA, APIs de desarrolladores y pruebas gratuitas de SaaS sin poner su correo principal en listas promocionales.",
+          "description": "Regístrate en herramientas de IA, APIs para desarrolladores y pruebas de SaaS sin que tu dirección principal acabe en sus listas de marketing.",
           "tags": [
             "ChatGPT / OpenAI",
             "Midjourney",
@@ -914,7 +914,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Juegos y Comunidades",
           "badge": "Discord y Steam",
           "title": "Correo Desechable para Discord y Juegos",
-          "description": "Cree perfiles secundarios de jugador, únase a servidores de Discord, verifique cuentas de Steam y canjee claves beta de juegos fácilmente.",
+          "description": "Crea un segundo perfil de juego, únete a un servidor de Discord o consigue una clave beta sin vincularlo a tu correo principal.",
           "tags": [
             "Verificación Discord",
             "Cuentas Steam",
@@ -926,7 +926,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Redes Sociales y Mensajería",
           "badge": "Telegram y Redes",
           "title": "Correo Efímero para Redes Sociales y Apps",
-          "description": "Mantenga su correo real anónimo al registrarse en redes sociales, foros, Telegram, Reddit o al descargar documentos y PDFs.",
+          "description": "Regístrate en foros y comunidades, o descarga un whitepaper o PDF que pide un correo, sin compartir tu dirección real.",
           "tags": [
             "Registros Telegram",
             "Perfiles Reddit",
@@ -938,23 +938,23 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Desarrollo y Pruebas QA",
           "badge": "API de Correo y QA",
           "title": "Generador de Correo Falso para QA de Software",
-          "description": "Pruebe flujos de registro de usuarios, verifique entrega de correos transaccionales, valide restablecimiento de contraseñas y simule múltiples usuarios.",
+          "description": "Prueba los correos de registro, confirmación y cambio de contraseña que envía tu propia app. Crea varias direcciones para registrarte como distintos usuarios de prueba.",
           "tags": [
             "QA Flujo Registro",
-            "Pruebas Webhook",
+            "Correo transaccional",
             "Verificación Auth",
-            "Simulación Multi-Buzón"
+            "Varios usuarios de prueba"
           ]
         }
       ]
     },
     "otpShowcase": {
-      "badge": "Detección Automática de Códigos",
+      "badge": "Códigos de verificación",
       "title": "Recibe códigos OTP de verificación al instante en tu email temporal.",
-      "subtitle": "TempoEmails analiza automáticamente los mensajes entrantes para extraer códigos de 4 a 8 dígitos y enlaces de activación de un solo uso. Ideal para registros rápidos y pruebas de aplicaciones sin saturar tu correo personal.",
+      "subtitle": "Cuando un correo incluye un código de 4 a 8 dígitos o un enlace de verificación, TempoEmails lo muestra encima del mensaje con un botón para copiarlo, sin tener que buscarlo en la plantilla.",
       "tag1": "Códigos OTP de 4 a 8 Dígitos",
-      "tag2": "Enlaces Mágicos en 1 Clic",
-      "tag3": "Copia Inmediata",
+      "tag2": "Enlaces de verificación",
+      "tag3": "Copiar con un clic",
       "previewBadge": "Vista Previa",
       "previewDetected": "Detectado Automáticamente",
       "previewCode": "Código de Verificación",
@@ -964,73 +964,73 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "previewTime": "Ahora mismo"
     },
     "features": {
-      "badge": "Funciones Principales",
-      "title": "Diseñado para Máxima Velocidad y Privacidad Total",
-      "subtitle": "Todo lo que necesitas de un servicio de email desechable moderno, sin rastreo y con rendimiento ultrarrápido.",
+      "badge": "Funciones",
+      "title": "Qué hace la bandeja",
+      "subtitle": "Una bandeja de solo recepción en tu navegador, respaldada por varios proveedores públicos de correo temporal.",
       "items": [
         {
           "title": "Generador de Correo Temporal Gratuito",
-          "description": "Proteja su dirección principal de boletines, intermediarios de datos, trampas de spam y correo no deseado para siempre."
+          "description": "La dirección se crea al cargar la página. Úsala en registros que no quieras vincular a tu correo real, para que los boletines y promociones posteriores lleguen a un sitio que puedes abandonar."
         },
         {
           "title": "Extractor Automático de OTP y Códigos",
-          "description": "Los correos entrantes se analizan automáticamente para resaltar tokens de 4 a 8 dígitos, enlaces de confirmación y códigos OTP con copia en 1 clic."
+          "description": "Los códigos de verificación y los enlaces de confirmación se extraen de cada correo y se muestran con un botón para copiarlos."
         },
         {
-          "title": "Correo 100% Anónimo — Cero Registros",
-          "description": "Sin registro, sin rastreo personal y sin base de datos central. Al eliminar o borrar su buzón temporal, los mensajes desaparecen permanentemente."
+          "title": "Sin registro",
+          "description": "Nunca creas una cuenta con nosotros. Las bandejas de Mail.tm y Mail.gw incluyen una contraseña generada para volver a abrirlas más tarde. Las de otros proveedores no tienen contraseña: cualquiera que conozca la dirección puede leerlas."
         },
         {
-          "title": "Transferencia QR de PC a Móvil",
-          "description": "Escanee el código QR instantáneo en pantalla con su cámara móvil para abrir y acceder de inmediato a su correo desechable en teléfono o tableta."
+          "title": "Código QR para el móvil",
+          "description": "Escanea el código QR para llevar la dirección a tu teléfono, útil para registrarte en una app. El correo seguirá llegando a este navegador."
         },
         {
           "title": "Bandeja de Entrada con Auto-Actualización en Vivo",
-          "description": "Los nuevos correos llegan en tiempo real con sondeo automático cada 10 segundos y push SSE. No vuelva a hacer clic manualmente en actualizar."
+          "description": "La bandeja busca correo nuevo cada 10 segundos y puede sonar un aviso cuando llega algo. También puedes actualizar a mano."
         },
         {
-          "title": "Selector Multi-Buzón de 10 Minutos",
-          "description": "Administre hasta 8 buzones temporales recientes simultáneamente desde su historial de sesión sin perder mensajes de verificación pendientes."
+          "title": "Historial de bandejas",
+          "description": "Se guardan hasta 25 direcciones recientes en este navegador. Vuelve a una para revisar un correo que llegó tarde; los mensajes ya recibidos siguen guardados."
         }
       ]
     },
     "howItWorks": {
-      "badge": "Guía en 4 Pasos",
+      "badge": "Cómo funciona",
       "title": "Cómo Funciona el Correo Temporal en 4 Pasos",
-      "subtitle": "De cero a verificado en segundos. Sin registros complejos ni datos personales requeridos.",
+      "subtitle": "Nada que instalar ni formularios que rellenar.",
       "step1Title": "1. Copia tu Dirección Gratuita",
-      "step1Desc": "Generamos instantáneamente una dirección temporal activa lista para recibir correos.",
+      "step1Desc": "Al cargar la página ya tienes una dirección de uno de nuestros proveedores de correo. Cópiala con un clic.",
       "step2Title": "2. Úsala en Cualquier Registro",
-      "step2Desc": "Pega la dirección desechable en cualquier aplicación, juego o servicio que pida verificación.",
-      "step3Title": "3. Detección Automática de OTP",
-      "step3Desc": "Los mensajes llegan en tiempo real y nuestro motor destaca códigos y enlaces con un botón para copiar.",
-      "step4Title": "4. Autodestrucción y Olvido",
-      "step4Desc": "Cierra la pestaña o elimina el buzón al terminar. Cero spam y cero registros en tu correo personal."
+      "step2Desc": "Úsala donde un sitio pida un correo: un registro, una prueba gratuita, una descarga.",
+      "step3Title": "3. Recibe el código",
+      "step3Desc": "El correo nuevo aparece unos 10 segundos después de llegar al proveedor. Los códigos y enlaces de confirmación se muestran arriba con un botón para copiarlos.",
+      "step4Title": "4. Elimínala o sigue",
+      "step4Desc": "Cuando termines, elimina la bandeja o crea una dirección nueva. El marketing que llegue después irá a la dirección desechable, no a la tuya."
     },
     "faq": {
       "badge": "Preguntas Frecuentes",
       "title": "Preguntas Frecuentes",
-      "subtitle": "Todo lo que necesitas saber sobre correo temporal, verificación OTP y privacidad.",
+      "subtitle": "Respuestas breves sobre cómo funciona la bandeja.",
       "q1": "¿Qué es el correo temporal y cómo funciona un email desechable?",
-      "a1": "El correo temporal (también conocido como email desechable o correo de 10 minutos) te ofrece una dirección temporal inmediata para recibir mensajes, enlaces de activación y códigos OTP sin exponer tu correo personal.",
+      "a1": "El correo temporal (también llamado desechable) es una dirección que puedes usar al instante sin registrarte en nada. Lo que se envía a ella aparece en esta página. Sirve para registros y correos de verificación que no quieres en tu bandeja personal.",
       "q2": "¿Puedo usar TempoEmails para códigos de verificación OTP?",
-      "a2": "¡Sí! TempoEmails detecta de manera inteligente códigos OTP de 4 a 8 dígitos y enlaces de confirmación, mostrándolos resaltados con un botón de copiado en 1 clic.",
+      "a2": "Sí. Cuando un correo incluye un código de 4 a 8 dígitos o un enlace de confirmación, se muestra encima del mensaje con un botón para copiarlo. La bandeja busca correo nuevo cada 10 segundos, así que el código suele aparecer poco después de que el sitio lo envíe.",
       "q3": "¿Funciona en Discord, ChatGPT, Telegram o Steam?",
-      "a3": "Sí. TempoEmails es compatible con plataformas como Discord, ChatGPT, Telegram, Steam y pruebas de software. Si un servicio filtra un dominio, haz clic en \"Cambiar\" para probar otro dominio activo.",
+      "a3": "A menudo sí. Algunos servicios bloquean dominios desechables conocidos. Si no llega nada en uno o dos minutos, pulsa \"Nuevo correo\" o \"Personalizar\" para obtener una dirección en otro dominio y vuelve a intentarlo.",
       "q4": "¿Puedo enviar correos salientes desde TempoEmails?",
-      "a4": "No. TempoEmails es exclusivamente de recepción para evitar abusos de spam y garantizar que tus correos de confirmación lleguen sin demoras.",
+      "a4": "No. La bandeja es solo de recepción: puedes leer, descargar y eliminar mensajes, pero no enviar ni responder desde la dirección.",
       "q5": "¿Puedo elegir mi propio nombre de usuario y dominio?",
-      "a5": "Sí. Haz clic en \"Personalizar\" en la barra de dirección para elegir un usuario propio y seleccionar entre nuestros dominios activos.",
-      "q6": "¿Es completamente gratis y sin registros?",
-      "a6": "Sí, 100% gratis, sin contraseñas, sin registros y sin guardar registros personales."
+      "a5": "Sí. Pulsa \"Personalizar\", escribe un nombre de usuario y elige uno de los dominios que ofrecen ahora Mail.tm, Mail.gw, Inboxes o Guerrilla Mail. Si el nombre ya está ocupado, prueba otro.",
+      "q6": "¿Es gratis y quién puede leer mis mensajes?",
+      "a6": "Es gratis y no hay nada que registrar. Los mensajes los guarda el proveedor de la dirección y se almacenan en caché en tu navegador. Las bandejas de Mail.tm y Mail.gw están protegidas con contraseña (ver \"Acceso\"); las direcciones de Inboxes, Guerrilla Mail y TempMail.lol las puede leer cualquiera que las conozca. No uses una dirección temporal para nada delicado."
     },
     "cta": {
       "title": "Tu bandeja ya está activa.",
-      "subtitle": "Sin cuenta ni contraseña: copia la dirección y listo.",
+      "subtitle": "No hay que registrarse. Copia la dirección y el correo nuevo aparecerá aquí. Las bandejas de Mail.tm y Mail.gw tienen además contraseña para volver a abrirlas más tarde.",
       "button": "Abrir mi bandeja"
     },
     "footer": {
-      "brandDesc": "Generador gratuito de correo temporal desechable. Recibe códigos de verificación y OTPs al instante protegiendo tu buzón personal del spam.",
+      "brandDesc": "Correo desechable gratis para registros y códigos de verificación. Solo recepción y sin cuentas que crear.",
       "quickLinks": "Enlaces Rápidos",
       "instantInbox": "Buzón Instantáneo",
       "company": "Empresa",
@@ -1068,27 +1068,27 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageNotFoundBadge": "Página No Encontrada",
       "pageNotFoundTitle": "Vaya, esta página",
       "pageExpired": "ha caducado.",
-      "pageNotFoundDesc": "Al igual que un correo temporal, esta página ha desaparecido. Pero no se preocupe, su buzón desechable sigue esperándole.",
+      "pageNotFoundDesc": "Esta página no existe, como una dirección temporal caducada. Tu bandeja sigue en la página de inicio.",
       "goToHomepage": "Ir a la Página Principal",
       "readOurBlog": "Leer Nuestro Blog",
       "translationNotice": "Este artículo se muestra actualmente en inglés. La traducción completa está en proceso."
     },
     "pages": {
       "about": {
-        "title": "Acerca de TempoEmails — Misión de Correo Temporal Desechable y Gratuito",
-        "description": "Por qué creamos TempoEmails: un servicio de correo temporal gratuito y rápido con detección de OTP, cero registros y protección contra spam.",
+        "title": "Sobre TempoEmails — Correo temporal y desechable gratis",
+        "description": "Por qué creamos TempoEmails: un sitio de correo temporal gratis que reúne varios proveedores públicos de correo desechable en una sola bandeja, con detección automática de OTP.",
         "heading": "Por Qué Creamos TempoEmails",
-        "subheading": "Correo temporal limpio, rápido y centrado en la privacidad que simplemente funciona."
+        "subheading": "Una bandeja temporal sencilla para registros que no quieres en tu correo real."
       },
       "contact": {
         "title": "Contacto y Soporte de TempoEmails",
-        "description": "Obtenga soporte para TempoEmails, correo temporal gratuito, consultas de entrega, API para desarrolladores o comentarios.",
+        "description": "Contacta con TempoEmails sobre errores, problemas de entrega, denuncias de abuso, colaboraciones o sugerencias.",
         "heading": "Contacto y Soporte",
         "subheading": "¿Tiene alguna pregunta, detectó un error o necesita ayuda? Póngase en contacto con nosotros."
       },
       "blog": {
         "title": "Blog de Privacidad, Seguridad y Correo Temporal — TempoEmails",
-        "description": "Guías de expertos sobre correo temporal gratuito, códigos OTP, correo de 10 minutos y privacidad digital.",
+        "description": "Guías sobre correo temporal, correo desechable, códigos OTP y cómo mantener privada tu bandeja principal.",
         "heading": "Guías de Privacidad y Seguridad",
         "subheading": "Consejos prácticos para evitar el spam, gestionar cuentas online y proteger su correo principal.",
         "faqHeading": "Preguntas frecuentes",
@@ -1096,7 +1096,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       },
       "privacy": {
         "title": "Política de Privacidad — TempoEmails",
-        "description": "Política de privacidad de TempoEmails: cero registros, procesamiento en memoria efímero y cumplimiento con GDPR/CCPA.",
+        "description": "Cómo trata los datos TempoEmails: qué guardan los proveedores de correo, qué queda en tu navegador, registros del servidor, cookies y anuncios.",
         "heading": "Política de Privacidad"
       },
       "terms": {
@@ -1114,7 +1114,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
   "pt": {
     "meta": {
       "title": "Email Temporário Grátis — Gerador de Email Descartável e Falso",
-      "description": "Email temporário descartável e gratuito. Receba códigos de verificação OTP, links de ativação e mensagens instantâneas sem spam nem cadastros.",
+      "description": "E-mail temporário grátis com um endereço descartável pronto assim que a página carrega. Receba códigos OTP e links de ativação sem informar seu e-mail real.",
       "keywords": "email temporario, email descartavel, correio temporario, email falso, gerador de email temporario, 10 minute mail, receber otp online, email temporario gratis"
     },
     "nav": {
@@ -1128,12 +1128,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Idioma"
     },
     "hero": {
-      "chips": ["Sem cadastro","Detecção automática de OTP","Zero registros"],
+      "chips": ["Sem cadastro","Códigos OTP em destaque","Só recebimento"],
       "worksWith": "Funciona com",
-      "badge": "Email Temporário Instantâneo e Caixa Descartável",
+      "badge": "E-mail temporário grátis, sem cadastro",
       "titleLine1": "Email Temporário Grátis.",
       "titleLine2": "Email Descartável em Segundos.",
-      "subtitle": "Gere um endereço de email temporário e descartável em um clique. Receba códigos OTP e links de ativação com zero spam, sem logs e sem cadastro."
+      "subtitle": "Gere um endereço de email temporário e descartável em um clique. Receba códigos OTP e links de ativação."
     },
     "addressBar": {
       "tempEmailLabel": "Email Temporário",
@@ -1157,7 +1157,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "inboxList": {
       "title": "Caixa de Entrada",
       "emptyTitle": "Aguardando novas mensagens...",
-      "emptyDesc": "Copie seu endereço temporário acima e cole em qualquer formulário. As mensagens recebidas aparecerão aqui automaticamente.",
+      "emptyDesc": "Copie o endereço acima e use-o em um formulário de cadastro. A caixa verifica novos e-mails a cada 10 segundos.",
       "autoChecking": "Verificação automática ativa",
       "clickToView": "Clique para ver os detalhes do e-mail...",
       "unreadBadge": "Não lido",
@@ -1187,7 +1187,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "customModal": {
       "title": "Email Personalizado",
-      "desc": "Escolha seu nome de usuário e domínio favoritos para criar um email temporário personalizado.",
+      "desc": "Escolha um nome de usuário e um domínio. Se um site recusar um domínio, tente outro.",
       "usernameLabel": "Nome de usuário",
       "usernamePlaceholder": "ex. lucas.cadastro",
       "domainLabel": "Domínio",
@@ -1215,15 +1215,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "qrModal": {
       "title": "QR Code para Celular",
-      "desc": "Aponte a câmera do seu smartphone para abrir e usar este email temporário no celular instantaneamente.",
-      "copyLink": "Copiar Link",
-      "copiedLink": "Link Copiado!",
+      "desc": "Escaneie com a câmera do celular para levar este endereço ao telefone, por exemplo para se cadastrar em um app. Os e-mails continuam chegando aqui.",
+      "copyLink": "Copiar endereço",
+      "copiedLink": "Copiado!",
       "close": "Fechar",
       "unavailable": "QR code indisponível — verifique sua conexão e tente novamente."
     },
     "historyDrawer": {
       "title": "Emails Recentes",
-      "desc": "Alterne rapidamente entre caixas de email temporárias anteriores salvas no seu navegador.",
+      "desc": "Endereços que você usou recentemente. Ficam salvos apenas neste navegador.",
       "activeInbox": "Ativo",
       "savedStorage": "Salvo Localmente",
       "emptyTitle": "Nenhum email salvo",
@@ -1237,7 +1237,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Cancelar",
       "confirm": "Confirmar",
       "deleteInboxTitle": "Excluir Caixa de Entrada",
-      "deleteInboxDesc": "Deseja realmente apagar este email temporário e todas as mensagens recebidas?",
+      "deleteInboxDesc": "O endereço e as mensagens salvas serão removidos deste navegador e um novo será criado. Você só poderá reabri-lo se ele tiver senha e você a tiver guardado.",
       "changeAddressTitle": "Mudar Endereço",
       "changeAddressDesc": "Gerar um novo email temporário aleatório? As mensagens atuais permanecerão no histórico.",
       "deleteMessageTitle": "Excluir Mensagem",
@@ -1256,12 +1256,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "initFailed": "Falha ao iniciar caixa postal. Recarregue a página.",
       "messageDeleted": "Mensagem excluída",
       "switchedTo": "Alternado para {address}",
-      "generatedNew": "Novo email temporário gerado com sucesso!",
-      "mailboxDeleted": "Caixa de entrada excluída e novo email gerado!",
+      "generatedNew": "Novo endereço criado.",
+      "mailboxDeleted": "Caixa removida. Um novo endereço está pronto.",
       "customCreated": "Email personalizado criado: {address}",
       "customFailed": "Falha ao criar email. Tente outro nome de usuário.",
       "providerSwitched": "Provedor ativo alternado para {provider}",
-      "historyCleared": "Histórico de emails apagado com sucesso.",
+      "historyCleared": "Caixas salvas apagadas deste navegador.",
       "copiedToClipboard": "Copiado para a área de transferência!",
       "copyFailed": "Falha ao copiar",
       "otpCopied": "Código de verificação {code} copiado!",
@@ -1285,14 +1285,14 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "useCases": {
       "badge": "Serviços Populares",
-      "title": "Funciona Perfeitamente em Qualquer Plataforma",
-      "subtitle": "Use o TempoEmails para se cadastrar rapidamente em seus serviços favoritos com total anonimato.",
+      "title": "Onde as pessoas usam",
+      "subtitle": "Cadastros comuns em que um endereço descartável faz mais sentido do que o seu real.",
       "items": [
         {
           "category": "Testes de IA e Software",
           "badge": "ChatGPT e SaaS",
           "title": "E-mail Temporário para ChatGPT e Testes Grátis",
-          "description": "Cadastre-se em ferramentas de IA, APIs de desenvolvedores e testes gratuitos de SaaS sem colocar seu e-mail principal em listas promocionais.",
+          "description": "Cadastre-se em ferramentas de IA, APIs para desenvolvedores e testes de SaaS sem colocar seu endereço principal nas listas de marketing deles.",
           "tags": [
             "ChatGPT / OpenAI",
             "Midjourney",
@@ -1304,7 +1304,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Jogos e Comunidades",
           "badge": "Discord e Steam",
           "title": "E-mail Descartável para Discord e Jogos",
-          "description": "Crie perfis secundários de jogos, entre em servidores privados do Discord, verifique contas da Steam e resgate chaves beta com facilidade.",
+          "description": "Crie um segundo perfil de jogo, entre em um servidor do Discord ou resgate uma chave beta sem vincular ao seu e-mail principal.",
           "tags": [
             "Verificação Discord",
             "Contas Steam",
@@ -1316,7 +1316,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Redes Sociais e Mensagens",
           "badge": "Telegram e Redes",
           "title": "E-mail Descartável para Redes Sociais e Apps",
-          "description": "Mantenha seu e-mail real anônimo ao se cadastrar em redes sociais, fóruns, Telegram, Reddit ou ao baixar materiais e PDFs.",
+          "description": "Cadastre-se em fóruns e comunidades, ou baixe um whitepaper ou PDF que pede e-mail, sem informar seu endereço real.",
           "tags": [
             "Cadastros Telegram",
             "Perfis Reddit",
@@ -1328,23 +1328,23 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Desenvolvimento e Testes QA",
           "badge": "API de E-mail e QA",
           "title": "Gerador de E-mail Falso para QA de Software",
-          "description": "Teste fluxos de cadastro de usuários, verifique entrega de e-mails transacionais, valide redefinição de senha e simule múltiplos usuários.",
+          "description": "Teste os e-mails de cadastro, confirmação e redefinição de senha que o seu próprio app envia. Crie vários endereços para se cadastrar como usuários de teste diferentes.",
           "tags": [
             "QA Fluxo Cadastro",
-            "Testes Webhook",
+            "E-mail transacional",
             "Verificação Auth",
-            "Simulação Multi-Caixa"
+            "Vários usuários de teste"
           ]
         }
       ]
     },
     "otpShowcase": {
-      "badge": "Extração Automática de Códigos",
+      "badge": "Códigos de verificação",
       "title": "Receba códigos OTP de verificação instantaneamente no email temporário.",
-      "subtitle": "O TempoEmails analisa mensagens recebidas para identificar códigos de 4 a 8 dígitos e links de ativação no segundo em que chegam.",
+      "subtitle": "Quando um e-mail traz um código de 4 a 8 dígitos ou um link de verificação, o TempoEmails mostra isso acima da mensagem com um botão de copiar, sem você precisar procurar no meio do modelo.",
       "tag1": "Códigos OTP de 4 a 8 Dígitos",
-      "tag2": "Links de 1 Clique",
-      "tag3": "Cópia Imediata",
+      "tag2": "Links de verificação",
+      "tag3": "Copiar com um clique",
       "previewBadge": "Prévia da Caixa",
       "previewDetected": "Detectado Automaticamente",
       "previewCode": "Código de Verificação",
@@ -1354,73 +1354,73 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "previewTime": "Agora mesmo"
     },
     "features": {
-      "badge": "Principais Recursos",
-      "title": "Projetado para Velocidade Máxima e Privacidade Total",
-      "subtitle": "Tudo o que você espera de um gerador de email temporário moderno, sem rastreamento e super rápido.",
+      "badge": "Recursos",
+      "title": "O que a caixa faz",
+      "subtitle": "Uma caixa só de recebimento no seu navegador, apoiada por vários provedores públicos de e-mail temporário.",
       "items": [
         {
           "title": "Gerador de E-mail Temporário Grátis",
-          "description": "Proteja seu endereço principal de newsletters, corretores de dados, armadilhas de spam e lixo eletrônico para sempre."
+          "description": "O endereço é criado quando a página carrega. Use-o em cadastros que você não quer ligar ao seu e-mail real, para que as newsletters e promoções que vierem depois caiam num lugar que você pode abandonar."
         },
         {
           "title": "Extrator Automático de OTP e Códigos",
-          "description": "E-mails recebidos são analisados automaticamente para destacar tokens de 4 a 8 dígitos, links de confirmação e códigos OTP com cópia em 1 clique."
+          "description": "Códigos de verificação e links de confirmação são extraídos de cada e-mail e exibidos com um botão de copiar."
         },
         {
-          "title": "E-mail 100% Anônimo — Zero Registros",
-          "description": "Sem cadastro, sem rastreamento pessoal e sem banco de dados central. Ao excluir ou limpar sua caixa temporária, as mensagens somem permanentemente."
+          "title": "Sem cadastro",
+          "description": "Você nunca cria uma conta conosco. As caixas do Mail.tm e do Mail.gw vêm com uma senha gerada para você reabri-las depois. As de outros provedores não têm senha: qualquer pessoa que saiba o endereço pode lê-las."
         },
         {
-          "title": "Transferência QR do PC para o Celular",
-          "description": "Escaneie o código QR instantâneo na tela com a câmera do celular para acessar imediatamente seu e-mail descartável no smartphone ou tablet."
+          "title": "QR code para o celular",
+          "description": "Escaneie o QR code para levar o endereço ao telefone, útil para se cadastrar em um app. Os e-mails continuam chegando neste navegador."
         },
         {
           "title": "Caixa de Entrada com Atualização em Tempo Real",
-          "description": "Novos e-mails chegam em tempo real com verificação automática a cada 10 segundos e push SSE. Nunca mais fique clicando em atualizar manualmente."
+          "description": "A caixa verifica novos e-mails a cada 10 segundos e pode tocar um som curto quando algo chega. Você também pode atualizar manualmente."
         },
         {
-          "title": "Seletor Multi-Caixa de 10 Minutos",
-          "description": "Gerencie até 8 caixas temporárias recentes simultaneamente pelo seu histórico de sessão sem perder mensagens de verificação pendentes."
+          "title": "Histórico de caixas",
+          "description": "Até 25 endereços recentes ficam salvos neste navegador. Volte a um deles para conferir um e-mail atrasado; as mensagens já recebidas continuam guardadas."
         }
       ]
     },
     "howItWorks": {
-      "badge": "Guia em 4 Passos",
+      "badge": "Como funciona",
       "title": "Como Funciona o Email Temporário em 4 Passos",
-      "subtitle": "Da criação à verificação em segundos. Sem burocracia nem dados pessoais.",
+      "subtitle": "Nada para instalar e nenhum formulário para preencher.",
       "step1Title": "1. Copie seu Endereço Grátis",
-      "step1Desc": "Criamos na hora um email temporário ativo e pronto para receber mensagens.",
+      "step1Desc": "Um endereço de um dos nossos provedores de e-mail fica pronto quando a página carrega. Copie com um clique.",
       "step2Title": "2. Use em Cadastros",
-      "step2Desc": "Cole o endereço descartável em qualquer aplicativo ou site que solicite confirmação.",
-      "step3Title": "3. Detecção Automática de Códigos",
-      "step3Desc": "Os emails chegam em tempo real e o código de verificação é destacado com botão de copiar.",
-      "step4Title": "4. Autodestruição sem Rastros",
-      "step4Desc": "Feche a aba quando terminar. Zero spam e zero marketing na sua caixa postal pessoal."
+      "step2Desc": "Use-o onde um site pedir e-mail: um cadastro, um teste grátis, um download.",
+      "step3Title": "3. Receba o código",
+      "step3Desc": "Novos e-mails aparecem cerca de 10 segundos depois de chegarem ao provedor. Códigos e links de confirmação aparecem no topo com um botão de copiar.",
+      "step4Title": "4. Apague ou siga em frente",
+      "step4Desc": "Quando terminar, apague a caixa ou crie um novo endereço. O marketing que vier depois vai para o endereço descartável, não para o seu."
     },
     "faq": {
       "badge": "Dúvidas Comuns",
       "title": "Perguntas Frequentes",
-      "subtitle": "Tudo sobre email temporário, verificação OTP e proteção de privacidade.",
+      "subtitle": "Respostas curtas sobre como a caixa funciona.",
       "q1": "O que é email temporário e como funciona?",
-      "a1": "O email temporário (descartável ou 10 minute mail) fornece um endereço imediato para receber confirmações sem expor seu email pessoal.",
+      "a1": "E-mail temporário (também chamado de descartável) é um endereço que você pode usar na hora, sem se cadastrar em nada. O que for enviado para ele aparece nesta página. Serve para cadastros e e-mails de verificação que você não quer na sua caixa pessoal.",
       "q2": "Posso usar o TempoEmails para receber códigos OTP?",
-      "a2": "Sim! O TempoEmails detecta automaticamente códigos numéricos e links de confirmação com botão de copiar em um clique.",
+      "a2": "Sim. Quando um e-mail traz um código de 4 a 8 dígitos ou um link de confirmação, ele aparece acima da mensagem com um botão de copiar. A caixa verifica novos e-mails a cada 10 segundos, então o código costuma aparecer pouco depois de o site enviá-lo.",
       "q3": "Funciona para Discord, ChatGPT, Telegram ou Steam?",
-      "a3": "Sim. O TempoEmails é compatível com diversos serviços populares. Se um domínio for bloqueado, basta clicar em \"Mudar\" para gerar outro.",
+      "a3": "Muitas vezes, sim. Alguns serviços bloqueiam domínios descartáveis conhecidos. Se nada chegar em um ou dois minutos, clique em \"Novo email\" ou \"Personalizar\" para obter um endereço em outro domínio e tente de novo.",
       "q4": "Posso enviar mensagens a partir do TempoEmails?",
-      "a4": "Não. O serviço é estritamente para recepção, o que previne spam e garante alta entregabilidade dos seus emails de ativação.",
+      "a4": "Não. A caixa é só de recebimento: você pode ler, baixar e apagar mensagens, mas não pode enviar nem responder a partir do endereço.",
       "q5": "Posso escolher um nome de usuário personalizado?",
-      "a5": "Sim. Clique no botão \"Personalizar\" para escolher o nome e o domínio que preferir.",
-      "q6": "É totalmente gratuito e sem cadastro?",
-      "a6": "Sim, 100% grátis, sem senhas, sem formulários e sem registro de dados pessoais."
+      "a5": "Sim. Clique em \"Personalizar\", digite um nome de usuário e escolha um dos domínios oferecidos no momento pelo Mail.tm, Mail.gw, Inboxes ou Guerrilla Mail. Se o nome já estiver em uso, tente outro.",
+      "q6": "É grátis? Quem pode ler minhas mensagens?",
+      "a6": "É grátis e não há nada para cadastrar. As mensagens ficam com o provedor do endereço e em cache no seu navegador. As caixas do Mail.tm e do Mail.gw são protegidas por senha (veja \"Acesso\"); endereços do Inboxes, Guerrilla Mail e TempMail.lol podem ser lidos por qualquer pessoa que os conheça. Não use um endereço temporário para nada sensível."
     },
     "cta": {
       "title": "Sua caixa de entrada já está ativa.",
-      "subtitle": "Sem conta, sem senha — é só copiar o endereço.",
+      "subtitle": "Não precisa se cadastrar. Copie o endereço e os novos e-mails aparecem aqui. As caixas do Mail.tm e do Mail.gw também ganham uma senha para você reabri-las depois.",
       "button": "Abrir minha caixa"
     },
     "footer": {
-      "brandDesc": "Gerador gratuito de email descartável e temporário. Receba códigos de verificação e OTPs mantendo seu email principal longe do spam.",
+      "brandDesc": "E-mail descartável grátis para cadastros e códigos de verificação. Só recebimento, sem conta para criar.",
       "quickLinks": "Links Rápidos",
       "instantInbox": "Caixa Instantânea",
       "company": "Empresa",
@@ -1458,27 +1458,27 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageNotFoundBadge": "Página Não Encontrada",
       "pageNotFoundTitle": "Ops, esta página",
       "pageExpired": "expirou.",
-      "pageNotFoundDesc": "Assim como um e-mail temporário, esta página desapareceu. Mas não se preocupe — sua caixa de entrada descartável ainda está esperando por você.",
+      "pageNotFoundDesc": "Esta página não existe, como um endereço temporário expirado. Sua caixa continua na página inicial.",
       "goToHomepage": "Ir para a Página Inicial",
       "readOurBlog": "Ler Nosso Blog",
       "translationNotice": "Este artigo está atualmente em inglês. A tradução completa está em andamento."
     },
     "pages": {
       "about": {
-        "title": "Sobre o TempoEmails — Missão de E-mail Temporário e Descartável Gratuito",
-        "description": "Por que criamos o TempoEmails: um serviço de e-mail temporário rápido e gratuito com detecção de OTP, zero registros e proteção contra spam.",
+        "title": "Sobre o TempoEmails — E-mail temporário e descartável grátis",
+        "description": "Por que criamos o TempoEmails: um site de e-mail temporário grátis que reúne vários provedores públicos de e-mail descartável em uma só caixa, com detecção automática de OTP.",
         "heading": "Por Que Criamos o TempoEmails",
-        "subheading": "E-mail temporário limpo, rápido e focado em privacidade que simplesmente funciona."
+        "subheading": "Uma caixa temporária simples para cadastros que você não quer no seu e-mail real."
       },
       "contact": {
         "title": "Contato e Suporte do TempoEmails",
-        "description": "Obtenha suporte para o TempoEmails, e-mail temporário gratuito, entregabilidade de domínios, API ou envie seu feedback.",
+        "description": "Fale com o TempoEmails sobre bugs, problemas de entrega, denúncias de abuso, parcerias ou sugestões.",
         "heading": "Contato e Suporte",
         "subheading": "Tem alguma dúvida, encontrou um erro ou precisa de ajuda? Fale conosco."
       },
       "blog": {
         "title": "Blog de Privacidade, Segurança e E-mail Temporário — TempoEmails",
-        "description": "Guias especializados sobre e-mail temporário gratuito, códigos OTP, e-mail de 10 minutos e privacidade digital.",
+        "description": "Guias sobre e-mail temporário, e-mail descartável, códigos OTP e como manter sua caixa principal privada.",
         "heading": "Guias de Privacidade e Segurança",
         "subheading": "Dicas práticas para evitar spam, gerenciar contas online e proteger seu e-mail principal.",
         "faqHeading": "Perguntas frequentes",
@@ -1486,7 +1486,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       },
       "privacy": {
         "title": "Política de Privacidade — TempoEmails",
-        "description": "Política de privacidade do TempoEmails: zero registros, processamento efêmero em memória e conformidade com LGPD/GDPR.",
+        "description": "Como o TempoEmails trata dados: o que os provedores de e-mail guardam, o que fica no seu navegador, logs do servidor, cookies e anúncios.",
         "heading": "Política de Privacidade"
       },
       "terms": {
@@ -1504,7 +1504,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
   "fr": {
     "meta": {
       "title": "Email Temporaire Gratuit — Générateur d’Email Jetable & Faux Email",
-      "description": "Email temporaire jetable et gratuit. Recevez des codes de vérification OTP, des liens d’activation et des e-mails instantanés sans spam ni inscription.",
+      "description": "Email temporaire gratuit avec une adresse jetable prête dès le chargement de la page. Recevez codes OTP et liens d’activation sans donner votre vraie adresse.",
       "keywords": "email temporaire, mail temporaire, email jetable, faux email, generateur email temporaire, 10 minute mail, recevoir otp en ligne, email temporaire gratuit"
     },
     "nav": {
@@ -1518,12 +1518,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Langue"
     },
     "hero": {
-      "chips": ["Sans inscription","Détection auto des OTP","Zéro journal"],
+      "chips": ["Sans inscription","Codes OTP mis en avant","Réception seule"],
       "worksWith": "Compatible avec",
-      "badge": "Email Temporaire Instantané & Boîte Jetable 10 Minutes",
+      "badge": "Email temporaire gratuit, sans inscription",
       "titleLine1": "Email Temporaire Gratuit.",
       "titleLine2": "Email Jetable en Quelques Secondes.",
-      "subtitle": "Générez une adresse email temporaire jetable en un clic. Recevez vos codes de vérification OTP et liens d’activation sans spam, sans journaux et sans inscription."
+      "subtitle": "Générez une adresse email temporaire jetable en un clic. Recevez vos codes de vérification OTP et liens d’activation."
     },
     "addressBar": {
       "tempEmailLabel": "Email Temporaire",
@@ -1547,7 +1547,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "inboxList": {
       "title": "Boîte de réception",
       "emptyTitle": "En attente d’e-mails entrants...",
-      "emptyDesc": "Copiez votre adresse temporaire ci-dessus et collez-la dans n’importe quel formulaire. Les messages reçus apparaîtront ici automatiquement.",
+      "emptyDesc": "Copiez l’adresse ci-dessus et utilisez-la dans un formulaire d’inscription. La boîte vérifie les nouveaux messages toutes les 10 secondes.",
       "autoChecking": "Vérification automatique active",
       "clickToView": "Cliquez pour afficher les détails du message...",
       "unreadBadge": "Non lu",
@@ -1577,7 +1577,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "customModal": {
       "title": "Adresse Email Personnalisée",
-      "desc": "Choisissez votre identifiant et votre domaine pour créer une boîte temporaire sur mesure.",
+      "desc": "Choisissez un nom d’utilisateur et un domaine. Si un site refuse un domaine, essayez-en un autre.",
       "usernameLabel": "Identifiant",
       "usernamePlaceholder": "ex. julien.inscription",
       "domainLabel": "Domaine",
@@ -1605,15 +1605,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "qrModal": {
       "title": "QR Code Mobile",
-      "desc": "Scannez ce code avec votre smartphone pour ouvrir cette boîte temporaire directement sur mobile.",
-      "copyLink": "Copier le lien",
-      "copiedLink": "Lien Copié !",
+      "desc": "Scannez avec l’appareil photo de votre téléphone pour y récupérer cette adresse, par exemple pour vous inscrire dans une application. Les messages continuent d’arriver ici.",
+      "copyLink": "Copier l’adresse",
+      "copiedLink": "Copiée !",
       "close": "Fermer",
       "unavailable": "QR code indisponible — vérifiez votre connexion et réessayez."
     },
     "historyDrawer": {
       "title": "Boîtes Récentes",
-      "desc": "Basculez entre vos adresses temporaires précédentes stockées dans votre navigateur.",
+      "desc": "Les adresses utilisées récemment. Elles ne sont enregistrées que dans ce navigateur.",
       "activeInbox": "Actif",
       "savedStorage": "Stocké Localement",
       "emptyTitle": "Aucune boîte enregistrée",
@@ -1627,7 +1627,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Annuler",
       "confirm": "Confirmer",
       "deleteInboxTitle": "Supprimer la Boîte",
-      "deleteInboxDesc": "Voulez-vous supprimer définitivement cette adresse temporaire et tous ses messages ?",
+      "deleteInboxDesc": "L’adresse et ses messages enregistrés seront retirés de ce navigateur et une nouvelle sera créée. Vous ne pourrez la rouvrir que si elle a un mot de passe et que vous l’avez noté.",
       "changeAddressTitle": "Changer d’Adresse",
       "changeAddressDesc": "Générer une nouvelle adresse aléatoire ? Les messages actuels resteront dans votre historique.",
       "deleteMessageTitle": "Supprimer le Message",
@@ -1646,12 +1646,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "initFailed": "Échec de l’initialisation. Veuillez actualiser.",
       "messageDeleted": "Message supprimé",
       "switchedTo": "Basculé sur {address}",
-      "generatedNew": "Nouvelle adresse temporaire générée !",
-      "mailboxDeleted": "Boîte supprimée et nouvelle adresse créée !",
+      "generatedNew": "Nouvelle adresse créée.",
+      "mailboxDeleted": "Boîte supprimée. Une nouvelle adresse est prête.",
       "customCreated": "Boîte personnalisée créée : {address}",
       "customFailed": "Échec de la création. Essayez un autre identifiant.",
       "providerSwitched": "Fournisseur actif basculé sur {provider}",
-      "historyCleared": "Historique des boîtes effacé.",
+      "historyCleared": "Boîtes enregistrées effacées de ce navigateur.",
       "copiedToClipboard": "Copié dans le presse-papiers !",
       "copyFailed": "Échec de la copie",
       "otpCopied": "Code de vérification {code} copié !",
@@ -1675,14 +1675,14 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "useCases": {
       "badge": "Services Populaires",
-      "title": "Fonctionne Partout Sans Encombre",
-      "subtitle": "Utilisez TempoEmails pour vos validations rapides sans risquer de divulguer votre adresse personnelle.",
+      "title": "À quoi elle sert",
+      "subtitle": "Des inscriptions courantes où une adresse jetable a plus de sens que la vôtre.",
       "items": [
         {
           "category": "Essais IA & Logiciels",
           "badge": "ChatGPT & SaaS",
           "title": "E-mail Temporaire pour ChatGPT et Essais Gratuits",
-          "description": "Inscrivez-vous aux outils d'IA, API et essais SaaS gratuits sans exposer votre adresse principale aux listes de diffusion.",
+          "description": "Inscrivez-vous à des outils d’IA, des API pour développeurs et des essais SaaS sans que votre adresse principale finisse dans leurs listes marketing.",
           "tags": [
             "ChatGPT / OpenAI",
             "Midjourney",
@@ -1694,7 +1694,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Jeux & Communautés",
           "badge": "Discord & Steam",
           "title": "E-mail Jetable pour Discord et Jeux Vidéo",
-          "description": "Créez des profils secondaires, rejoignez des serveurs Discord, vérifiez vos comptes Steam et activez des clés bêta facilement.",
+          "description": "Créez un second profil de joueur, rejoignez un serveur Discord ou récupérez une clé bêta sans le lier à votre boîte principale.",
           "tags": [
             "Vérification Discord",
             "Comptes Steam",
@@ -1706,7 +1706,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Réseaux Sociaux & Messages",
           "badge": "Telegram & Réseaux",
           "title": "E-mail Éphémère pour Réseaux Sociaux et Applis",
-          "description": "Gardez votre vrai e-mail anonyme lors de vos inscriptions sur les forums, Telegram, Reddit ou pour télécharger des livres blancs.",
+          "description": "Inscrivez-vous sur des forums et des communautés, ou téléchargez un livre blanc ou un PDF qui demande un email, sans donner votre vraie adresse.",
           "tags": [
             "Inscriptions Telegram",
             "Profils Reddit",
@@ -1718,23 +1718,23 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Développement & Tests QA",
           "badge": "API E-mail & QA",
           "title": "Générateur de Faux E-mails pour Tests QA",
-          "description": "Testez les parcours d'inscription, vérifiez la réception des e-mails transactionnels et simulez plusieurs comptes en parallèle.",
+          "description": "Testez les emails d’inscription, de confirmation et de réinitialisation de mot de passe envoyés par votre application. Créez plusieurs adresses pour vous inscrire comme différents utilisateurs de test.",
           "tags": [
             "QA Inscription",
-            "Tests Webhooks",
+            "Email transactionnel",
             "Vérification Auth",
-            "Simulation Multi-Boîtes"
+            "Plusieurs utilisateurs test"
           ]
         }
       ]
     },
     "otpShowcase": {
-      "badge": "Détection Automatique de Codes",
+      "badge": "Codes de vérification",
       "title": "Recevez instantanément vos codes OTP sur un email jetable.",
-      "subtitle": "TempoEmails détecte automatiquement les codes de vérification de 4 à 8 chiffres et les liens d’activation dès leur réception.",
+      "subtitle": "Quand un email contient un code de 4 à 8 chiffres ou un lien de vérification, TempoEmails l’affiche au-dessus du message avec un bouton de copie, sans avoir à le chercher dans le modèle.",
       "tag1": "Codes OTP de 4 à 8 Chiffres",
-      "tag2": "Liens d’Activation en 1 Clic",
-      "tag3": "Copie Immédiate",
+      "tag2": "Liens de vérification",
+      "tag3": "Copie en un clic",
       "previewBadge": "Aperçu Boîte",
       "previewDetected": "Détecté Automatiquement",
       "previewCode": "Code de Vérification",
@@ -1744,73 +1744,73 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "previewTime": "À l'instant"
     },
     "features": {
-      "badge": "Points Forts",
-      "title": "Conçu pour la Rapidité et la Protection Totale",
-      "subtitle": "Tous les avantages d’un service d’email jetable moderne, ultra rapide et sans aucun traçage.",
+      "badge": "Fonctionnalités",
+      "title": "Ce que fait la boîte",
+      "subtitle": "Une boîte de réception seule dans votre navigateur, adossée à plusieurs fournisseurs publics d’email temporaire.",
       "items": [
         {
           "title": "Générateur d'E-mail Temporaire Gratuit",
-          "description": "Protégez votre boîte principale contre les newsletters, les courtiers de données, les pièges à spam et les courriels indésirables."
+          "description": "L’adresse est créée au chargement de la page. Utilisez-la pour les inscriptions que vous ne voulez pas lier à votre vraie boîte : les newsletters et promotions qui suivent arriveront à un endroit que vous pouvez abandonner."
         },
         {
           "title": "Extracteur Automatique d'OTP et de Codes",
-          "description": "Les e-mails entrants sont analysés automatiquement pour mettre en évidence les codes à 4-8 chiffres et les liens magiques en 1 clic."
+          "description": "Les codes de vérification et les liens de confirmation sont repérés dans chaque email et affichés avec un bouton de copie."
         },
         {
-          "title": "E-mail 100% Anonyme — Zéro Journal",
-          "description": "Aucune inscription, aucun traçage personnel et aucune base de données centrale. Vos messages s'effacent définitivement."
+          "title": "Sans inscription",
+          "description": "Vous ne créez jamais de compte chez nous. Les boîtes Mail.tm et Mail.gw ont un mot de passe généré pour les rouvrir plus tard. Celles des autres fournisseurs n’en ont pas : toute personne qui connaît l’adresse peut les lire."
         },
         {
-          "title": "Transfert QR du PC vers Mobile",
-          "description": "Scannez le code QR à l'écran avec l'appareil photo de votre smartphone pour accéder instantanément à votre boîte jetable."
+          "title": "QR code pour votre téléphone",
+          "description": "Scannez le QR code pour récupérer l’adresse sur votre téléphone, pratique pour s’inscrire dans une application. Les messages arrivent toujours dans ce navigateur."
         },
         {
           "title": "Boîte de Réception avec Rafraîchissement en Direct",
-          "description": "Les nouveaux e-mails arrivent en temps réel grâce à une vérification automatique toutes les 10 secondes et au push SSE."
+          "description": "La boîte vérifie les nouveaux messages toutes les 10 secondes et peut émettre un court son à leur arrivée. Vous pouvez aussi actualiser à la main."
         },
         {
-          "title": "Sélecteur Multi-Boîtes de 10 Minutes",
-          "description": "Gérez jusqu'à 8 boîtes temporaires récentes simultanément depuis votre tiroir d'historique sans perdre vos messages en attente."
+          "title": "Historique des boîtes",
+          "description": "Jusqu’à 25 adresses récentes sont conservées dans ce navigateur. Revenez à l’une d’elles pour un email arrivé en retard ; les messages déjà reçus restent en cache."
         }
       ]
     },
     "howItWorks": {
-      "badge": "Guide en 4 Étapes",
+      "badge": "Fonctionnement",
       "title": "Comment Fonctionne l’Email Temporaire en 4 Étapes",
-      "subtitle": "Prêt et vérifié en quelques secondes, sans inscription complexe ni données personnelles.",
+      "subtitle": "Rien à installer, aucun formulaire à remplir.",
       "step1Title": "1. Copiez votre Adresse Gratuite",
-      "step1Desc": "Nous générons instantanément une boîte jetable fonctionnelle pour recevoir des messages.",
+      "step1Desc": "Une adresse fournie par l’un de nos fournisseurs de messagerie est prête au chargement de la page. Copiez-la en un clic.",
       "step2Title": "2. Utilisez-la pour vos Inscriptions",
-      "step2Desc": "Collez l’adresse sur n’importe quel site, forum ou essai gratuit demandant une confirmation.",
-      "step3Title": "3. Détection Automatique d’OTP",
-      "step3Desc": "Vos emails s’affichent en direct et vos codes de confirmation sont mis en évidence.",
-      "step4Title": "4. Détruisez et Oubliez",
-      "step4Desc": "Fermez l’onglet à la fin. Aucun spam ni publicité dans votre véritable messagerie."
+      "step2Desc": "Utilisez-la partout où un site demande un email : inscription, essai gratuit, téléchargement.",
+      "step3Title": "3. Récupérez le code",
+      "step3Desc": "Les nouveaux messages apparaissent environ 10 secondes après leur arrivée chez le fournisseur. Codes et liens de confirmation s’affichent en haut avec un bouton de copie.",
+      "step4Title": "4. Supprimez ou passez à autre chose",
+      "step4Desc": "Une fois terminé, supprimez la boîte ou créez une nouvelle adresse. Le marketing qui suit ira à l’adresse jetable, pas à la vôtre."
     },
     "faq": {
       "badge": "Questions Fréquentes",
       "title": "Foire Aux Questions",
-      "subtitle": "Tout ce qu’il faut savoir sur l’email jetable, la réception d’OTP et votre vie privée.",
+      "subtitle": "Des réponses courtes sur le fonctionnement de la boîte.",
       "q1": "Qu’est-ce qu’un email temporaire et comment fonctionne-t-il ?",
-      "a1": "Un email temporaire (ou boîte jetable de 10 minutes) fournit une adresse instantanée pour recevoir des confirmations sans exposer votre adresse personnelle.",
+      "a1": "Un email temporaire (ou jetable) est une adresse utilisable immédiatement, sans s’inscrire nulle part. Ce qui y est envoyé s’affiche sur cette page. Elle sert aux inscriptions et aux emails de vérification que vous ne voulez pas dans votre boîte personnelle.",
       "q2": "Puis-je utiliser TempoEmails pour recevoir des codes OTP ?",
-      "a2": "Oui ! TempoEmails extrait automatiquement les codes OTP et liens magiques avec un bouton de copie en 1 clic.",
+      "a2": "Oui. Quand un email contient un code de 4 à 8 chiffres ou un lien de confirmation, il s’affiche au-dessus du message avec un bouton de copie. La boîte vérifie les nouveaux messages toutes les 10 secondes ; le code apparaît donc en général peu après l’envoi par le site.",
       "q3": "Est-il compatible avec Discord, ChatGPT, Telegram ou Steam ?",
-      "a3": "Oui. Si un domaine est filtré par un site, cliquez simplement sur \"Changer\" pour utiliser un autre domaine actif.",
+      "a3": "Souvent, oui. Certains services bloquent les domaines jetables connus. Si rien n’arrive au bout d’une ou deux minutes, cliquez sur « Nouvel email » ou « Personnaliser » pour obtenir une adresse sur un autre domaine, puis réessayez.",
       "q4": "Puis-je envoyer des e-mails avec TempoEmails ?",
-      "a4": "Non. Le service est strictement en réception pour empêcher tout abus de spam et assurer une délivrabilité maximale.",
+      "a4": "Non. La boîte fonctionne en réception seule : vous pouvez lire, télécharger et supprimer des messages, mais pas envoyer ni répondre depuis l’adresse.",
       "q5": "Puis-je choisir un identifiant personnalisé ?",
-      "a5": "Oui. Cliquez sur \"Personnalisé\" pour choisir votre nom et votre domaine préféré.",
-      "q6": "Est-ce totalement gratuit et sans inscription ?",
-      "a6": "Oui, 100 % gratuit, sans mot de passe, sans formulaires et sans enregistrement de journaux personnels."
+      "a5": "Oui. Cliquez sur « Personnaliser », saisissez un nom d’utilisateur et choisissez l’un des domaines proposés en ce moment par Mail.tm, Mail.gw, Inboxes ou Guerrilla Mail. Si le nom est déjà pris, essayez-en un autre.",
+      "q6": "Est-ce gratuit, et qui peut lire mes messages ?",
+      "a6": "C’est gratuit et il n’y a rien à créer. Les messages sont conservés par le fournisseur de l’adresse et mis en cache dans votre navigateur. Les boîtes Mail.tm et Mail.gw sont protégées par un mot de passe (voir « Accès ») ; les adresses Inboxes, Guerrilla Mail et TempMail.lol peuvent être lues par quiconque les connaît. N’utilisez pas d’adresse temporaire pour quoi que ce soit de sensible."
     },
     "cta": {
       "title": "Votre boîte est déjà active.",
-      "subtitle": "Ni compte ni mot de passe : copiez l’adresse et c’est parti.",
+      "subtitle": "Aucune inscription. Copiez l’adresse et les nouveaux messages s’afficheront ici. Les boîtes Mail.tm et Mail.gw ont aussi un mot de passe pour les rouvrir plus tard.",
       "button": "Ouvrir ma boîte"
     },
     "footer": {
-      "brandDesc": "Générateur d’email temporaire et jetable gratuit. Recevez vos codes OTP et liens de confirmation en protégeant votre boîte personnelle.",
+      "brandDesc": "Email jetable gratuit pour les inscriptions et les codes de vérification. Réception seule, sans compte à créer.",
       "quickLinks": "Liens Rapides",
       "instantInbox": "Boîte Instantanée",
       "company": "Entreprise",
@@ -1848,27 +1848,27 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageNotFoundBadge": "Page Introuvable",
       "pageNotFoundTitle": "Oups, cette page a",
       "pageExpired": "expiré.",
-      "pageNotFoundDesc": "Tout comme un e-mail temporaire, cette page a disparu. Ne vous inquiétez pas — votre boîte de réception jetable vous attend.",
+      "pageNotFoundDesc": "Cette page n’existe pas, un peu comme une adresse temporaire expirée. Votre boîte est toujours sur la page d’accueil.",
       "goToHomepage": "Retourner à l'Accueil",
       "readOurBlog": "Lire Notre Blog",
       "translationNotice": "Cet article est actuellement affiché en anglais. La traduction complète est en cours."
     },
     "pages": {
       "about": {
-        "title": "À Propos de TempoEmails — Notre Mission d'E-mail Temporaire Gratuit",
-        "description": "Pourquoi nous avons créé TempoEmails : un service d'e-mail temporaire rapide, gratuit avec détection d'OTP et zéro journal.",
+        "title": "À propos de TempoEmails — Email temporaire et jetable gratuit",
+        "description": "Pourquoi nous avons créé TempoEmails : un site d’email temporaire gratuit qui réunit plusieurs fournisseurs publics d’email jetable dans une seule boîte, avec détection automatique des OTP.",
         "heading": "Pourquoi Nous Avons Créé TempoEmails",
-        "subheading": "Un outil d'e-mail temporaire propre, rapide et respectueux de votre vie privée."
+        "subheading": "Une boîte temporaire simple pour les inscriptions que vous ne voulez pas dans votre vraie messagerie."
       },
       "contact": {
         "title": "Contact & Support TempoEmails",
-        "description": "Contactez l'équipe TempoEmails pour une assistance, des questions sur la délivrabilité des domaines ou l'accès API.",
+        "description": "Contactez TempoEmails pour un bug, un problème de réception, un signalement d’abus, un partenariat ou une suggestion.",
         "heading": "Contact & Assistance",
         "subheading": "Une question, un problème ou une suggestion ? Contactez-nous."
       },
       "blog": {
         "title": "Blog Confidentialité, Sécurité & E-mail Jetable — TempoEmails",
-        "description": "Guides d'experts sur l'e-mail temporaire gratuit, les codes OTP, le mail 10 minutes et la protection de la vie privée.",
+        "description": "Guides sur l’email temporaire, l’email jetable, les codes OTP et la protection de votre boîte principale.",
         "heading": "Guides Confidentialité & Sécurité",
         "subheading": "Conseils pratiques pour éviter le spam, gérer vos comptes en ligne et protéger votre adresse principale.",
         "faqHeading": "Questions fréquentes",
@@ -1876,7 +1876,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       },
       "privacy": {
         "title": "Politique de Confidentialité — TempoEmails",
-        "description": "Politique de confidentialité de TempoEmails : zéro journal, traitement éphémère en mémoire et conformité RGPD.",
+        "description": "Comment TempoEmails traite les données : ce que stockent les fournisseurs de messagerie, ce qui reste dans votre navigateur, journaux serveur, cookies et publicités.",
         "heading": "Politique de Confidentialité"
       },
       "terms": {
@@ -1894,7 +1894,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
   "de": {
     "meta": {
       "title": "Temporäre Email Kostenlos — Wegwerf-Email & Fake Mail Generator",
-      "description": "Kostenlose temporäre Wegwerf-Email Adresse. Erhalte OTP-Bestätigungscodes, Aktivierungslinks und Nachrichten sofort ohne Spam und ohne Anmeldung.",
+      "description": "Kostenlose Wegwerf-E-Mail mit einer temporären Adresse, die beim Laden der Seite bereitsteht. OTP-Codes und Aktivierungslinks empfangen, ohne Ihre echte E-Mail anzugeben.",
       "keywords": "temporäre email, wegwerf email, fake email, 10 minuten mail, wegwerfmail, temporäre mail, otp empfangen online, fake mail generator, kostenlose temporäre email"
     },
     "nav": {
@@ -1908,12 +1908,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Sprache"
     },
     "hero": {
-      "chips": ["Ohne Anmeldung","Automatische OTP-Erkennung","Keine Logs"],
+      "chips": ["Ohne Anmeldung","OTP-Codes hervorgehoben","Nur Empfang"],
       "worksWith": "Funktioniert mit",
-      "badge": "Sofortige Wegwerf-Email & 10-Minuten-Postfach",
+      "badge": "Kostenlose Temp-Mail ohne Anmeldung",
       "titleLine1": "Kostenlose Temporäre Email.",
       "titleLine2": "Wegwerf-Email in Sekunden.",
-      "subtitle": "Erstelle mit einem Klick eine anonyme Wegwerf-Email Adresse. Empfange Bestätigungscodes, OTPs und Aktivierungslinks ohne Spam, ohne Logs und ohne Registrierung."
+      "subtitle": "Erstelle mit einem Klick eine Wegwerf-Email-Adresse. Empfange Bestätigungscodes, OTPs und Aktivierungslinks."
     },
     "addressBar": {
       "tempEmailLabel": "Temporäre Email",
@@ -1937,7 +1937,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "inboxList": {
       "title": "Posteingang",
       "emptyTitle": "Warte auf eingehende Emails...",
-      "emptyDesc": "Kopiere deine obige Wegwerfadresse und füge sie in ein beliebiges Registrierungsformular ein. Neue Nachrichten erscheinen hier automatisch.",
+      "emptyDesc": "Kopieren Sie die Adresse oben und verwenden Sie sie in einem Anmeldeformular. Das Postfach sucht alle 10 Sekunden nach neuer Post.",
       "autoChecking": "Automatische Prüfung aktiv",
       "clickToView": "Klicken, um E-Mail-Details anzuzeigen...",
       "unreadBadge": "Ungelesen",
@@ -1967,7 +1967,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "customModal": {
       "title": "Benutzerdefinierte Email",
-      "desc": "Wähle deinen Wunschnamen und eine Domain für dein individuelles temporäres Postfach.",
+      "desc": "Wählen Sie einen Benutzernamen und eine Domain. Lehnt eine Website die Domain ab, versuchen Sie eine andere.",
       "usernameLabel": "Benutzername",
       "usernamePlaceholder": "z.B. max.anmeldung",
       "domainLabel": "Domain",
@@ -1995,15 +1995,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "qrModal": {
       "title": "Smartphone QR-Code",
-      "desc": "Scanne diesen Code mit der Handykamera, um diese temporäre Email sofort auf dem Smartphone zu nutzen.",
-      "copyLink": "Link Kopieren",
-      "copiedLink": "Link Kopiert!",
+      "desc": "Mit der Handykamera scannen, um diese Adresse auf Ihr Telefon zu holen, etwa für die Anmeldung in einer App. Die Post kommt weiterhin hier an.",
+      "copyLink": "Adresse kopieren",
+      "copiedLink": "Kopiert!",
       "close": "Schließen",
       "unavailable": "QR-Code nicht verfügbar — bitte Verbindung prüfen und erneut versuchen."
     },
     "historyDrawer": {
       "title": "Letzte Postfächer",
-      "desc": "Wechsle schnell zwischen früheren Adressen, die sicher in deinem Browser gespeichert sind.",
+      "desc": "Zuletzt verwendete Adressen. Sie werden nur in diesem Browser gespeichert.",
       "activeInbox": "Aktiv",
       "savedStorage": "Lokal Gespeichert",
       "emptyTitle": "Keine Postfächer gespeichert",
@@ -2017,7 +2017,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Abbrechen",
       "confirm": "Bestätigen",
       "deleteInboxTitle": "Postfach Löschen",
-      "deleteInboxDesc": "Möchtest du diese temporäre Email und alle empfangenen Nachrichten unwiderruflich löschen?",
+      "deleteInboxDesc": "Die Adresse und ihre gespeicherten Nachrichten werden aus diesem Browser entfernt, und eine neue wird erstellt. Wieder öffnen können Sie sie nur, wenn sie ein Passwort hat und Sie es gespeichert haben.",
       "changeAddressTitle": "Adresse Wechseln",
       "changeAddressDesc": "Neue Zufallsadresse erstellen? Aktuelle Nachrichten bleiben in deinem Verlauf.",
       "deleteMessageTitle": "Nachricht Löschen",
@@ -2036,12 +2036,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "initFailed": "Postfach konnte nicht initialisiert werden. Bitte neu laden.",
       "messageDeleted": "Nachricht gelöscht",
       "switchedTo": "Gewechselt zu {address}",
-      "generatedNew": "Neues temporäres Postfach generiert!",
-      "mailboxDeleted": "Postfach gelöscht und neue Adresse erstellt!",
+      "generatedNew": "Neue Adresse erstellt.",
+      "mailboxDeleted": "Postfach entfernt. Eine neue Adresse ist bereit.",
       "customCreated": "Wunsch-Postfach erstellt: {address}",
       "customFailed": "Erstellung fehlgeschlagen. Bitte anderen Namen wählen.",
       "providerSwitched": "Aktiver Mail-Provider gewechselt zu {provider}",
-      "historyCleared": "Verlauf gelöscht.",
+      "historyCleared": "Gespeicherte Postfächer aus diesem Browser gelöscht.",
       "copiedToClipboard": "In Zwischenablage kopiert!",
       "copyFailed": "Kopieren fehlgeschlagen",
       "otpCopied": "Bestätigungscode {code} kopiert!",
@@ -2065,14 +2065,14 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "useCases": {
       "badge": "Beliebte Dienste",
-      "title": "Funktioniert Überall Einwandfrei",
-      "subtitle": "Nutze TempoEmails für schnelle Verifizierungen ohne Weitergabe deiner privaten Email-Adresse.",
+      "title": "Wofür man es nutzt",
+      "subtitle": "Typische Anmeldungen, bei denen eine Wegwerfadresse sinnvoller ist als Ihre echte.",
       "items": [
         {
           "category": "KI- & Software-Testphasen",
           "badge": "ChatGPT & SaaS",
           "title": "Wegwerf-E-Mail für ChatGPT & Testversionen",
-          "description": "Melden Sie sich für KI-Tools, Entwickler-APIs und SaaS-Testversionen an, ohne Ihre Hauptadresse auf Werbelisten zu setzen.",
+          "description": "Melden Sie sich bei KI-Tools, Entwickler-APIs und SaaS-Testversionen an, ohne dass Ihre Hauptadresse auf deren Marketinglisten landet.",
           "tags": [
             "ChatGPT / OpenAI",
             "Midjourney",
@@ -2084,7 +2084,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Gaming & Communitys",
           "badge": "Discord & Steam",
           "title": "Temporäre E-Mail für Discord & Gaming",
-          "description": "Erstellen Sie Zweitprofile, treten Sie Discord-Servern bei, verifizieren Sie Steam-Accounts und lösen Sie Beta-Keys ein.",
+          "description": "Legen Sie ein zweites Gaming-Profil an, treten Sie einem Discord-Server bei oder holen Sie sich einen Beta-Key, ohne es mit Ihrem Hauptpostfach zu verknüpfen.",
           "tags": [
             "Discord-Verifizierung",
             "Steam-Accounts",
@@ -2096,7 +2096,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Soziale Medien & Messenger",
           "badge": "Telegram & Social",
           "title": "Brenner-E-Mail für soziale Netzwerke",
-          "description": "Bleiben Sie anonym bei Anmeldungen auf Foren, Telegram, Reddit oder beim Herunterladen von Whitepapers und PDFs.",
+          "description": "Registrieren Sie sich in Foren und Communitys oder laden Sie ein Whitepaper oder PDF herunter, das eine E-Mail verlangt, ohne Ihre echte Adresse preiszugeben.",
           "tags": [
             "Telegram-Anmeldungen",
             "Reddit-Profile",
@@ -2108,23 +2108,23 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Entwickler & QA-Tests",
           "badge": "E-Mail-API & QA",
           "title": "Fake-E-Mail-Generator für Software-QA",
-          "description": "Testen Sie Registrierungsabläufe, prüfen Sie die Zustellung transaktionaler E-Mails und simulieren Sie Mehrfachnutzer.",
+          "description": "Testen Sie die Anmelde-, Bestätigungs- und Passwort-Reset-Mails Ihrer eigenen App. Erstellen Sie mehrere Adressen, um sich als verschiedene Testnutzer anzumelden.",
           "tags": [
             "Registrierungs-QA",
-            "Webhook-Tests",
+            "Transaktions-E-Mails",
             "Auth-Prüfung",
-            "Multi-Postfach-Sim"
+            "Mehrere Testnutzer"
           ]
         }
       ]
     },
     "otpShowcase": {
-      "badge": "Automatische Code-Erkennung",
+      "badge": "Bestätigungscodes",
       "title": "Erhalte OTP-Bestätigungscodes sofort in deiner Wegwerf-Email.",
-      "subtitle": "TempoEmails durchsucht eingehende Emails automatisch nach 4- bis 8-stelligen OTP-Codes und Aktivierungslinks, sobald sie eintreffen.",
+      "subtitle": "Enthält eine E-Mail einen 4- bis 8-stelligen Code oder einen Bestätigungslink, zeigt TempoEmails ihn über der Nachricht mit einer Kopieren-Schaltfläche an. Sie müssen ihn also nicht im Template suchen.",
       "tag1": "4- bis 8-stellige OTPs",
-      "tag2": "1-Klick Aktivierungslinks",
-      "tag3": "Sofort Kopieren",
+      "tag2": "Bestätigungslinks",
+      "tag3": "Kopieren mit einem Klick",
       "previewBadge": "Postfach Vorschau",
       "previewDetected": "Automatisch Erkannt",
       "previewCode": "Bestätigungscode",
@@ -2134,73 +2134,73 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "previewTime": "Gerade eben"
     },
     "features": {
-      "badge": "Hauptmerkmale",
-      "title": "Entwickelt für Maximale Geschwindigkeit & Absolute Privatsphäre",
-      "subtitle": "Alles, was du von einem modernen Wegwerf-Email-Dienst erwartest: blitzschnell und ohne Tracking.",
+      "badge": "Funktionen",
+      "title": "Was das Postfach kann",
+      "subtitle": "Ein reines Empfangspostfach im Browser, gestützt auf mehrere öffentliche Temp-Mail-Anbieter.",
       "items": [
         {
           "title": "Kostenloser Wegwerf-E-Mail-Generator",
-          "description": "Schützen Sie Ihre Hauptadresse dauerhaft vor Newslettern, Datenhändlern, Spam-Fallen und unerwünschter Werbung."
+          "description": "Die Adresse wird beim Laden der Seite erstellt. Nutzen Sie sie für Anmeldungen, die nicht an Ihr echtes Postfach gebunden sein sollen. Newsletter und Werbung, die danach kommen, landen dort, wo Sie sie einfach zurücklassen können."
         },
         {
           "title": "Automatische OTP- & Code-Erkennung",
-          "description": "Eingehende E-Mails werden automatisch analysiert, um 4- bis 8-stellige Codes und Bestätigungslinks per 1-Klick hervorzuheben."
+          "description": "Bestätigungscodes und -links werden aus jeder E-Mail herausgesucht und mit einer Kopieren-Schaltfläche angezeigt."
         },
         {
-          "title": "100% Anonyme E-Mail — Keine Logs",
-          "description": "Keine Registrierung, kein Tracking und keine zentrale Datenbank. Nach dem Löschen verschwinden alle Nachrichten unwiderruflich."
+          "title": "Keine Anmeldung nötig",
+          "description": "Sie legen bei uns nie ein Konto an. Postfächer von Mail.tm und Mail.gw erhalten ein generiertes Passwort, mit dem Sie sie später wieder öffnen können. Postfächer anderer Anbieter haben kein Passwort: Wer die Adresse kennt, kann sie lesen."
         },
         {
-          "title": "Desktop-zu-Mobile QR-Übertragung",
-          "description": "Scannen Sie den QR-Code auf Ihrem Bildschirm mit der Handykamera, um Ihre Wegwerfadresse sofort mobil zu öffnen."
+          "title": "QR-Code fürs Handy",
+          "description": "Scannen Sie den QR-Code, um die Adresse aufs Telefon zu holen, praktisch für die Anmeldung in einer App. Die Post kommt weiterhin in diesem Browser an."
         },
         {
           "title": "Automatisch aktualisierender Live-Posteingang",
-          "description": "Neue E-Mails treffen dank 10-Sekunden-Intervall und SSE-Push in Echtzeit ein. Kein manuelles Aktualisieren nötig."
+          "description": "Das Postfach sucht alle 10 Sekunden nach neuer Post und kann bei Eingang einen kurzen Ton abspielen. Sie können auch manuell aktualisieren."
         },
         {
-          "title": "Multi-Postfach 10-Minuten-Mail Switcher",
-          "description": "Verwalten Sie bis zu 8 temporäre Adressen gleichzeitig im Verlauf, ohne ausstehende Bestätigungen zu verlieren."
+          "title": "Verlauf der Postfächer",
+          "description": "Bis zu 25 zuletzt genutzte Adressen bleiben in diesem Browser gespeichert. Wechseln Sie zurück, um nach einer verspäteten E-Mail zu sehen; bereits empfangene Nachrichten bleiben im Cache."
         }
       ]
     },
     "howItWorks": {
-      "badge": "4-Schritte-Anleitung",
+      "badge": "So funktioniert es",
       "title": "So Funktioniert Wegwerf-Email in 4 Schritten",
-      "subtitle": "In Sekunden verifiziert. Ohne komplizierte Registrierung oder persönliche Angaben.",
+      "subtitle": "Nichts zu installieren, kein Formular auszufüllen.",
       "step1Title": "1. Kostenlose Adresse Kopieren",
-      "step1Desc": "Wir erstellen sofort eine aktive, empfangsbereite Wegwerf-Email-Adresse für dich.",
+      "step1Desc": "Beim Laden der Seite steht eine Adresse von einem unserer Mail-Anbieter bereit. Mit einem Klick kopieren.",
       "step2Title": "2. Bei Beliebigen Diensten Nutzen",
-      "step2Desc": "Füge die Adresse bei Formularen, Probeabos oder Apps ein, die eine Email verlangen.",
-      "step3Title": "3. Codes Automatisch Erkennen",
-      "step3Desc": "Eingehende Emails landen in Echtzeit im Postfach, Codes werden direkt hervorgehoben.",
-      "step4Title": "4. Schließen & Vergessen",
-      "step4Desc": "Tab schließen oder Postfach löschen. Garantiert kein Spam in deinem echten Postfach."
+      "step2Desc": "Verwenden Sie sie überall, wo eine Website eine E-Mail verlangt: Anmeldung, Testversion, Download.",
+      "step3Title": "3. Code abholen",
+      "step3Desc": "Neue Post erscheint etwa 10 Sekunden, nachdem sie beim Anbieter eingegangen ist. Codes und Bestätigungslinks stehen oben mit einer Kopieren-Schaltfläche.",
+      "step4Title": "4. Löschen oder weiterziehen",
+      "step4Desc": "Löschen Sie das Postfach oder erstellen Sie eine neue Adresse, wenn Sie fertig sind. Werbung, die danach kommt, geht an die Wegwerfadresse, nicht an Ihre echte."
     },
     "faq": {
       "badge": "Häufige Fragen",
       "title": "Häufig Gestellte Fragen",
-      "subtitle": "Wissenswertes rund um Wegwerf-Emails, OTP-Erkennung und Datenschutz.",
+      "subtitle": "Kurze Antworten dazu, wie das Postfach funktioniert.",
       "q1": "Was ist eine Wegwerf-Email und wie funktioniert sie?",
-      "a1": "Eine Wegwerf-Email (auch 10-Minuten-Mail genannt) liefert eine temporäre Adresse zum Empfang von Bestätigungen, ohne dein echtes Postfach preiszugeben.",
+      "a1": "Eine Temp-Mail (auch Wegwerf-E-Mail) ist eine Adresse, die Sie sofort nutzen können, ohne sich irgendwo anzumelden. Was an sie geschickt wird, erscheint auf dieser Seite. Gedacht ist sie für Anmeldungen und Bestätigungsmails, die Sie nicht im persönlichen Postfach haben wollen.",
       "q2": "Kann ich TempoEmails für OTP-Codes nutzen?",
-      "a2": "Ja! TempoEmails erkennt 4-8-stellige Codes und Bestätigungslinks automatisch mit 1-Klick-Kopierfunktion.",
+      "a2": "Ja. Enthält eine E-Mail einen 4- bis 8-stelligen Code oder einen Bestätigungslink, wird er über der Nachricht mit einer Kopieren-Schaltfläche angezeigt. Das Postfach sucht alle 10 Sekunden nach neuer Post, der Code erscheint also meist kurz nachdem die Website ihn verschickt hat.",
       "q3": "Funktioniert es mit Discord, ChatGPT, Telegram oder Steam?",
-      "a3": "Ja. Falls ein Dienst eine Domain blockiert, klicke einfach auf \"Ändern\", um eine andere Domain zu wählen.",
+      "a3": "Oft ja. Manche Dienste sperren bekannte Wegwerf-Domains. Kommt nach ein, zwei Minuten nichts an, klicken Sie auf „Neue Adresse“ oder „Anpassen“, um eine Adresse auf einer anderen Domain zu erhalten, und versuchen Sie es erneut.",
       "q4": "Kann ich von TempoEmails aus Emails versenden?",
-      "a4": "Nein, TempoEmails ist ein reiner Empfangsdienst, um Missbrauch zu verhindern und maximale Zustellbarkeit zu sichern.",
+      "a4": "Nein. Das Postfach ist ein reines Empfangspostfach: Sie können Nachrichten lesen, herunterladen und löschen, aber nicht von der Adresse senden oder antworten.",
       "q5": "Kann ich eine eigene Wunsch-Email wählen?",
-      "a5": "Ja, klicke auf \"Anpassen\", um deinen Wunschnamen und eine verfügbare Domain auszuwählen.",
-      "q6": "Ist TempoEmails wirklich kostenlos und ohne Registrierung?",
-      "a6": "Ja, 100 % kostenlos, ohne Passwörter, ohne Anmeldung und ohne Speicherung persönlicher Daten."
+      "a5": "Ja. Klicken Sie auf „Anpassen“, geben Sie einen Benutzernamen ein und wählen Sie eine der Domains, die Mail.tm, Mail.gw, Inboxes oder Guerrilla Mail gerade anbieten. Ist der Name vergeben, versuchen Sie einen anderen.",
+      "q6": "Ist es kostenlos, und wer kann meine Nachrichten lesen?",
+      "a6": "Es ist kostenlos, und Sie müssen nichts registrieren. Die Nachrichten liegen beim Anbieter der Adresse und im Cache Ihres Browsers. Postfächer von Mail.tm und Mail.gw sind passwortgeschützt (siehe „Zugang“); Adressen von Inboxes, Guerrilla Mail und TempMail.lol kann jeder lesen, der sie kennt. Verwenden Sie eine temporäre Adresse nicht für Vertrauliches."
     },
     "cta": {
       "title": "Ihr Postfach ist schon aktiv.",
-      "subtitle": "Kein Konto, kein Passwort – Adresse kopieren und loslegen.",
+      "subtitle": "Keine Anmeldung nötig. Adresse kopieren, neue Post erscheint hier. Postfächer von Mail.tm und Mail.gw erhalten zusätzlich ein Passwort, damit Sie sie später wieder öffnen können.",
       "button": "Mein Postfach öffnen"
     },
     "footer": {
-      "brandDesc": "Kostenloser Generator für temporäre Wegwerf-Emails. Empfange Bestätigungscodes und halte dein privates Postfach sauber von Spam.",
+      "brandDesc": "Kostenlose Wegwerf-E-Mail für Anmeldungen und Bestätigungscodes. Nur Empfang, ohne Konto.",
       "quickLinks": "Direktlinks",
       "instantInbox": "Sofort-Postfach",
       "company": "Unternehmen",
@@ -2238,27 +2238,27 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageNotFoundBadge": "Seite nicht gefunden",
       "pageNotFoundTitle": "Hoppla, diese Seite ist",
       "pageExpired": "abgelaufen.",
-      "pageNotFoundDesc": "Genau wie eine temporäre E-Mail ist diese Seite verschwunden. Ihr Wegwerf-Posteingang wartet jedoch weiterhin auf Sie.",
+      "pageNotFoundDesc": "Diese Seite gibt es nicht, ähnlich wie eine abgelaufene Wegwerfadresse. Ihr Postfach finden Sie weiterhin auf der Startseite.",
       "goToHomepage": "Zur Startseite",
       "readOurBlog": "Blog lesen",
       "translationNotice": "Dieser Artikel wird derzeit auf Englisch angezeigt. Die vollständige Übersetzung ist in Arbeit."
     },
     "pages": {
       "about": {
-        "title": "Über TempoEmails — Kostenlose Wegwerf-E-Mail Mission",
-        "description": "Warum wir TempoEmails gebaut haben: ein schneller, kostenloser Wegwerf-E-Mail-Dienst mit OTP-Erkennung und ohne Logs.",
+        "title": "Über TempoEmails — Kostenlose Temp-Mail & Wegwerf-E-Mail",
+        "description": "Warum wir TempoEmails gebaut haben: eine kostenlose Temp-Mail-Seite, die mehrere öffentliche Wegwerf-Mail-Anbieter in einem Postfach zusammenführt, mit automatischer OTP-Erkennung.",
         "heading": "Warum wir TempoEmails entwickelt haben",
-        "subheading": "Saubere, schnelle und datenschutzorientierte temporäre E-Mails, die einfach funktionieren."
+        "subheading": "Ein einfaches temporäres Postfach für Anmeldungen, die nicht in Ihre echte E-Mail gehören."
       },
       "contact": {
         "title": "TempoEmails Kontakt & Support",
-        "description": "Kontaktieren Sie das TempoEmails-Team bei Fragen zur Zustellbarkeit, Entwickler-APIs oder Feedback.",
+        "description": "Kontaktieren Sie TempoEmails zu Fehlern, Zustellproblemen, Missbrauchsmeldungen, Partnerschaften oder Feedback.",
         "heading": "Kontakt & Support",
         "subheading": "Haben Sie eine Frage, einen Fehler gefunden oder benötigen Sie Hilfe? Schreiben Sie uns."
       },
       "blog": {
         "title": "Datenschutz-, Sicherheits- & Wegwerf-E-Mail-Blog — TempoEmails",
-        "description": "Expertenratgeber zu temporären E-Mails, OTP-Codes, 10-Minuten-Mail und digitaler Privatsphäre.",
+        "description": "Ratgeber zu Temp-Mail, Wegwerf-E-Mail, OTP-Codes und dazu, wie Ihr Hauptpostfach privat bleibt.",
         "heading": "Datenschutz- & Sicherheitsleitfäden",
         "subheading": "Praktische Anleitungen zur Vermeidung von Spam, Verwaltung von Online-Konten und Schutz Ihrer Hauptadresse.",
         "faqHeading": "Häufig gestellte Fragen",
@@ -2266,7 +2266,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       },
       "privacy": {
         "title": "Datenschutzerklärung — TempoEmails",
-        "description": "TempoEmails Datenschutzerklärung: Keine Protokolle, flüchtige Speicherung im RAM und DSGVO-Konformität.",
+        "description": "Wie TempoEmails mit Daten umgeht: was die Mail-Anbieter speichern, was in Ihrem Browser bleibt, Server-Logs, Cookies und Werbung.",
         "heading": "Datenschutzerklärung"
       },
       "terms": {
@@ -2284,7 +2284,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
   "ja": {
     "meta": {
       "title": "無料捨てメアド — 使い捨てメールアドレス＆ワンタイムメール生成器",
-      "description": "登録不要の無料使い捨てメールアドレス生成サービス。OTP認証コード、アクティベーションリンクを即時受信。スパムや個人情報の流出をゼロに。",
+      "description": "ページを開くとすぐに使える無料の捨てメールアドレス。本当のメールアドレスを教えずに、OTP認証コードや有効化リンクを受信できます。",
       "keywords": "捨てメアド, 使い捨てメール, 一時メール, ワンタイムメール, 捨てメール, フリーメール, otp受信, 捨て垢メール, 無料捨てメアド"
     },
     "nav": {
@@ -2298,12 +2298,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "言語"
     },
     "hero": {
-      "chips": ["登録不要","OTPを自動検出","ログなし"],
+      "chips": ["登録不要","OTPコードを強調表示","受信専用"],
       "worksWith": "対応サービス",
-      "badge": "即時発行の捨てメアド＆10分間使い捨てメール",
+      "badge": "登録不要の無料捨てメール",
       "titleLine1": "無料捨てメアド。",
       "titleLine2": "数秒で使い捨てアドレス作成。",
-      "subtitle": "ワンクリックで使い捨てメールアドレスを発行。スパムやログ、個人情報登録なしで認証コードや確認メールを即座に受信できます。"
+      "subtitle": "ワンクリックで使い捨てメールアドレスを発行。登録時の認証コードや確認メールを受信できます。"
     },
     "addressBar": {
       "tempEmailLabel": "一時メールアドレス",
@@ -2327,7 +2327,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "inboxList": {
       "title": "受信トレイ",
       "emptyTitle": "メールの受信を待機中...",
-      "emptyDesc": "上記のアドレスをコピーして登録フォームに入力してください。受信したメールはここに自動で表示されます。",
+      "emptyDesc": "上のアドレスをコピーして登録フォームに入力してください。受信箱は10秒ごとに新着メールを確認します。",
       "autoChecking": "自動受信チェック中",
       "clickToView": "クリックしてメール詳細を表示...",
       "unreadBadge": "未読",
@@ -2357,7 +2357,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "customModal": {
       "title": "カスタムアドレス作成",
-      "desc": "お好みのユーザー名と利用可能なドメインを選んでオリジナルの一時メールを作成できます。",
+      "desc": "ユーザー名とドメインを選んでください。サイトにドメインを拒否された場合は、別のドメインをお試しください。",
       "usernameLabel": "ユーザー名",
       "usernamePlaceholder": "例: taro.signup",
       "domainLabel": "ドメイン",
@@ -2385,15 +2385,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "qrModal": {
       "title": "スマホ用QRコード",
-      "desc": "スマホのカメラでスキャンすれば、スマートフォンでも同じ捨てメアドをすぐに使えます。",
-      "copyLink": "リンクをコピー",
-      "copiedLink": "コピーしました！",
+      "desc": "スマートフォンのカメラで読み取ると、このアドレスをスマホに送れます。アプリでの登録などに便利です。メールは引き続きこの画面に届きます。",
+      "copyLink": "アドレスをコピー",
+      "copiedLink": "コピーしました",
       "close": "閉じる",
       "unavailable": "QRコードを生成できません。接続を確認して再試行してください。"
     },
     "historyDrawer": {
       "title": "最近のアドレス履歴",
-      "desc": "ブラウザに一時保存された過去の捨てメアドをすばやく切り替えることができます。",
+      "desc": "最近使ったアドレスです。このブラウザにのみ保存されます。",
       "activeInbox": "現在使用中",
       "savedStorage": "ローカル保存済み",
       "emptyTitle": "履歴はありません",
@@ -2407,7 +2407,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "キャンセル",
       "confirm": "実行する",
       "deleteInboxTitle": "メールボックスの削除",
-      "deleteInboxDesc": "このメールアドレスとすべての受信メッセージを完全に破棄しますか？",
+      "deleteInboxDesc": "このアドレスと保存済みメッセージをこのブラウザから削除し、新しいアドレスを作成します。後で開き直せるのは、パスワード付きのアドレスでそのパスワードを控えている場合だけです。",
       "changeAddressTitle": "アドレスの変更",
       "changeAddressDesc": "新しいランダムアドレスを作成しますか？現在のメールは履歴に残ります。",
       "deleteMessageTitle": "メールの削除",
@@ -2426,12 +2426,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "initFailed": "初期化に失敗しました。ページを再読み込みしてください。",
       "messageDeleted": "メールを削除しました",
       "switchedTo": "切り替えました: {address}",
-      "generatedNew": "新しい捨てメアドを作成しました！",
-      "mailboxDeleted": "アドレスを破棄し、新しいアドレスを作成しました！",
+      "generatedNew": "新しいアドレスを作成しました。",
+      "mailboxDeleted": "受信箱を削除しました。新しいアドレスを用意しました。",
       "customCreated": "カスタムアドレスを作成しました: {address}",
       "customFailed": "作成に失敗しました。別のユーザー名をお試しください。",
       "providerSwitched": "プロバイダを切り替えました: {provider}",
-      "historyCleared": "アドレス履歴を削除しました。",
+      "historyCleared": "保存した受信箱をこのブラウザから消去しました。",
       "copiedToClipboard": "クリップボードにコピーしました！",
       "copyFailed": "コピーに失敗しました",
       "otpCopied": "認証コード {code} をコピーしました！",
@@ -2455,14 +2455,14 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "useCases": {
       "badge": "対応サービス",
-      "title": "さまざまなWebサービスで安心・快適に利用可能",
-      "subtitle": "本物のアドレスを教えたくない会員登録やアプリの体験利用に最適です。",
+      "title": "主な使い道",
+      "subtitle": "本当のアドレスより使い捨てアドレスのほうが向いている、よくある登録の場面です。",
       "items": [
         {
           "category": "AI & ソフトウェアお試し",
           "badge": "ChatGPT & SaaS",
           "title": "ChatGPTや無料体験向けの捨てメアド",
-          "description": "本命アドレスを広告リストに晒すことなく、AIツールや開発者API、SaaSの無料トライアルに登録できます。",
+          "description": "AIツール、開発者向けAPI、SaaSの無料トライアルに登録しても、メインのアドレスがマーケティングリストに載りません。",
           "tags": [
             "ChatGPT / OpenAI",
             "Midjourney",
@@ -2474,7 +2474,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "ゲーム & コミュニティ",
           "badge": "Discord & Steam",
           "title": "Discordやゲーム向け使い捨てメール",
-          "description": "サブアカの作成、Discordサーバーへの参加、Steamアカウントの認証、ベータキーの受け取りが簡単に行えます。",
+          "description": "ゲーム用のサブプロフィール作成、Discordサーバーへの参加、ベータキーの受け取りを、メインの受信箱と結び付けずに行えます。",
           "tags": [
             "Discord認証",
             "Steamアカウント",
@@ -2486,7 +2486,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "SNS & メッセージアプリ",
           "badge": "Telegram & SNS",
           "title": "SNSやアプリ用の匿名バーナーメール",
-          "description": "SNS、掲示板、Telegram、Redditへの登録や資料ダウンロード時に本名アドレスの匿名性を保ちます。",
+          "description": "フォーラムやコミュニティへの登録、メールアドレスの入力が必要なホワイトペーパーやPDFのダウンロードに、本当のアドレスを使わずに済みます。",
           "tags": [
             "Telegram登録",
             "Redditプロファイル",
@@ -2498,23 +2498,23 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "開発者 & QAテスト",
           "badge": "メールAPI & QA",
           "title": "ソフトウェアQA向けテスト用メール生成",
-          "description": "会員登録フローのテスト、トランザクションメールの到達確認、パスワード再設定テストをマルチアカウントで実施。",
+          "description": "自分のアプリが送る登録・確認・パスワード再設定のメールをテストできます。複数のアドレスを作れば、別々のテストユーザーとして登録できます。",
           "tags": [
             "登録フローQA",
-            "Webhookテスト",
+            "トランザクションメール",
             "Auth認証",
-            "複数受信箱シミュレーション"
+            "複数のテストユーザー"
           ]
         }
       ]
     },
     "otpShowcase": {
-      "badge": "自動認証コード解析",
+      "badge": "認証コード",
       "title": "届いたメールの認証コードを瞬時に抽出。",
-      "subtitle": "TempoEmailsはメールを受信した瞬間に4〜8桁のOTPコードや有効化リンクを自動解析し、ワンクリックでコピーできるように表示します。",
+      "subtitle": "メールに4〜8桁のコードや認証リンクが含まれていると、TempoEmailsがメッセージの上にコピーボタン付きで表示します。テンプレートの中から探す必要はありません。",
       "tag1": "4〜8桁の確認コード",
-      "tag2": "1クリック認証リンク",
-      "tag3": "ワンクリックコピー",
+      "tag2": "認証リンク",
+      "tag3": "ワンクリックでコピー",
       "previewBadge": "受信プレビュー",
       "previewDetected": "自動検出完了",
       "previewCode": "認証コード",
@@ -2524,73 +2524,73 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "previewTime": "たった今"
     },
     "features": {
-      "badge": "主な機能",
-      "title": "超高速な受信スピードと徹底したプライバシー保護",
-      "subtitle": "トラッキングなし、登録なし。最もシンプルで使いやすい現代的な使い捨てメールサービス。",
+      "badge": "機能",
+      "title": "受信箱でできること",
+      "subtitle": "複数の公開捨てメールサービスを利用した、ブラウザで使う受信専用の受信箱です。",
       "items": [
         {
           "title": "無料の使い捨て捨てメアド生成",
-          "description": "メルマガ、データブローカー、スパムトラップからあなたの本命アドレスを永久に保護します。"
+          "description": "ページを開くとアドレスが作成されます。本当の受信箱と結び付けたくない登録に使えば、その後に届くニュースレターや宣伝メールはいつでも手放せる場所に届きます。"
         },
         {
           "title": "自動OTP・認証コード抽出",
-          "description": "届いたメールを自動解析し、4〜8桁の認証コードやワンクリックリンクを瞬時に強調表示します。"
+          "description": "各メールから認証コードや確認リンクを抜き出し、コピーボタン付きで表示します。"
         },
         {
-          "title": "100% 匿名・完全ログゼロ",
-          "description": "登録不要、追跡なし、中央データベースなし。受信トレイを削除するとメールは完全に消去されます。"
+          "title": "登録不要",
+          "description": "当サイトでアカウントを作る必要はありません。Mail.tmとMail.gwの受信箱には自動生成されたパスワードがあり、後で開き直せます。その他のサービスの受信箱にはパスワードがなく、アドレスを知っている人なら誰でも読めます。"
         },
         {
-          "title": "PCからスマホへのQR転送",
-          "description": "画面のQRコードをスマホカメラで読み取るだけで、モバイルから即座に捨てメアドを利用可能です。"
+          "title": "スマホ用QRコード",
+          "description": "QRコードを読み取るとアドレスをスマホに送れるので、アプリでの登録に便利です。メールは引き続きこのブラウザに届きます。"
         },
         {
           "title": "自動更新ライブ受信トレイ",
-          "description": "10秒ごとの自動更新とSSEプッシュ技術により、新着メールがリアルタイムに届きます。手動更新は不要です。"
+          "description": "受信箱は10秒ごとに新着メールを確認し、届いたときに短い通知音を鳴らすこともできます。手動で更新することもできます。"
         },
         {
-          "title": "マルチ受信箱 10分メール切替",
-          "description": "履歴ドロワーから最大8件の最近の受信トレイを同時に管理でき、大切な確認メールを見失いません。"
+          "title": "受信箱の履歴",
+          "description": "最近使ったアドレスを最大25件このブラウザに保存します。遅れて届くメールを確認したいときは切り替えて戻れます。受信済みのメッセージはキャッシュに残ります。"
         }
       ]
     },
     "howItWorks": {
-      "badge": "簡単4ステップ",
+      "badge": "使い方",
       "title": "捨てメアドの使い方（4ステップ）",
-      "subtitle": "会員登録や個人情報の入力なしで、すぐに認証コードを受け取れます。",
+      "subtitle": "インストールもフォーム入力も不要です。",
       "step1Title": "1. 無料アドレスをコピー",
-      "step1Desc": "ページを開くだけで、受信可能な一時メールアドレスがすぐに発行されます。",
+      "step1Desc": "ページを開くと、提携メールサービスのアドレスが用意されます。ワンクリックでコピーできます。",
       "step2Title": "2. 登録フォームに入力",
-      "step2Desc": "アプリやお試し利用など、メール確認が必要なフォームに貼り付けます。",
-      "step3Title": "3. 認証コードを自動検出",
-      "step3Desc": "メールがリアルタイムで届き、認証コードが大きく分かりやすく表示されます。",
-      "step4Title": "4. 使い終わったら閉じるだけ",
-      "step4Desc": "確認が終わればタブを閉じるだけ。本物のアドレスにスパムが届く心配は一切ありません。"
+      "step2Desc": "登録フォーム、無料トライアル、ダウンロードなど、メールアドレスを求められる場所で使えます。",
+      "step3Title": "3. コードを受け取る",
+      "step3Desc": "新着メールはメールサービスに届いてから約10秒で表示されます。コードや確認リンクはコピーボタン付きで上部に表示されます。",
+      "step4Title": "4. 削除して終了",
+      "step4Desc": "使い終わったら受信箱を削除するか、新しいアドレスを作成します。その後の宣伝メールは使い捨てアドレスに届き、本当のアドレスには届きません。"
     },
     "faq": {
       "badge": "FAQ",
       "title": "よくある質問",
-      "subtitle": "捨てメアドの使い方、OTPコードの受信、セキュリティについての解説。",
+      "subtitle": "受信箱の仕組みについての簡単な回答です。",
       "q1": "捨てメアド（使い捨てメール）とは何ですか？",
-      "a1": "個人の本名アドレスを公開することなく、確認メールや認証コードを受信できる一時的な無料メールサービスです。",
+      "a1": "捨てメール（使い捨てメール）は、何にも登録せずにすぐ使えるメールアドレスです。送られたメールはこのページに表示されます。個人の受信箱に入れたくない登録や認証メールのためのものです。",
       "q2": "会員登録時の確認コード受信に使えますか？",
-      "a2": "はい！TempoEmailsは4〜8桁の確認コードを自動で認識し、ワンタップでコピーできます。",
+      "a2": "はい。メールに4〜8桁のコードや確認リンクが含まれていると、メッセージの上にコピーボタン付きで表示されます。受信箱は10秒ごとに新着を確認するため、サイトが送信してから間もなくコードが表示されます。",
       "q3": "DiscordやChatGPT、Steamなどでも使えますか？",
-      "a3": "はい。もし特定のドメインが弾かれた場合は、「変更」ボタンから別のドメインに切り替えてお試しください。",
+      "a3": "多くの場合は使えます。ただし、既知の捨てメールドメインをブロックするサービスもあります。1〜2分待っても届かない場合は、「再生成」または「カスタム」で別のドメインのアドレスを取得して、もう一度お試しください。",
       "q4": "TempoEmailsからメールの送信はできますか？",
-      "a4": "いいえ。スパム対策と安全なメール受信品質を保つため、受信専用となっています。",
+      "a4": "いいえ。受信専用です。メッセージの閲覧、ダウンロード、削除はできますが、このアドレスから送信や返信はできません。",
       "q5": "自分の好きなユーザー名を選べますか？",
-      "a5": "はい。「カスタム」ボタンをクリックすれば、希望のユーザー名とドメインを自由に選べます。",
-      "q6": "本当に無料で登録も不要ですか？",
-      "a6": "はい、完全無料でパスワード設定やアカウント登録も一切不要です。"
+      "a5": "はい。「カスタム」をクリックしてユーザー名を入力し、Mail.tm、Mail.gw、Inboxes、Guerrilla Mailが現在提供しているドメインから選んでください。名前が使用済みの場合は別の名前をお試しください。",
+      "q6": "無料ですか？ メッセージは誰が読めますか？",
+      "a6": "無料で、登録も不要です。メッセージはアドレスを提供するメールサービスに保管され、ブラウザにもキャッシュされます。Mail.tmとMail.gwの受信箱はパスワードで保護されています（「パスワード」ボタンから確認できます）。Inboxes、Guerrilla Mail、TempMail.lolのアドレスは、アドレスを知っている人なら誰でも読めます。重要な用途には使わないでください。"
     },
     "cta": {
       "title": "受信箱はすでに稼働中です。",
-      "subtitle": "アカウントもパスワードも不要。アドレスをコピーするだけ。",
+      "subtitle": "登録は不要です。アドレスをコピーすれば、新着メールがここに表示されます。Mail.tmとMail.gwの受信箱にはパスワードもあり、後で開き直せます。",
       "button": "受信箱を開く"
     },
     "footer": {
-      "brandDesc": "無料の使い捨てメール（捨てメアド）サービス。本物のアドレスをスパムから守り、安全に認証コードを受信。",
+      "brandDesc": "登録や認証コードの受信に使える無料の捨てメール。受信専用で、アカウント作成は不要です。",
       "quickLinks": "リンク",
       "instantInbox": "即時メール作成",
       "company": "運営情報",
@@ -2628,27 +2628,27 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageNotFoundBadge": "ページが見つかりません",
       "pageNotFoundTitle": "お探しのページは",
       "pageExpired": "期限切れです。",
-      "pageNotFoundDesc": "使い捨てメールと同様に、このページは消去されました。捨てメアドはいつでも利用可能です。",
+      "pageNotFoundDesc": "このページは存在しません。期限切れの捨てメールアドレスのようなものです。受信箱はトップページにあります。",
       "goToHomepage": "トップページへ",
       "readOurBlog": "ブログを読む",
       "translationNotice": "この記事は現在英語で表示されています。全編翻訳を進めています。"
     },
     "pages": {
       "about": {
-        "title": "TempoEmails について — 無料使い捨てメールの使命",
-        "description": "TempoEmails の開発理念：高速、無料、OTP 自動検出、ログゼロの安全な使い捨てメールサービス。",
+        "title": "TempoEmailsについて — 無料の捨てメール・使い捨てメール",
+        "description": "TempoEmailsを作った理由：複数の公開捨てメールサービスをひとつの受信箱にまとめ、OTPを自動検出する無料の捨てメールサイトです。",
         "heading": "TempoEmails 開発の理由",
-        "subheading": "シンプルで高速、プライバシーを最優先にした快適な捨てメアドサービス。"
+        "subheading": "本当のメールに入れたくない登録のための、シンプルな一時受信箱。"
       },
       "contact": {
         "title": "TempoEmails お問い合わせ & サポート",
-        "description": "TempoEmails の無料捨てメアドに関するお問い合わせ、ドメイン到達性、開発者 API、ご意見はこちら。",
+        "description": "不具合、メールが届かない問題、不正利用の報告、提携、ご意見などはTempoEmailsまでご連絡ください。",
         "heading": "お問い合わせ & サポート",
         "subheading": "ご質問、不具合の報告、サポートが必要な場合はお気軽にお問い合わせください。"
       },
       "blog": {
         "title": "プライバシー・セキュリティ & 捨てメアド ブログ — TempoEmails",
-        "description": "使い捨てメール、OTP 認証コード、10 分メール、デジタルプライバシー対策に関する専門ガイド。",
+        "description": "捨てメール、使い捨てメール、OTP認証コード、メインの受信箱を守る方法についてのガイド。",
         "heading": "プライバシー & セキュリティ ガイド",
         "subheading": "スパム対策、アカウント管理、メインアドレスの保護に役立つ実践的アドバイス。",
         "faqHeading": "よくある質問",
@@ -2656,7 +2656,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       },
       "privacy": {
         "title": "プライバシーポリシー — TempoEmails",
-        "description": "TempoEmails プライバシーポリシー：完全ログゼロ、一時メモリ処理、GDPR 準拠。",
+        "description": "TempoEmailsのデータの扱い：メールサービスが保存するもの、ブラウザに残るもの、サーバーログ、Cookie、広告について。",
         "heading": "プライバシーポリシー"
       },
       "terms": {
@@ -2674,7 +2674,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
   "ar": {
     "meta": {
       "title": "بريد مؤقت مجاني — مهمل بريد إلكتروني مؤقت ومولد إيميل وهمي",
-      "description": "خدمة بريد مؤقت مجانية وفورية. احصل على إيميل مهمل وهمي لاستقبال رسائل التفعيل وأكواد OTP بدون تسجيل وبلا رسائل مزعجة.",
+      "description": "بريد مؤقت مجاني بعنوان مؤقت جاهز فور تحميل الصفحة. استقبل رموز التحقق OTP وروابط التفعيل دون مشاركة بريدك الحقيقي.",
       "keywords": "بريد مؤقت, ايميل مؤقت, مهمل, بريد مهمل, ايميل وهمي, بريد الكتروني مؤقت, 10 دقائق بريد, استقبال otp مجانا, بريد مؤقت فوري"
     },
     "nav": {
@@ -2688,12 +2688,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "اللغة"
     },
     "hero": {
-      "chips": ["بدون تسجيل","اكتشاف تلقائي لرموز OTP","بدون سجلات"],
+      "chips": ["بدون تسجيل","إبراز رموز OTP","للاستقبال فقط"],
       "worksWith": "يعمل مع",
-      "badge": "بريد إلكتروني مؤقت وفوري لمدة 10 دقائق",
+      "badge": "بريد مؤقت مجاني بدون تسجيل",
       "titleLine1": "بريد مؤقت مجاني.",
       "titleLine2": "إيميل وهمي في ثوانٍ معدودة.",
-      "subtitle": "أنشئ عنوان بريد إلكتروني مؤقت فوراً بنقرة واحدة. استقبل رموز التحقق OTP وروابط التفعيل بدون رسائل مزعجة وبلا تسجيل."
+      "subtitle": "أنشئ عنوان بريد إلكتروني مؤقت بنقرة واحدة. استقبل رموز التحقق OTP وروابط التفعيل."
     },
     "addressBar": {
       "tempEmailLabel": "البريد المؤقت",
@@ -2717,7 +2717,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "inboxList": {
       "title": "صندوق الوارد",
       "emptyTitle": "في انتظار الرسائل الواردة...",
-      "emptyDesc": "انسخ عنوان البريد المؤقت أعلاه والصقه في أي استمارة تسجيل. ستظهر الرسائل الجديدة هنا تلقائياً.",
+      "emptyDesc": "انسخ العنوان أعلاه واستخدمه في نموذج التسجيل. يتحقق الصندوق من الرسائل الجديدة كل 10 ثوانٍ.",
       "autoChecking": "الفحص التلقائي نشط",
       "clickToView": "انقر لعرض تفاصيل الرسالة...",
       "unreadBadge": "غير مقروءة",
@@ -2747,7 +2747,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "customModal": {
       "title": "بريد إلكتروني مخصص",
-      "desc": "اختر اسم المستخدم والنطاق المفضل لإنشاء صندوق بريد مؤقت خاص بك.",
+      "desc": "اختر اسم مستخدم ونطاقًا. إذا رفض موقع ما أحد النطاقات، فجرّب نطاقًا آخر.",
       "usernameLabel": "اسم المستخدم",
       "usernamePlaceholder": "مثال: ahmed.signup",
       "domainLabel": "النطاق",
@@ -2775,15 +2775,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "qrModal": {
       "title": "رمز QR للهاتف",
-      "desc": "امسح الرمز بكاميرا هاتفك لفتح واستخدام هذا البريد المؤقت على الجوال فوراً.",
-      "copyLink": "نسخ الرابط",
-      "copiedLink": "تم نسخ الرابط!",
+      "desc": "امسح الرمز بكاميرا هاتفك لنقل هذا العنوان إلى الهاتف، مثلًا للتسجيل في تطبيق. ستظل الرسائل تصل إلى هنا.",
+      "copyLink": "نسخ العنوان",
+      "copiedLink": "تم النسخ!",
       "close": "إغلاق",
       "unavailable": "رمز QR غير متاح — تحقق من اتصالك وأعد المحاولة."
     },
     "historyDrawer": {
       "title": "الصناديق السابقة",
-      "desc": "تنقل بسهولة بين عناوين البريد المؤقتة السابقة المحفوظة بأمان في متصفحك.",
+      "desc": "العناوين التي استخدمتها مؤخرًا. تُحفظ في هذا المتصفح فقط.",
       "activeInbox": "الحالي",
       "savedStorage": "محفوظ محلياً",
       "emptyTitle": "لا توجد صناديق سابقة",
@@ -2797,7 +2797,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "إلغاء",
       "confirm": "تأكيد",
       "deleteInboxTitle": "حذف الصندوق",
-      "deleteInboxDesc": "هل أنت متأكد من رغبتك في حذف هذا البريد وجميع الرسائل المحفوظة نهائياً؟",
+      "deleteInboxDesc": "سيُزال العنوان ورسائله المحفوظة من هذا المتصفح ويُنشأ عنوان جديد. لن تتمكن من فتحه لاحقًا إلا إذا كانت له كلمة مرور واحتفظت بها.",
       "changeAddressTitle": "تغيير العنوان",
       "changeAddressDesc": "توليد بريد عشوائي جديد؟ ستبقى الرسائل الحالية في سجلك.",
       "deleteMessageTitle": "حذف الرسالة",
@@ -2816,12 +2816,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "initFailed": "فشل تهيئة البريد. يرجى تحديث الصفحة.",
       "messageDeleted": "تم حذف الرسالة",
       "switchedTo": "تم التبديل إلى {address}",
-      "generatedNew": "تم إنشاء بريد مؤقت جديد بنجاح!",
-      "mailboxDeleted": "تم حذف الصندوق وإنشاء عنوان جديد!",
+      "generatedNew": "تم إنشاء عنوان جديد.",
+      "mailboxDeleted": "تمت إزالة الصندوق. عنوان جديد جاهز.",
       "customCreated": "تم إنشاء البريد المخصص: {address}",
       "customFailed": "فشل الإنشاء. يرجى تجربة اسم مستخدم آخر.",
       "providerSwitched": "تم تغيير مزود الخدمة إلى {provider}",
-      "historyCleared": "تم مسح سجل الصناديق.",
+      "historyCleared": "تم مسح الصناديق المحفوظة من هذا المتصفح.",
       "copiedToClipboard": "تم النسخ إلى الحافظة!",
       "copyFailed": "فشل النسخ",
       "otpCopied": "تم نسخ رمز التحقق {code}!",
@@ -2845,14 +2845,14 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "useCases": {
       "badge": "خدمات شائعة",
-      "title": "يعمل بسلاسة في كل المواقع",
-      "subtitle": "استخدم TempoEmails للتسجيل الفوري وحماية بريدك الشخصي من رسائل الترويج المزعجة.",
+      "title": "أين يستخدمه الناس",
+      "subtitle": "حالات تسجيل شائعة يكون فيها العنوان المؤقت أنسب من عنوانك الحقيقي.",
       "items": [
         {
           "category": "تجارب الذكاء الاصطناعي والبرامج",
           "badge": "ChatGPT و SaaS",
           "title": "بريد مؤقت لـ ChatGPT والتجارب المجانية",
-          "description": "سجل في أدوات الذكاء الاصطناعي وواجهات API دون تعريض بريدك الرئيسي للقوائم الترويجية.",
+          "description": "سجّل في أدوات الذكاء الاصطناعي وواجهات API للمطورين وتجارب SaaS دون أن يدخل عنوانك الرئيسي في قوائمهم التسويقية.",
           "tags": [
             "ChatGPT / OpenAI",
             "Midjourney",
@@ -2864,7 +2864,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "الألعاب والمجتمعات",
           "badge": "Discord و Steam",
           "title": "بريد مؤقت لـ Discord والألعاب",
-          "description": "أنشئ حسابات ثانوية وانضم لخوادم Discord وفعل حسابات Steam واستلم مفاتيح الألعاب بسهولة.",
+          "description": "أنشئ ملفًا ثانيًا للألعاب أو انضم إلى خادم Discord أو احصل على مفتاح نسخة تجريبية دون ربطه ببريدك الرئيسي.",
           "tags": [
             "تفعيل Discord",
             "حسابات Steam",
@@ -2876,7 +2876,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "التواصل الاجتماعي والرسائل",
           "badge": "Telegram والتواصل",
           "title": "بريد مؤقت لشبكات التواصل والتطبيقات",
-          "description": "حافظ على سرية بريدك الحقيقي عند التسجيل في المنتديات وTelegram وReddit أو تحميل الملفات.",
+          "description": "سجّل في المنتديات والمجتمعات، أو نزّل ورقة بيضاء أو ملف PDF يطلب بريدًا إلكترونيًا، دون مشاركة عنوانك الحقيقي.",
           "tags": [
             "تسجيل Telegram",
             "حسابات Reddit",
@@ -2888,23 +2888,23 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "المطورون واختبارات الجودة QA",
           "badge": "API البريد و QA",
           "title": "مولد بريد وهمي لاختبار البرمجيات",
-          "description": "اختبر تدفقات التسجيل، وتحقق من وصول الرسائل التلقائية، وجرب استعادة كلمات المرور لمستخدمين متعددين.",
+          "description": "اختبر رسائل التسجيل والتأكيد وإعادة تعيين كلمة المرور التي يرسلها تطبيقك. أنشئ عدة عناوين للتسجيل كمستخدمين تجريبيين مختلفين.",
           "tags": [
             "اختبار التسجيل",
-            "اختبار Webhook",
+            "رسائل المعاملات",
             "التحقق من الدخول",
-            "محاكاة صناديق"
+            "عدة مستخدمين تجريبيين"
           ]
         }
       ]
     },
     "otpShowcase": {
-      "badge": "كشف تلقائي لأكواد التحقق",
+      "badge": "رموز التحقق",
       "title": "استقبل رموز التحقق OTP فوراً عبر البريد المؤقت.",
-      "subtitle": "يقوم TempoEmails تلقائياً بفحص الرسائل الواردة واستخراج رموز التفعيل المكونة من 4 إلى 8 أرقام فور وصولها.",
+      "subtitle": "عندما تحتوي الرسالة على رمز من 4 إلى 8 أرقام أو رابط تحقق، يعرضه TempoEmails فوق الرسالة مع زر نسخ، فلا تحتاج إلى البحث عنه داخل القالب.",
       "tag1": "رموز OTP من 4 إلى 8 أرقام",
-      "tag2": "روابط التفعيل بنقرة واحدة",
-      "tag3": "نسخ فوري للحافظة",
+      "tag2": "روابط التحقق",
+      "tag3": "نسخ بنقرة واحدة",
       "previewBadge": "معاينة الصندوق",
       "previewDetected": "تم الكشف تلقائياً",
       "previewCode": "رمز التحقق",
@@ -2914,73 +2914,73 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "previewTime": "الآن"
     },
     "features": {
-      "badge": "المزايا الأساسية",
-      "title": "مصمم لتحقيق أقصى سرعة وخصوصية كاملة",
-      "subtitle": "كل ما تحتاجه من خدمة بريد مهمل عصرية، بلا تتبع وبسرعة فائقة.",
+      "badge": "الميزات",
+      "title": "ما الذي يفعله الصندوق",
+      "subtitle": "صندوق للاستقبال فقط في متصفحك، يعتمد على عدة مزودين عامين للبريد المؤقت.",
       "items": [
         {
           "title": "مولد بريد مؤقت مجاني",
-          "description": "احمِ عنوان بريدك الرئيسي من النشرات البريدية وسماسرة البيانات ومصائد البريد العشوائي للأبد."
+          "description": "يُنشأ العنوان عند تحميل الصفحة. استخدمه في عمليات التسجيل التي لا تريد ربطها ببريدك الحقيقي، فتصل النشرات والعروض اللاحقة إلى مكان يمكنك تركه."
         },
         {
           "title": "مستخرج تلقائي لرموز OTP",
-          "description": "يتم تحليل الرسائل الواردة تلقائيًا لإبراز رموز التحقق والروابط بنقرة زر واحدة للنسخ."
+          "description": "تُستخرج رموز التحقق وروابط التأكيد من كل رسالة وتُعرض مع زر نسخ."
         },
         {
-          "title": "بريد مجهول 100% — بدون سجلات",
-          "description": "بدون تسجيل، بدون تتبع وبدون قاعدة بيانات مركزية. تُحذف الرسائل نهائيًا عند إغلاق الجلسة."
+          "title": "بدون تسجيل",
+          "description": "لا تنشئ حسابًا لدينا أبدًا. صناديق Mail.tm وMail.gw تأتي بكلمة مرور مُولّدة لتعيد فتحها لاحقًا. أما صناديق المزودين الآخرين فبلا كلمة مرور، ويمكن لأي شخص يعرف العنوان قراءتها."
         },
         {
-          "title": "نقل سريع للهاتف عبر رمز QR",
-          "description": "امسح رمز QR على شاشتك بكاميرا الهاتف للوصول الفوري إلى بريدك المؤقت على الجوال."
+          "title": "رمز QR للهاتف",
+          "description": "امسح رمز QR لنقل العنوان إلى هاتفك، وهذا مفيد للتسجيل في تطبيق. ستظل الرسائل تصل إلى هذا المتصفح."
         },
         {
           "title": "صندوق بريد مباشر بتحديث تلقائي",
-          "description": "تصل الرسائل فورًا مع فحص تلقائي كل 10 ثوانٍ وتقنية دفع SSE دون الحاجة لتحديث يدوي."
+          "description": "يتحقق الصندوق من الرسائل الجديدة كل 10 ثوانٍ ويمكنه تشغيل صوت قصير عند وصول رسالة. ويمكنك التحديث يدويًا أيضًا."
         },
         {
-          "title": "مبدل صناديق متعددة 10 دقائق",
-          "description": "أدر ما يصل إلى 8 صناديق بريد مؤقتة في نفس الوقت من درج السجل دون فقدان رسائل التفعيل."
+          "title": "سجل الصناديق",
+          "description": "يُحفظ حتى 25 عنوانًا حديثًا في هذا المتصفح. عُد إلى أحدها للتحقق من رسالة متأخرة؛ وتبقى الرسائل المستلمة محفوظة."
         }
       ]
     },
     "howItWorks": {
-      "badge": "دليل من 4 خطوات",
+      "badge": "طريقة العمل",
       "title": "كيف يعمل البريد المؤقت في 4 خطوات",
-      "subtitle": "جاهز للاستخدام في ثوانٍ بدون أي معلومات شخصية أو خطوات معقدة.",
+      "subtitle": "لا شيء لتثبيته ولا نموذج لملئه.",
       "step1Title": "1. انسخ بريدك المجاني",
-      "step1Desc": "ننشئ لك عنوان بريد مؤقت فوراً وجاهز لاستقبال الرسائل.",
+      "step1Desc": "يكون عنوان من أحد مزودي البريد لدينا جاهزًا عند تحميل الصفحة. انسخه بنقرة واحدة.",
       "step2Title": "2. استخدمه في أي موقع",
-      "step2Desc": "الصق العنوان المؤقت في أي استمارة تسجيل تطلب تأكيد البريد.",
-      "step3Title": "3. استخراج تلقائي للأكواد",
-      "step3Desc": "تصل الرسائل بشكل فوري، ويتم إبراز رمز التفعيل مع زر نسخ سريع.",
-      "step4Title": "4. احذف الصندوق بلا أثر",
-      "step4Desc": "أغلق الصفحة عند الانتهاء. لن تصل أي رسائل دعائية إلى بريدك الحقيقي."
+      "step2Desc": "استخدمه أينما طلب موقع بريدًا إلكترونيًا: نموذج تسجيل أو تجربة مجانية أو تنزيل.",
+      "step3Title": "3. استلم الرمز",
+      "step3Desc": "تظهر الرسائل الجديدة بعد نحو 10 ثوانٍ من وصولها إلى المزود. وتُعرض الرموز وروابط التأكيد في الأعلى مع زر نسخ.",
+      "step4Title": "4. احذفه أو تابع",
+      "step4Desc": "عند الانتهاء احذف الصندوق أو أنشئ عنوانًا جديدًا. أي رسائل تسويقية لاحقة تذهب إلى العنوان المؤقت، لا إلى عنوانك الحقيقي."
     },
     "faq": {
       "badge": "الأسئلة الشائعة",
       "title": "الأسئلة الأكثر تداولاً",
-      "subtitle": "كل ما تحتاج لمعرفته عن البريد المهمل المؤقت واستقبال أكواد التفعيل.",
+      "subtitle": "إجابات قصيرة عن طريقة عمل الصندوق.",
       "q1": "ما هو البريد المؤقت وكيف يعمل؟",
-      "a1": "البريد المؤقت (أو البريد المهمل) هو عنوان إلكتروني فوري يستقبل الرسائل وأكواد التفعيل لحماية بريدك الحقيقي من التسريب.",
+      "a1": "البريد المؤقت (أو البريد المهمل) عنوان يمكنك استخدامه فورًا دون التسجيل في أي شيء. تظهر الرسائل المرسلة إليه في هذه الصفحة. وهو مخصص لعمليات التسجيل ورسائل التحقق التي لا تريدها في بريدك الشخصي.",
       "q2": "هل يمكن استخدامه لتلقي أكواد التحقق OTP؟",
-      "a2": "نعم! يتعرف نظامنا بذكاء على رموز التحقق الرقمية وروابط التفعيل ويوفر زراً لنسخها فوراً.",
+      "a2": "نعم. عندما تحتوي الرسالة على رمز من 4 إلى 8 أرقام أو رابط تأكيد، يُعرض فوق الرسالة مع زر نسخ. يتحقق الصندوق من الرسائل الجديدة كل 10 ثوانٍ، لذا يظهر الرمز عادةً بعد وقت قصير من إرساله.",
       "q3": "هل يعمل مع Discord أو ChatGPT أو Telegram؟",
-      "a3": "نعم. وإذا تم حظر نطاق معين، يمكنك الضغط على \"تغيير\" لاختيار نطاق نشط آخر.",
+      "a3": "غالبًا نعم. بعض الخدمات تحظر نطاقات البريد المؤقت المعروفة. إذا لم يصل شيء خلال دقيقة أو دقيقتين، فاضغط «بريد جديد» أو «اسم مخصص» للحصول على عنوان على نطاق آخر ثم حاول مجددًا.",
       "q4": "هل يمكنني إرسال رسائل من خلال TempoEmails؟",
-      "a4": "لا. الخدمة مخصصة للاستقبال فقط لمنع إساءة الاستخدام وضمان وصول رسائل التفعيل بسرعة.",
+      "a4": "لا. الصندوق للاستقبال فقط: يمكنك قراءة الرسائل وتنزيلها وحذفها، لكن لا يمكنك الإرسال أو الرد من العنوان.",
       "q5": "هل يمكنني اختيار اسم مستخدم مخصص؟",
-      "a5": "نعم، اضغط على زر \"مخصص\" لاختيار الاسم والنطاق الذي تريده.",
-      "q6": "هل الخدمة مجانية تماماً وبدون تسجيل؟",
-      "a6": "نعم، مجانية 100% بدون تسجيل حسابات أو كلمات سر وبلا أي سجلات لبياناتك."
+      "a5": "نعم. اضغط «اسم مخصص» واكتب اسم مستخدم واختر أحد النطاقات التي يوفرها حاليًا Mail.tm أو Mail.gw أو Inboxes أو Guerrilla Mail. إذا كان الاسم مستخدمًا، فجرّب اسمًا آخر.",
+      "q6": "هل الخدمة مجانية، ومن يمكنه قراءة رسائلي؟",
+      "a6": "الخدمة مجانية ولا يوجد ما تسجّل فيه. تُحفظ الرسائل لدى المزود الذي يستضيف العنوان وتُخزَّن مؤقتًا في متصفحك. صناديق Mail.tm وMail.gw محمية بكلمة مرور (انظر «الدخول»)، أما عناوين Inboxes وGuerrilla Mail وTempMail.lol فيمكن لأي شخص يعرفها قراءتها. لا تستخدم عنوانًا مؤقتًا لأي شيء حساس."
     },
     "cta": {
       "title": "صندوق بريدك جاهز بالفعل.",
-      "subtitle": "بدون حساب أو كلمة مرور — فقط انسخ العنوان وابدأ.",
+      "subtitle": "لا حاجة إلى التسجيل. انسخ العنوان وستظهر الرسائل الجديدة هنا. وتحصل صناديق Mail.tm وMail.gw أيضًا على كلمة مرور لتعيد فتحها لاحقًا.",
       "button": "افتح صندوقي"
     },
     "footer": {
-      "brandDesc": "خدمة بريد إلكتروني مؤقت ومجاني. استقبل أكواد التفعيل واحفظ بريدك الشخصي من الرسائل المزعجة.",
+      "brandDesc": "بريد مؤقت مجاني للتسجيل ورموز التحقق. للاستقبال فقط، دون إنشاء حساب.",
       "quickLinks": "روابط سريعة",
       "instantInbox": "بريد فوري",
       "company": "الشركة",
@@ -3018,27 +3018,27 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageNotFoundBadge": "الصفحة غير موجودة",
       "pageNotFoundTitle": "عذرًا، هذه الصفحة",
       "pageExpired": "انتهت صلاحيتها.",
-      "pageNotFoundDesc": "تمامًا كالبريد المؤقت، اختفت هذه الصفحة. لكن لا تقلق — صندوق بريدك المؤقت في انتظارك.",
+      "pageNotFoundDesc": "هذه الصفحة غير موجودة، مثل عنوان مؤقت انتهت صلاحيته. صندوق بريدك ما زال في الصفحة الرئيسية.",
       "goToHomepage": "الانتقال للصفحة الرئيسية",
       "readOurBlog": "قراءة المدونة",
       "translationNotice": "هذا المقال معروض حاليًا باللغة الإنجليزية. الترجمة الكاملة قيد التنفيذ."
     },
     "pages": {
       "about": {
-        "title": "عن TempoEmails — مهمتنا لتوفير بريد مؤقت مجاني وآمن",
-        "description": "لماذا طورنا TempoEmails: خدمة بريد مؤقت سريعة ومجانية مع استخراج فوري لرموز OTP وحماية تامة للخصوصية.",
+        "title": "عن TempoEmails — بريد مؤقت مجاني",
+        "description": "لماذا أنشأنا TempoEmails: موقع بريد مؤقت مجاني يجمع عدة مزودين عامين للبريد المؤقت في صندوق واحد، مع اكتشاف تلقائي لرموز OTP.",
         "heading": "لماذا طورنا TempoEmails",
-        "subheading": "بريد مؤقت نظيف، سريع، يركز على الخصوصية ويعمل بكفاءة مطلقة."
+        "subheading": "صندوق مؤقت بسيط لعمليات التسجيل التي لا تريدها في بريدك الحقيقي."
       },
       "contact": {
         "title": "اتصل بنا ودعم TempoEmails",
-        "description": "احصل على الدعم لخدمة البريد المؤقت TempoEmails، واستفسارات التسليم، وواجهة API للمطورين.",
+        "description": "تواصل مع TempoEmails بشأن الأخطاء أو مشكلات وصول الرسائل أو بلاغات إساءة الاستخدام أو الشراكات أو الملاحظات.",
         "heading": "الاتصال والدعم الفني",
         "subheading": "هل لديك سؤال أو لاحظت خطأ أو تحتاج لمساعدة؟ تواصل معنا."
       },
       "blog": {
         "title": "مدونة الخصوصية والأمان والبريد المؤقت — TempoEmails",
-        "description": "أدلة الخبراء حول البريد المؤقت المجاني، ورموز OTP، وبريد 10 دقائق وحماية الخصوصية الرقمية.",
+        "description": "أدلة عن البريد المؤقت ورموز التحقق OTP والحفاظ على خصوصية بريدك الرئيسي.",
         "heading": "أدلة الخصوصية والأمان",
         "subheading": "إرشادات عملية لتجنب البريد العشوائي وإدارة الحسابات وحماية بريدك الشخصي.",
         "faqHeading": "الأسئلة الشائعة",
@@ -3046,7 +3046,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       },
       "privacy": {
         "title": "سياسة الخصوصية — TempoEmails",
-        "description": "سياسة الخصوصية لـ TempoEmails: انعدام تام للسجلات، معالجة في الذاكرة المؤقتة وتوافق مع معايير GDPR.",
+        "description": "كيف يتعامل TempoEmails مع البيانات: ما يحفظه مزودو البريد، وما يبقى في متصفحك، وسجلات الخادم، وملفات تعريف الارتباط والإعلانات.",
         "heading": "سياسة الخصوصية"
       },
       "terms": {
@@ -3064,7 +3064,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
   "id": {
     "meta": {
       "title": "Email Sementara Gratis — Generator Email Sekali Pakai & Palsu",
-      "description": "Layanan email sementara sekali pakai gratis. Terima kode verifikasi OTP, tautan aktivasi, dan pesan instan tanpa spam dan tanpa daftar.",
+      "description": "Email sementara gratis dengan alamat sekali pakai yang siap begitu halaman dimuat. Terima kode OTP dan tautan aktivasi tanpa memberikan email asli Anda.",
       "keywords": "email sementara, email sekali pakai, email palsu, 10 minute mail, buat email sementara, terima otp online, generator email sementara gratis"
     },
     "nav": {
@@ -3078,12 +3078,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "selectLanguage": "Bahasa"
     },
     "hero": {
-      "chips": ["Tanpa daftar","Deteksi OTP otomatis","Tanpa log"],
+      "chips": ["Tanpa daftar","Kode OTP disorot","Hanya menerima"],
       "worksWith": "Kompatibel dengan",
-      "badge": "Email Sementara Cepat & Kotak Masuk 10 Menit",
+      "badge": "Email sementara gratis, tanpa daftar",
       "titleLine1": "Email Sementara Gratis.",
       "titleLine2": "Email Sekali Pakai dalam Hitungan Detik.",
-      "subtitle": "Buat alamat email sementara sekali pakai dalam satu klik. Terima kode verifikasi OTP dan tautan aktivasi tanpa spam, tanpa log, dan tanpa registrasi."
+      "subtitle": "Buat alamat email sementara sekali pakai dalam satu klik. Terima kode verifikasi OTP dan tautan aktivasi."
     },
     "addressBar": {
       "tempEmailLabel": "Email Sementara",
@@ -3107,7 +3107,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     "inboxList": {
       "title": "Kotak Masuk",
       "emptyTitle": "Menunggu pesan masuk...",
-      "emptyDesc": "Salin alamat email di atas dan gunakan untuk formulir pendaftaran. Pesan masuk akan muncul di sini secara otomatis.",
+      "emptyDesc": "Salin alamat di atas dan gunakan di formulir pendaftaran. Kotak masuk memeriksa email baru setiap 10 detik.",
       "autoChecking": "Pengecekan otomatis aktif",
       "clickToView": "Klik untuk melihat detail email...",
       "unreadBadge": "Belum dibaca",
@@ -3137,7 +3137,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "customModal": {
       "title": "Email Kustom",
-      "desc": "Pilih username dan domain favorit Anda untuk membuat kotak masuk sementara yang dipersonalisasi.",
+      "desc": "Pilih nama pengguna dan domain. Jika sebuah situs menolak satu domain, coba domain lain.",
       "usernameLabel": "Nama Pengguna",
       "usernamePlaceholder": "contoh: budi.daftar",
       "domainLabel": "Domain",
@@ -3165,15 +3165,15 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "qrModal": {
       "title": "QR Code Ponsel",
-      "desc": "Pindai kode ini dengan kamera ponsel Anda untuk langsung membuka email sementara ini di HP.",
-      "copyLink": "Salin Tautan",
-      "copiedLink": "Tautan Tersalin!",
+      "desc": "Pindai dengan kamera ponsel untuk memindahkan alamat ini ke ponsel Anda, misalnya untuk mendaftar di aplikasi. Email tetap masuk ke sini.",
+      "copyLink": "Salin Alamat",
+      "copiedLink": "Tersalin!",
       "close": "Tutup",
       "unavailable": "Kode QR tidak tersedia — periksa koneksi Anda lalu coba lagi."
     },
     "historyDrawer": {
       "title": "Riwayat Email",
-      "desc": "Beralih dengan cepat di antara email sementara yang tersimpan aman di browser Anda.",
+      "desc": "Alamat yang baru-baru ini Anda gunakan. Hanya tersimpan di browser ini.",
       "activeInbox": "Sedang Aktif",
       "savedStorage": "Tersimpan di Browser",
       "emptyTitle": "Belum ada riwayat",
@@ -3187,7 +3187,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "cancel": "Batal",
       "confirm": "Konfirmasi",
       "deleteInboxTitle": "Hapus Kotak Masuk",
-      "deleteInboxDesc": "Apakah Anda yakin ingin menghapus email sementara ini beserta semua pesannya?",
+      "deleteInboxDesc": "Alamat ini dan pesan tersimpannya akan dihapus dari browser ini, lalu alamat baru dibuat. Anda hanya bisa membukanya lagi jika alamat itu punya kata sandi dan Anda menyimpannya.",
       "changeAddressTitle": "Ganti Alamat",
       "changeAddressDesc": "Buat alamat email acak baru? Pesan saat ini akan tetap tersimpan di riwayat Anda.",
       "deleteMessageTitle": "Hapus Pesan",
@@ -3206,12 +3206,12 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "initFailed": "Gagal memuat kotak masuk. Silakan muat ulang halaman.",
       "messageDeleted": "Pesan berhasil dihapus",
       "switchedTo": "Beralih ke {address}",
-      "generatedNew": "Email sementara baru berhasil dibuat!",
-      "mailboxDeleted": "Kotak masuk dihapus dan alamat baru telah dibuat!",
+      "generatedNew": "Alamat baru dibuat.",
+      "mailboxDeleted": "Kotak masuk dihapus. Alamat baru sudah siap.",
       "customCreated": "Email kustom dibuat: {address}",
       "customFailed": "Gagal membuat email. Silakan coba username lain.",
       "providerSwitched": "Penyedia email aktif diubah ke {provider}",
-      "historyCleared": "Semua riwayat email berhasil dibersihkan.",
+      "historyCleared": "Kotak masuk tersimpan dihapus dari browser ini.",
       "copiedToClipboard": "Disalin ke papan klip!",
       "copyFailed": "Gagal menyalin",
       "otpCopied": "Kode verifikasi {code} berhasil disalin!",
@@ -3235,14 +3235,14 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
     },
     "useCases": {
       "badge": "Layanan Populer",
-      "title": "Berfungsi dengan Baik di Mana Saja",
-      "subtitle": "Gunakan TempoEmails untuk verifikasi akun di situs web mana pun tanpa khawatir kebocoran data.",
+      "title": "Dipakai untuk apa",
+      "subtitle": "Pendaftaran umum yang lebih cocok memakai alamat sekali pakai daripada alamat asli Anda.",
       "items": [
         {
           "category": "Uji Coba AI & Perangkat Lunak",
           "badge": "ChatGPT & SaaS",
           "title": "Email Sementara untuk ChatGPT & Uji Coba Gratis",
-          "description": "Daftar alat AI, API pengembang, dan uji coba SaaS gratis tanpa memasukkan email utama ke daftar promosi.",
+          "description": "Daftar ke alat AI, API pengembang, dan uji coba SaaS tanpa membuat alamat utama Anda masuk ke daftar pemasaran mereka.",
           "tags": [
             "ChatGPT / OpenAI",
             "Midjourney",
@@ -3254,7 +3254,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Game & Komunitas",
           "badge": "Discord & Steam",
           "title": "Email Sekali Pakai untuk Discord & Gaming",
-          "description": "Buat profil game sekunder, gabung server Discord, verifikasi akun Steam, dan klaim kode beta game dengan mudah.",
+          "description": "Buat profil game kedua, gabung ke server Discord, atau klaim kunci beta tanpa mengaitkannya ke kotak masuk utama Anda.",
           "tags": [
             "Verifikasi Discord",
             "Akun Steam",
@@ -3266,7 +3266,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Media Sosial & Pesan",
           "badge": "Telegram & Sosial",
           "title": "Email Sementara untuk Media Sosial & Aplikasi",
-          "description": "Jaga anonimitas email asli Anda saat mendaftar di forum, Telegram, Reddit, atau mengunduh dokumen dan PDF.",
+          "description": "Daftar di forum dan komunitas, atau unduh whitepaper atau PDF yang meminta email, tanpa membagikan alamat asli Anda.",
           "tags": [
             "Pendaftaran Telegram",
             "Profil Reddit",
@@ -3278,23 +3278,23 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
           "category": "Pengembang & Pengujian QA",
           "badge": "API Email & QA",
           "title": "Generator Email Palsu untuk QA Software",
-          "description": "Uji alur pendaftaran pengguna, verifikasi pengiriman email transaksional, dan simulasikan banyak akun sekaligus.",
+          "description": "Uji email pendaftaran, konfirmasi, dan reset kata sandi yang dikirim aplikasi Anda sendiri. Buat beberapa alamat untuk mendaftar sebagai pengguna uji yang berbeda.",
           "tags": [
             "QA Pendaftaran",
-            "Pengujian Webhook",
+            "Email Transaksional",
             "Verifikasi Auth",
-            "Simulasi Multi-Inbox"
+            "Beberapa Pengguna Uji"
           ]
         }
       ]
     },
     "otpShowcase": {
-      "badge": "Deteksi Kode Otomatis",
+      "badge": "Kode Verifikasi",
       "title": "Terima kode OTP verifikasi secara instan di email sementara.",
-      "subtitle": "TempoEmails secara otomatis membaca pesan masuk untuk mengekstrak 4–8 digit kode verifikasi dan tautan aktivasi tepat saat email diterima.",
+      "subtitle": "Jika email berisi kode 4–8 digit atau tautan verifikasi, TempoEmails menampilkannya di atas pesan dengan tombol salin, jadi Anda tidak perlu mencarinya di dalam template.",
       "tag1": "4 sampai 8 Digit Kode OTP",
-      "tag2": "1-Klik Buka Tautan",
-      "tag3": "Salin Cepat ke Clipboard",
+      "tag2": "Tautan Verifikasi",
+      "tag3": "Salin Sekali Klik",
       "previewBadge": "Pratinjau Email",
       "previewDetected": "Otomatis Terdeteksi",
       "previewCode": "Kode Verifikasi",
@@ -3304,73 +3304,73 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "previewTime": "Baru saja"
     },
     "features": {
-      "badge": "Fitur Unggulan",
-      "title": "Dirancang untuk Kecepatan Maksimal & Privasi Menyeluruh",
-      "subtitle": "Semua yang Anda butuhkan dari layanan email sementara modern, tanpa pelacakan dan super cepat.",
+      "badge": "Fitur",
+      "title": "Apa yang dilakukan kotak masuk",
+      "subtitle": "Kotak masuk khusus menerima di browser Anda, didukung beberapa penyedia email sementara publik.",
       "items": [
         {
           "title": "Generator Email Sementara Gratis",
-          "description": "Lindungi alamat email utama Anda dari buletin, pialang data, jebakan spam, dan email sampah selamanya."
+          "description": "Alamat dibuat saat halaman dimuat. Gunakan untuk pendaftaran yang tidak ingin Anda kaitkan dengan kotak masuk asli, sehingga newsletter dan promosi berikutnya masuk ke tempat yang bisa Anda tinggalkan."
         },
         {
           "title": "Ekstraktor Otomatis OTP & Kode",
-          "description": "Email masuk dipindai secara otomatis untuk menonjolkan kode OTP 4-8 digit dan tautan konfirmasi dengan 1 klik salin."
+          "description": "Kode verifikasi dan tautan konfirmasi diambil dari setiap email dan ditampilkan dengan tombol salin."
         },
         {
-          "title": "100% Email Anonim — Tanpa Log",
-          "description": "Tanpa registrasi, tanpa pelacakan pribadi, dan tanpa database pusat. Pesan terhapus permanen saat kotak surat dihapus."
+          "title": "Tanpa Pendaftaran",
+          "description": "Anda tidak pernah membuat akun di tempat kami. Kotak masuk Mail.tm dan Mail.gw dilengkapi kata sandi yang dibuat otomatis agar bisa dibuka lagi nanti. Kotak masuk penyedia lain tidak punya kata sandi, jadi siapa pun yang tahu alamatnya bisa membacanya."
         },
         {
-          "title": "Transfer QR Desktop ke Ponsel",
-          "description": "Pindai kode QR instan di layar dengan kamera ponsel untuk langsung mengakses email sementara di smartphone Anda."
+          "title": "Kode QR untuk Ponsel",
+          "description": "Pindai kode QR untuk memindahkan alamat ke ponsel, berguna untuk mendaftar di aplikasi. Email tetap masuk ke browser ini."
         },
         {
           "title": "Kotak Masuk Live Auto-Refresh",
-          "description": "Email baru mendarat real-time dengan pemeriksaan otomatis setiap 10 detik dan SSE push. Tanpa perlu refresh manual."
+          "description": "Kotak masuk memeriksa email baru setiap 10 detik dan bisa memutar suara singkat saat ada pesan masuk. Anda juga bisa menyegarkan secara manual."
         },
         {
-          "title": "Pengalih Multi-Kotak Masuk 10 Menit",
-          "description": "Kelola hingga 8 kotak masuk sementara sekaligus melalui riwayat sesi tanpa kehilangan pesan verifikasi penting."
+          "title": "Riwayat Kotak Masuk",
+          "description": "Hingga 25 alamat terbaru disimpan di browser ini. Beralih kembali ke salah satunya untuk memeriksa email yang terlambat; pesan yang sudah diterima tetap tersimpan."
         }
       ]
     },
     "howItWorks": {
-      "badge": "Panduan 4 Langkah",
+      "badge": "Cara Kerja",
       "title": "Cara Kerja Email Sementara dalam 4 Langkah",
-      "subtitle": "Selesai diverifikasi dalam hitungan detik tanpa registrasi berbelit-belit.",
+      "subtitle": "Tidak ada yang perlu dipasang dan tidak ada formulir untuk diisi.",
       "step1Title": "1. Salin Alamat Gratis Anda",
-      "step1Desc": "Kami langsung menyiapkan alamat email sementara aktif yang siap menerima pesan.",
+      "step1Desc": "Alamat dari salah satu penyedia email kami sudah siap saat halaman dimuat. Salin dengan sekali klik.",
       "step2Title": "2. Gunakan untuk Pendaftaran",
-      "step2Desc": "Tempelkan alamat sekali pakai ke formulir pendaftaran aplikasi atau situs yang Anda inginkan.",
-      "step3Title": "3. Deteksi Kode Otomatis",
-      "step3Desc": "Pesan masuk secara realtime dan kode OTP langsung ditonjolkan dengan tombol salin.",
-      "step4Title": "4. Tutup & Lupakan",
-      "step4Desc": "Tutup tab saat selesai. Tidak ada spam atau email promosi di kotak surat pribadi Anda."
+      "step2Desc": "Gunakan di mana pun situs meminta email: formulir pendaftaran, uji coba gratis, unduhan.",
+      "step3Title": "3. Ambil Kodenya",
+      "step3Desc": "Email baru muncul sekitar 10 detik setelah sampai di penyedia. Kode dan tautan konfirmasi ditampilkan di atas dengan tombol salin.",
+      "step4Title": "4. Hapus atau Lanjutkan",
+      "step4Desc": "Setelah selesai, hapus kotak masuk atau buat alamat baru. Email pemasaran berikutnya masuk ke alamat sekali pakai, bukan ke alamat asli Anda."
     },
     "faq": {
       "badge": "Pertanyaan Umum",
       "title": "Pertanyaan yang Sering Diajukan",
-      "subtitle": "Segala hal tentang email sekali pakai, deteksi kode verifikasi OTP, dan privasi data.",
+      "subtitle": "Jawaban singkat tentang cara kerja kotak masuk.",
       "q1": "Apa itu email sementara dan bagaimana cara kerjanya?",
-      "a1": "Email sementara (juga dikenal sebagai disposable email atau 10 minute mail) menyediakan alamat email instan untuk menerima pesan verifikasi tanpa membocorkan email pribadi Anda.",
+      "a1": "Email sementara (disebut juga email sekali pakai) adalah alamat yang bisa langsung Anda gunakan tanpa mendaftar apa pun. Email yang dikirim ke alamat itu muncul di halaman ini. Gunanya untuk pendaftaran dan email verifikasi yang tidak ingin Anda terima di kotak masuk pribadi.",
       "q2": "Apakah bisa digunakan untuk menerima kode OTP?",
-      "a2": "Ya! TempoEmails memiliki pendeteksi cerdas yang otomatis menemukan kode verifikasi dan tautan aktivasi.",
+      "a2": "Ya. Jika email berisi kode 4–8 digit atau tautan konfirmasi, kode itu ditampilkan di atas pesan dengan tombol salin. Kotak masuk memeriksa email baru setiap 10 detik, jadi kode biasanya muncul tak lama setelah situs mengirimnya.",
       "q3": "Apakah bisa untuk Discord, ChatGPT, Telegram, atau Steam?",
-      "a3": "Ya. Jika suatu layanan memblokir domain tertentu, cukup klik \"Ganti\" untuk beralih ke domain aktif lainnya.",
+      "a3": "Sering kali bisa. Beberapa layanan memblokir domain email sekali pakai yang dikenal. Jika tidak ada yang masuk setelah satu atau dua menit, klik \"Email Baru\" atau \"Kustom\" untuk mendapatkan alamat di domain lain, lalu coba lagi.",
       "q4": "Bisakah mengirim email keluar dari TempoEmails?",
-      "a4": "Tidak. Layanan ini khusus menerima email untuk mencegah penyalahgunaan spam dan menjaga pengiriman email tetap lancar.",
+      "a4": "Tidak. Kotak masuk ini hanya untuk menerima: Anda bisa membaca, mengunduh, dan menghapus pesan, tetapi tidak bisa mengirim atau membalas dari alamat ini.",
       "q5": "Bisakah saya memilih username sendiri?",
-      "a5": "Ya. Klik tombol \"Kustom\" di bilah alamat untuk menentukan nama dan domain pilihan Anda.",
-      "q6": "Apakah benar-benar gratis dan tanpa registrasi?",
-      "a6": "Ya, 100% gratis tanpa password, tanpa pendaftaran, dan tanpa mencatat data pribadi Anda."
+      "a5": "Ya. Klik \"Kustom\", ketik nama pengguna, lalu pilih salah satu domain yang saat ini disediakan Mail.tm, Mail.gw, Inboxes, atau Guerrilla Mail. Jika nama sudah dipakai, coba nama lain.",
+      "q6": "Apakah gratis, dan siapa yang bisa membaca pesan saya?",
+      "a6": "Gratis dan tidak ada yang perlu didaftarkan. Pesan disimpan oleh penyedia alamat tersebut dan di-cache di browser Anda. Kotak masuk Mail.tm dan Mail.gw dilindungi kata sandi (lihat \"Sandi\"); alamat Inboxes, Guerrilla Mail, dan TempMail.lol bisa dibaca siapa pun yang mengetahuinya. Jangan gunakan alamat sementara untuk hal yang sensitif."
     },
     "cta": {
       "title": "Kotak masuk Anda sudah aktif.",
-      "subtitle": "Tanpa akun, tanpa kata sandi — cukup salin alamatnya.",
+      "subtitle": "Tidak perlu mendaftar. Salin alamatnya dan email baru akan muncul di sini. Kotak masuk Mail.tm dan Mail.gw juga mendapat kata sandi agar bisa dibuka lagi nanti.",
       "button": "Buka kotak masuk"
     },
     "footer": {
-      "brandDesc": "Generator email sementara sekali pakai gratis. Dapatkan kode verifikasi dan OTP instan sambil menjaga kotak masuk pribadi Anda aman dari spam.",
+      "brandDesc": "Email sekali pakai gratis untuk pendaftaran dan kode verifikasi. Hanya menerima, tanpa perlu membuat akun.",
       "quickLinks": "Tautan Cepat",
       "instantInbox": "Kotak Masuk Instan",
       "company": "Perusahaan",
@@ -3408,27 +3408,27 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       "pageNotFoundBadge": "Halaman Tidak Ditemukan",
       "pageNotFoundTitle": "Ups, halaman ini telah",
       "pageExpired": "kedaluwarsa.",
-      "pageNotFoundDesc": "Sama seperti email sementara, halaman ini telah hilang. Jangan khawatir — kotak masuk sementara Anda masih siap digunakan.",
+      "pageNotFoundDesc": "Halaman ini tidak ada, mirip alamat sementara yang sudah kedaluwarsa. Kotak masuk Anda masih ada di beranda.",
       "goToHomepage": "Kembali ke Beranda",
       "readOurBlog": "Baca Blog Kami",
       "translationNotice": "Artikel ini saat ini ditampilkan dalam bahasa Inggris. Terjemahan lengkap sedang diproses."
     },
     "pages": {
       "about": {
-        "title": "Tentang TempoEmails — Misi Email Sementara & Sekali Pakai Gratis",
-        "description": "Mengapa kami membangun TempoEmails: layanan email sementara gratis, cepat dengan deteksi OTP instan dan tanpa log.",
+        "title": "Tentang TempoEmails — Email Sementara & Sekali Pakai Gratis",
+        "description": "Mengapa kami membuat TempoEmails: situs email sementara gratis yang menyatukan beberapa penyedia email sekali pakai publik dalam satu kotak masuk, dengan deteksi OTP otomatis.",
         "heading": "Mengapa Kami Membangun TempoEmails",
-        "subheading": "Email sementara yang bersih, cepat, mengutamakan privasi, dan bekerja dengan andal."
+        "subheading": "Kotak masuk sementara yang sederhana untuk pendaftaran yang tidak ingin Anda simpan di email asli."
       },
       "contact": {
         "title": "Kontak & Bantuan TempoEmails",
-        "description": "Dapatkan bantuan untuk TempoEmails, email sementara gratis, keterkiriman domain, API pengembang, atau kirim masukan.",
+        "description": "Hubungi TempoEmails tentang bug, masalah pengiriman email, laporan penyalahgunaan, kemitraan, atau masukan.",
         "heading": "Kontak & Bantuan",
         "subheading": "Punya pertanyaan, menemukan bug, atau butuh bantuan? Hubungi kami."
       },
       "blog": {
         "title": "Blog Privasi, Keamanan & Email Sementara — TempoEmails",
-        "description": "Panduan ahli tentang email sementara gratis, kode verifikasi OTP, email 10 menit, dan privasi digital.",
+        "description": "Panduan tentang email sementara, email sekali pakai, kode OTP, dan cara menjaga kotak masuk utama tetap privat.",
         "heading": "Panduan Privasi & Keamanan",
         "subheading": "Tips praktis menghindari spam, mengelola akun online, dan melindungi email utama Anda.",
         "faqHeading": "Pertanyaan yang sering diajukan",
@@ -3436,7 +3436,7 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
       },
       "privacy": {
         "title": "Kebijakan Privasi — TempoEmails",
-        "description": "Kebijakan privasi TempoEmails: tanpa log, pemrosesan memori sementara, dan kepatuhan GDPR/CCPA.",
+        "description": "Cara TempoEmails menangani data: apa yang disimpan penyedia email, apa yang tetap di browser Anda, log server, cookie, dan iklan.",
         "heading": "Kebijakan Privasi"
       },
       "terms": {

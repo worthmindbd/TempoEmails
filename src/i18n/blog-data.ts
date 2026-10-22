@@ -12,7 +12,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
   en: [
     {
       title: 'The Rise of Disposable Email Services: A Brief History',
-      description: 'Explore the evolution of disposable email services from early spam solutions to modern privacy tools used by millions worldwide.',
+      description: 'A short history of disposable email, from early anti-spam tricks to the temporary inbox providers used today.',
       category: 'Technology',
       date: '2026-08-20',
       slug: '/blog/rise-of-disposable-email/',
@@ -40,7 +40,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
     },
     {
       title: 'How Temporary Email Works Behind the Scenes',
-      description: 'A technical deep-dive into how disposable email services work — from DNS routing to API-driven inboxes and automatic message expiration.',
+      description: 'How disposable email works: how providers accept mail for any address, how TempoEmails connects to them, and where your messages are stored.',
       category: 'Technology',
       date: '2026-08-10',
       slug: '/blog/how-temporary-email-works/',
@@ -54,7 +54,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
     },
     {
       title: 'Email Privacy Best Practices for 2026',
-      description: 'Comprehensive guide to protecting your email privacy — from using disposable addresses to avoiding phishing and managing permissions.',
+      description: 'Seven practical steps to protect your email privacy, from disposable addresses and aliases to phishing awareness and 2FA.',
       category: 'Privacy',
       date: '2026-08-05',
       slug: '/blog/email-privacy-best-practices/',
@@ -82,7 +82,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
     },
     {
       title: 'Complete Guide to Online Account Security',
-      description: 'Protect your online accounts with this comprehensive security guide covering passwords, 2FA, email safety, and privacy practices.',
+      description: 'How to protect your online accounts: unique passwords, 2FA and security keys, breach checks and email hygiene.',
       category: 'Security',
       date: '2026-09-16',
       slug: '/blog/online-account-security-guide/',
@@ -109,7 +109,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       slug: '/blog/why-use-temporary-email/',
     },
     {
-      title: 'How to Avoid Spam Emails: The Ultimate Guide',
+      title: 'How to Avoid Spam Emails: A Practical Guide',
       description: 'Learn proven strategies to reduce spam in your inbox, from using disposable email addresses to managing subscriptions.',
       category: 'Guides',
       date: '2026-07-10',
@@ -147,7 +147,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
     },
     {
       title: 'Cómo funciona el correo temporal entre bastidores',
-      description: 'Análisis técnico exhaustivo sobre el funcionamiento del correo desechable: enrutamiento DNS MX, bandejas en tiempo real y caducidad automática.',
+      description: 'Cómo funciona el correo desechable: cómo los proveedores aceptan correo para cualquier dirección, cómo se conecta TempoEmails a ellos y dónde se guardan sus mensajes.',
       category: 'Technology',
       date: '2026-08-10',
       slug: '/blog/how-temporary-email-works/',
@@ -254,7 +254,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
     },
     {
       title: 'Como funciona o email temporário nos bastidores',
-      description: 'Mergulho técnico detalhado no ecossistema do email descartável: roteamento MX, caixas de entrada dinâmicas e purga imediata.',
+      description: 'Como o e-mail descartável funciona: como os provedores aceitam e-mails para qualquer endereço, como o TempoEmails se conecta a eles e onde suas mensagens ficam guardadas.',
       category: 'Technology',
       date: '2026-08-10',
       slug: '/blog/how-temporary-email-works/',
@@ -361,7 +361,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
     },
     {
       title: "Comment fonctionne l'email temporaire dans les coulisses",
-      description: "Immersion technique dans l'infrastructure des emails jetables : enregistrements DNS MX, réception instantanée et destruction sans journaux.",
+      description: "Comment fonctionne l'email jetable : comment les fournisseurs acceptent le courrier pour n'importe quelle adresse, comment TempoEmails s'y connecte et où vos messages sont stockés.",
       category: 'Technology',
       date: '2026-08-10',
       slug: '/blog/how-temporary-email-works/',
@@ -468,7 +468,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
     },
     {
       title: 'Wie temporäre E-Mails hinter den Kulissen funktionieren',
-      description: 'Technischer Tiefeneinblick in Wegwerf-E-Mails: DNS-MX-Routing, Echtzeit-Postfächer und automatische serverseitige Datenlöschung.',
+      description: 'So funktioniert Wegwerf-E-Mail: wie Anbieter Post für beliebige Adressen annehmen, wie TempoEmails sich mit ihnen verbindet und wo Ihre Nachrichten gespeichert werden.',
       category: 'Technology',
       date: '2026-08-10',
       slug: '/blog/how-temporary-email-works/',
@@ -537,7 +537,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
       slug: '/blog/why-use-temporary-email/',
     },
     {
-      title: 'Spam-E-Mails vermeiden: Der ultimative Leitfaden',
+      title: 'Spam-E-Mails vermeiden: Ein praktischer Leitfaden',
       description: 'Bewährte Strategien zur Reduzierung von Werbemüll im Postfach durch den gezielten Einsatz temporärer Wegwerf-Adressen.',
       category: 'Guides',
       date: '2026-07-10',
@@ -575,7 +575,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
     },
     {
       title: '使い捨て捨てメアドの仕組み：技術的舞台裏を徹底解説',
-      description: 'DNS MXルーティングからリアルタイム受信、自動破棄まで、使い捨てメールの内部構造を技術的に深掘りします。',
+      description: '使い捨てメールの仕組み：メールサービスが任意のアドレス宛てのメールを受け取る方法、TempoEmailsとの連携、メッセージの保存場所を解説します。',
       category: 'Technology',
       date: '2026-08-10',
       slug: '/blog/how-temporary-email-works/',
@@ -682,7 +682,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
     },
     {
       title: 'كيف يعمل البريد الإلكتروني المؤقت خلف الكواليس',
-      description: 'نظرة تقنية معمقة حول آلية عمل البريد المؤقت: توجيه سجلات MX، والاستلام الفوري، والحذف التلقائي بدون سجلات.',
+      description: 'كيف يعمل البريد المؤقت: كيف يستقبل المزودون البريد لأي عنوان، وكيف يتصل بهم TempoEmails، وأين تُحفظ رسائلك.',
       category: 'Technology',
       date: '2026-08-10',
       slug: '/blog/how-temporary-email-works/',
@@ -789,7 +789,7 @@ export const BLOG_ARTICLES: Record<Locale, BlogArticleData[]> = {
     },
     {
       title: 'Cara Kerja Email Sementara di Balik Layar',
-      description: 'Ulasan teknis mendalam tentang sistem email sekali pakai: perutean DNS MX, kotak masuk waktu nyata, dan penghapusan otomatis.',
+      description: 'Cara kerja email sekali pakai: bagaimana penyedia menerima email untuk alamat apa pun, bagaimana TempoEmails terhubung ke mereka, dan di mana pesan Anda disimpan.',
       category: 'Technology',
       date: '2026-08-10',
       slug: '/blog/how-temporary-email-works/',
